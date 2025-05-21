@@ -6,7 +6,7 @@ const Hero = () => {
     return (
         <div className="bg-gradient-to-br from-transparent to-primary/20">
             <ContainerWrapper>
-                <div className="grid grid-cols-2 gap-20 items-center justify-center py-20 pt-40">
+                <div className="grid md:grid-cols-2 gap-20 items-center justify-center py-20 pt-40">
                     <div className="grid gap-10">
                         <h2 className="text-5xl font-semibold text-secondary-foreground leading-snug">
                             There Are{" "}

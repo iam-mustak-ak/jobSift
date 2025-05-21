@@ -29,7 +29,7 @@ const SigninForm = () => {
         }
     }, [state]);
     return (
-        <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md">
+        <div className="w-full md:w-[425px] mx-4 md:mx-auto border p-4 rounded-md shadow-md ">
             <h4 className="font-bold text-lg">Login </h4>
             <p className="text-base">Welcome Back</p>
             <form className="w-full" action={formAction}>

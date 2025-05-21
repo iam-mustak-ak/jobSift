@@ -31,7 +31,7 @@ const SignupForm = () => {
     }, [state]);
 
     return (
-        <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md grid">
+        <div className="w-full md:w-[425px] mx-4 md:mx-auto border p-4 rounded-md shadow-md">
             <h4 className="font-bold text-lg">Sign Up </h4>
             <p className="text-base">Fill The Details</p>
             <form className="w-full" action={formAction}>
@@ -55,30 +55,32 @@ const SignupForm = () => {
                         </div>
                     </RadioGroup>
 
-                    <CustomInput
-                        type="text"
-                        id="full-name"
-                        label="Full Name"
-                        name="name"
-                    />
-                    <CustomInput
-                        type="email"
-                        id="email"
-                        label="Email"
-                        name="email"
-                    />
-                    <CustomInput
-                        type="password"
-                        id="password"
-                        label="Password"
-                        name="password"
-                    />
-                    <CustomInput
-                        type="password"
-                        id="confirm-pasword"
-                        label="Confirm Password"
-                        name="confirm-password"
-                    />
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                        <CustomInput
+                            type="text"
+                            id="full-name"
+                            label="Full Name"
+                            name="name"
+                        />
+                        <CustomInput
+                            type="email"
+                            id="email"
+                            label="Email"
+                            name="email"
+                        />
+                        <CustomInput
+                            type="password"
+                            id="password"
+                            label="Password"
+                            name="password"
+                        />
+                        <CustomInput
+                            type="password"
+                            id="confirm-pasword"
+                            label="Confirm Password"
+                            name="confirm-password"
+                        />
+                    </div>
 
                     <SubmitButton label="Sign Up" pending={pending} />
 

@@ -37,7 +37,7 @@ const FeaturedJobCard = () => {
                                 <Bookmark />
                             </Button>
                         </div>
-                        <ul className="flex items-center gap-5">
+                        <ul className="flex items-center gap-5 max-md:flex-wrap">
                             <li className="flex gap-2 font-normal text-muted-foreground">
                                 <BriefcaseBusiness /> Segment
                             </li>

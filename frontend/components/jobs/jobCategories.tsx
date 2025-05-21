@@ -11,7 +11,7 @@ const JobCategories = () => {
                     subHeading="2020 jobs live - 293 added today."
                 />
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[...Array(9)].map((item, i) => (
                         <JobCategoryCard
                             key={i}

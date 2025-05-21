@@ -13,7 +13,7 @@ const FeaturedJob = () => {
                         subHeading="Know your worth and find the job that qualify your life"
                     />
 
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid md:grid-cols-2 gap-5">
                         {[...Array(4)].map((item, i) => (
                             <FeaturedJobCard key={i} />
                         ))}
