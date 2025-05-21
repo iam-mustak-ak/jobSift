@@ -1,28 +1,57 @@
+"use client";
+
+import signInAction from "@/actions/signInAction";
 import Googlesvg from "@/lib/LogoProvider/googlesvg";
 import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import Link from "next/link";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CustomInput from "./customInput";
+import SubmitButton from "./submitButton";
+
+const initialState = {
+    success: false,
+    message: "",
+};
 
 const SigninForm = () => {
+    const [state, formAction, pending] = useActionState(
+        signInAction,
+        initialState
+    );
+
+    useEffect(() => {
+        if (state?.success) {
+            toast.success(state.message);
+        } else if (state?.message && !state.success) {
+            toast.error(state.message);
+        }
+    }, [state]);
     return (
         <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md">
             <h4 className="font-bold text-lg">Login </h4>
             <p className="text-base">Welcome Back</p>
-            <form className="w-full">
+            <form className="w-full" action={formAction}>
                 <div className="grid gap-4 py-4">
-                    <CustomInput type="email" id="email" label="Email" />
+                    <CustomInput
+                        type="email"
+                        id="email"
+                        label="Email"
+                        name="email"
+                    />
                     <CustomInput
                         type="password"
                         id="password"
                         label="Password"
+                        name="password"
                     />
 
-                    <Button type="submit">Sign In</Button>
+                    <SubmitButton label="Sign In" pending={pending} />
 
                     <div className="flex items-center justify-center gap-2 text-sm">
                         <span>Don't Have an Account?</span>{" "}
-                        <Link href="/auth/signup" className="hover:underline">
+                        <Link href="/signup" className="hover:underline">
                             Sign Up
                         </Link>
                     </div>

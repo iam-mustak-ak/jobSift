@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomInput from "./customInput";
 import SubmitButton from "./submitButton";
 
@@ -29,11 +31,36 @@ const SignupForm = () => {
     }, [state]);
 
     return (
-        <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md">
+        <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md grid">
             <h4 className="font-bold text-lg">Sign Up </h4>
             <p className="text-base">Fill The Details</p>
             <form className="w-full" action={formAction}>
                 <div className="grid gap-4 py-4">
+                    <p className=" text-md font-medium text-secondary-foreground">
+                        Sign up as
+                    </p>
+                    <RadioGroup
+                        defaultValue="candidate"
+                        name="role"
+                        className="flex items-center gap-4"
+                        required
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="candidate" id="candidate" />
+                            <Label htmlFor="candidate">Candidate</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="recruiter" id="recruiter" />
+                            <Label htmlFor="recruiter">Recruiter</Label>
+                        </div>
+                    </RadioGroup>
+
+                    <CustomInput
+                        type="text"
+                        id="full-name"
+                        label="Full Name"
+                        name="name"
+                    />
                     <CustomInput
                         type="email"
                         id="email"
@@ -53,11 +80,11 @@ const SignupForm = () => {
                         name="confirm-password"
                     />
 
-                    <SubmitButton label="Sign Up" />
+                    <SubmitButton label="Sign Up" pending={pending} />
 
                     <div className="flex items-center justify-center gap-2 text-sm">
                         <span>Have an Account?</span>{" "}
-                        <Link href="/auth/login" className="hover:underline">
+                        <Link href="/login" className="hover:underline">
                             Sign In
                         </Link>
                     </div>

@@ -1,44 +1,60 @@
+import dotenv from "dotenv";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/env";
+import User from "../models/user.model"; // 👈 make sure this path is correct
 import generateTokens from "../utils/generateTokens";
 import isTokenExpires from "../utils/isTokenExpires";
 import setTokenCookies from "../utils/setTokenCookies";
 
+dotenv.config();
+
 const setAuthorization: RequestHandler = async (req, res, next) => {
     try {
-        const accessToken = req.cookies.accessToken;
-        if (accessToken || !isTokenExpires(accessToken)) {
-            const decodedToken: any = jwt.verify(accessToken, JWT_SECRET!);
-            if (!decodedToken) {
-                throw new Error("Invalid access token");
-            }
+        const { accessToken, refreshToken } = req.cookies;
+        console.log("Access Token:", accessToken);
+        console.log("Refresh Token:", refreshToken);
 
-            req.headers.authorization = `Bearer ${accessToken}`;
+        if (!process.env.JWT_SECRET) {
+            throw new Error(
+                "JWT_SECRET is not defined in environment variables"
+            );
         }
 
-        if (!accessToken || isTokenExpires(accessToken)) {
-            const refreshToken = req.cookies.refreshToken;
-            if (!refreshToken) {
-                throw new Error("Refresh token not found");
+        if (accessToken && !isTokenExpires(accessToken)) {
+            try {
+                req.headers.authorization = `Bearer ${accessToken}`;
+                return next();
+            } catch (err) {
+                console.warn("Invalid access token:", err);
             }
-
-            const decodedToken: any = jwt.verify(refreshToken, JWT_SECRET!);
-            if (!decodedToken) {
-                throw new Error("Invalid refresh token");
-            }
-
-            const {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshtoken,
-            } = await generateTokens(decodedToken, req);
-            setTokenCookies(res, newAccessToken, newRefreshtoken);
-
-            req.headers.authorization = `Bearer ${newAccessToken}`;
         }
-        next();
+
+        // If no accessToken or expired, use refreshToken
+        if (refreshToken) {
+            try {
+                const decoded: any = jwt.verify(
+                    refreshToken,
+                    process.env.JWT_SECRET
+                );
+                const user = await User.findById(decoded.id); // 👈 fetch fresh user
+                if (!user) throw new Error("User not found");
+
+                const {
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken,
+                } = await generateTokens(user, req);
+
+                setTokenCookies(res, newAccessToken, newRefreshToken);
+                req.headers.authorization = `Bearer ${newAccessToken}`;
+                return next();
+            } catch (err) {
+                console.warn("Refresh token failed:", err);
+            }
+        }
+
+        throw new Error("Authentication required");
     } catch (error) {
-        next(error);
+        return next(error);
     }
 };
 

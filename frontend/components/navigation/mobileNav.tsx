@@ -60,7 +60,7 @@ const MobileNav = () => {
                         </NavigationMenuItem>
                         <NavigationMenuItem className="mt-2">
                             <Button asChild>
-                                <Link href="/auth/login">Login / Sign Up</Link>
+                                <Link href="/login">Login / Sign Up</Link>
                             </Button>
                         </NavigationMenuItem>
                     </NavigationMenuList>

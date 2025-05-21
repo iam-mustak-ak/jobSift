@@ -86,7 +86,7 @@ export const Navbar = () => {
                     <Link href="/post-job">Post A Job</Link>
                 </Button>
                 <Button className="max-lg:hidden" asChild>
-                    <Link href="/auth/login">Login / Sign Up</Link>
+                    <Link href="/login">Login / Sign Up</Link>
                 </Button>
                 <div className="lg:hidden">
                     <Drawer direction="left">

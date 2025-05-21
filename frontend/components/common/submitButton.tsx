@@ -1,14 +1,17 @@
 "use client";
-import Spinner from "@/lib/LogoProvider/spinner";
-import { useFormStatus } from "react-dom";
+import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
 
-const SubmitButton = ({ label }: { label: string }) => {
-    const { pending } = useFormStatus();
-
+const SubmitButton = ({
+    label,
+    pending,
+}: {
+    label: string;
+    pending: boolean;
+}) => {
     return (
         <Button disabled={pending} type="submit">
-            {pending && <Spinner />} {label}
+            {pending ? <Loader2 className="animate-spin" /> : label}
         </Button>
     );
 };

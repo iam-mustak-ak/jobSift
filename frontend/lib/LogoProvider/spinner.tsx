@@ -9,20 +9,20 @@ const Spinner = () => {
                 fy=".3125"
                 gradientTransform="scale(1.5)"
             >
-                <stop offset="0" stop-color="#8E51FF"></stop>
-                <stop offset=".3" stop-color="#8E51FF" stop-opacity=".9"></stop>
-                <stop offset=".6" stop-color="#8E51FF" stop-opacity=".6"></stop>
-                <stop offset=".8" stop-color="#8E51FF" stop-opacity=".3"></stop>
-                <stop offset="1" stop-color="#8E51FF" stop-opacity="0"></stop>
+                <stop offset="0" stopColor="#8E51FF"></stop>
+                <stop offset=".3" stopColor="#8E51FF" stopOpacity=".9"></stop>
+                <stop offset=".6" stopColor="#8E51FF" stopOpacity=".6"></stop>
+                <stop offset=".8" stopColor="#8E51FF" stopOpacity=".3"></stop>
+                <stop offset="1" stopColor="#8E51FF" stopOpacity="0"></stop>
             </radialGradient>
             <circle
-                transform-origin="center"
+                style={{ transformOrigin: "center center" }}
                 fill="none"
                 stroke="url(#a12)"
-                stroke-width="15"
-                stroke-linecap="round"
-                stroke-dasharray="200 1000"
-                stroke-dashoffset="0"
+                strokeWidth="15"
+                strokeLinecap="round"
+                strokeDasharray="200 1000"
+                strokeDashoffset="0"
                 cx="100"
                 cy="100"
                 r="70"
@@ -39,12 +39,12 @@ const Spinner = () => {
                 ></animateTransform>
             </circle>
             <circle
-                transform-origin="center"
+                style={{ transformOrigin: "center center" }}
                 fill="none"
                 opacity=".2"
                 stroke="#8E51FF"
-                stroke-width="15"
-                stroke-linecap="round"
+                strokeWidth="15"
+                strokeLinecap="round"
                 cx="100"
                 cy="100"
                 r="70"

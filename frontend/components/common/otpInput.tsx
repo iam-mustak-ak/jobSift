@@ -1,5 +1,8 @@
 "use client";
+import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
     InputOTP,
@@ -10,7 +13,47 @@ import {
 
 const OtpInput = () => {
     const [otp, setOtp] = useState("");
-    console.log(otp);
+    const router = useRouter();
+    const email = useSearchParams().get("email");
+    const [isPending, setIsPending] = useState(false);
+
+    const handleOtp = async () => {
+        setIsPending(true);
+        try {
+            if (otp.length < 6) {
+                toast.error("Please enter a valid OTP");
+                return;
+            }
+
+            if (email === null) {
+                toast.error("Please enter a valid email");
+                return;
+            }
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-otp`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email,
+                        otp,
+                    }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            console.log(res);
+
+            router.push("/login");
+        } catch (error) {
+            toast.error("Invalid OTP");
+        } finally {
+            setIsPending(false);
+        }
+    };
+
     return (
         <>
             <InputOTP maxLength={6} value={otp} onChange={(otp) => setOtp(otp)}>
@@ -26,7 +69,9 @@ const OtpInput = () => {
                     <InputOTPSlot index={5} />
                 </InputOTPGroup>
             </InputOTP>
-            <Button className="w-full mt-4">Verify</Button>
+            <Button onClick={handleOtp} className="w-full mt-4">
+                {isPending ? <Loader2 className="animate-spin" /> : "Verify"}
+            </Button>
             <div className="flex items-center justify-center text-sm mt-4">
                 <span>Didn't Receive the Code?</span>
                 <Button variant="link">Resend Code</Button>
