@@ -3,9 +3,12 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
+import userAgent from "express-useragent";
 import morgan from "morgan";
 import connnectMongo from "./config/dbConfig";
-import EmailTemplates from "./libs/email-template";
+import globalErrorHandler from "./middlewares/globalError.middleware";
+import Session from "./models/session.model";
+import userRouter from "./routes/user.routes";
 dotenv.config();
 
 const app = express();
@@ -21,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.set("Trust Proxy", 1);
 app.use(morgan("tiny"));
+app.use(userAgent.express());
 
 interface limiterReq extends Request {
     user?: Record<string, any>;
@@ -38,11 +42,10 @@ const limitrer = rateLimit({
 });
 app.use(limitrer);
 
+app.use(globalErrorHandler);
+
 const port = process.env.PORT || 3001;
 app.get("/", async (req: Request, res: Response) => {
-    await new EmailTemplates("otp-verification")
-        .setOtp("1234")
-        .sendEmail("mustakahmedkhan32@gmail.com");
     res.status(200).json({
         status: 200,
         message: "jobsift api is running and healthy",
@@ -55,9 +58,24 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
+app.use("/auth", userRouter);
+
 const mongoUi = process.env.MONGO_URI!;
 
-connnectMongo(mongoUi);
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+const startServer = async () => {
+    try {
+        connnectMongo(mongoUi);
+        console.log("MongoDB connected");
+        await Session.syncIndexes();
+        console.log("Session indexes synced");
+
+        app.listen(port, () => {
+            console.log(`Server running at http://localhost:${port}`);
+        });
+    } catch (err) {
+        console.error("Failed to start server:", err);
+        process.exit(1);
+    }
+};
+
+startServer();

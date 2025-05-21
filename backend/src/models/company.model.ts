@@ -28,10 +28,10 @@ const companySchema = new Schema(
             type: String,
         },
         logo: {
-            type: String, // image URL or path
+            type: String,
         },
         banner: {
-            type: String, // optional branding banner
+            type: String,
         },
         recruiter: {
             type: Types.ObjectId,

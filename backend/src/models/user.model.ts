@@ -28,7 +28,6 @@ const userSchema = new Schema(
         },
         location: {
             type: String,
-            required: true,
         },
         experience: {
             type: String,
@@ -95,16 +94,19 @@ const userSchema = new Schema(
             index: true,
         },
         jobPreferences: {
-            jobType: {
-                type: String,
-                enum: ["full-time", "part-time", "contract", "internship"],
+            type: {
+                jobType: {
+                    type: String,
+                    enum: ["full-time", "part-time", "contract", "internship"],
+                },
+                preferredLocation: {
+                    type: String,
+                },
+                expectedSalary: {
+                    type: Number,
+                },
             },
-            preferredLocation: {
-                type: String,
-            },
-            expectedSalary: {
-                type: Number,
-            },
+            default: {},
         },
 
         socialLinks: [

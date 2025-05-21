@@ -1,8 +1,10 @@
-import transporter from "../transporter";
+import { SMTP_SENDER } from "../../config/env";
+import transporter from "../../libs/transporter";
 import { htmlTemplates } from "./htmlTemplates";
 
 class EmailTemplates {
     private htmlContent: string = "";
+    private subject: string = "";
     constructor(public template: "otp-verification" | "password-reset") {
         this.template = template;
     }
@@ -11,9 +13,11 @@ class EmailTemplates {
         switch (this.template) {
             case "otp-verification":
                 this.htmlContent = htmlTemplates["otp-verification"].html(otp);
+                this.subject = htmlTemplates["otp-verification"].subject;
                 break;
             case "password-reset":
                 this.htmlContent = "password-reset";
+                this.subject = "Password Reset";
                 break;
             default:
                 throw new Error("Invalid template type");
@@ -23,9 +27,9 @@ class EmailTemplates {
 
     async sendEmail(to: string): Promise<this> {
         await transporter.sendMail({
-            from: "mustakahmedkhan0@gmail.com",
+            from: SMTP_SENDER,
             to: to,
-            subject: "OTP Verification",
+            subject: this.subject,
             html: this.htmlContent,
         });
         return this;

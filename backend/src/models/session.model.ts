@@ -12,7 +12,13 @@ const sessionSchema = new Schema(
             required: true,
         },
         userAgent: {
-            type: String,
+            type: {
+                device: String,
+                os: String,
+                browser: String,
+                version: String,
+                platform: String,
+            },
         },
         ipAddress: {
             type: String,
@@ -24,6 +30,7 @@ const sessionSchema = new Schema(
         expiresAt: {
             type: Date,
             required: true,
+            index: { expires: 0 },
         },
     },
     {
