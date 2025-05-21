@@ -3,6 +3,7 @@ import { Navbar } from "@/components/navigation/navbar";
 import { Providers } from "@/utils/providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default function RootLayout({
                     <Navbar />
                     {children}
                     <Footer />
+                    <Toaster />
                 </Providers>
             </body>
         </html>

@@ -1,28 +1,59 @@
+"use client";
+import createUserAction from "@/actions/createUserAction";
 import Googlesvg from "@/lib/LogoProvider/googlesvg";
 import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import Link from "next/link";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CustomInput from "./customInput";
+import SubmitButton from "./submitButton";
+
+const initialState = {
+    success: false,
+    message: "",
+};
 
 const SignupForm = () => {
+    const [state, formAction, pending] = useActionState(
+        createUserAction,
+        initialState
+    );
+
+    useEffect(() => {
+        if (state.success) {
+            toast.success(state.message);
+        } else if (state.message && !state.success) {
+            toast.error(state.message);
+        }
+    }, [state]);
+
     return (
         <div className="sm:w-[425px] mx-auto border p-4 rounded-md shadow-md">
             <h4 className="font-bold text-lg">Sign Up </h4>
             <p className="text-base">Fill The Details</p>
-            <form className="w-full">
+            <form className="w-full" action={formAction}>
                 <div className="grid gap-4 py-4">
-                    <CustomInput type="email" id="email" label="Email" />
+                    <CustomInput
+                        type="email"
+                        id="email"
+                        label="Email"
+                        name="email"
+                    />
                     <CustomInput
                         type="password"
                         id="password"
                         label="Password"
+                        name="password"
                     />
                     <CustomInput
                         type="password"
                         id="confirm-pasword"
                         label="Confirm Password"
+                        name="confirm-password"
                     />
-                    <Button type="submit">Sign Up</Button>
+
+                    <SubmitButton label="Sign Up" />
 
                     <div className="flex items-center justify-center gap-2 text-sm">
                         <span>Have an Account?</span>{" "}

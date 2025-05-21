@@ -7,6 +7,7 @@ type CustomInputProps = {
     type: string;
     placeholder?: string;
     className?: string;
+    name?: string;
 };
 
 function CustomInput({ id, label, ...props }: CustomInputProps) {

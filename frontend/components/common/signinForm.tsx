@@ -17,7 +17,8 @@ const SigninForm = () => {
                         id="password"
                         label="Password"
                     />
-                    <Button type="submit">Log In</Button>
+
+                    <Button type="submit">Sign In</Button>
 
                     <div className="flex items-center justify-center gap-2 text-sm">
                         <span>Don't Have an Account?</span>{" "}
