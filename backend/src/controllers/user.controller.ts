@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 import User from "../models/user.model";
+import customError from "../utils/customError";
 import generateTokens from "../utils/generateTokens";
 import {
     checkOtpRestrictions,
@@ -15,19 +16,19 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
         // Validate the input
         if (!role || !name || !email || !password) {
-            res.status(400).json({ message: "All fields are required" });
+            next(customError(400, "All fields are required"));
             return;
         }
 
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            res.status(400).json({ message: "User already exists" });
+            next(customError(400, "User already exists"));
             return;
         }
 
-        await checkOtpRestrictions(email, res);
-        await trackOtpRequest(email);
+        await checkOtpRestrictions(email, res, next);
+        await trackOtpRequest(email, next);
         await sendOtp(email);
         // Create a new user
         const newUser = new User({
@@ -55,26 +56,29 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 
         // Validate the input
         if (!email || !password) {
-            res.status(400).json({ message: "All fields are required" });
+            next(customError(400, "All fields are required"));
             return;
         }
 
         // Check if the user exists
         const user = await User.findOne({ email });
         if (!user) {
-            res.status(400).json({ message: "Invalid credentials" });
+            next(customError(400, "Invalid credentials"));
             return;
         }
 
         // Check if the password is correct
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            res.status(400).json({ message: "Invalid credentials" });
+            next(customError(400, "Invalid credentials"));
             return;
         }
 
         // Generate tokens
         const { accessToken, refreshToken } = await generateTokens(user, req);
+
+        console.log("Access Token: from sign", accessToken);
+        console.log("Refresh Token: from sign", refreshToken);
         // Set the refresh token in a cookie
         setTokenCookies(res, accessToken, refreshToken);
 
@@ -94,25 +98,52 @@ export const verifyUser: RequestHandler = async (req, res, next) => {
 
         // Validate the input
         if (!email || !otp) {
-            res.status(400).json({ message: "All fields are required" });
+            next(customError(400, "All fields are required"));
             return;
         }
 
         // Check if the user exists
         const user = await User.findOne({ email }).select("-password");
         if (!user) {
-            res.status(400).json({ message: "Invalid credentials" });
+            next(customError(400, "Invalid credentials"));
             return;
         }
 
         // Verify the OTP
-        await verifyOtp(email, otp);
+        await verifyOtp(email, otp, next);
         user.isVerified = true;
         await user.save();
 
         res.status(200).json({
             success: true,
             message: "User verified successfully",
+            data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getProfile: RequestHandler = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+
+        // Validate the input
+        if (!userId) {
+            next(customError(400, "User ID is required"));
+            return;
+        }
+
+        // Check if the user exists
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            next(customError(400, "User not found"));
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User profile fetched successfully",
             data: user,
         });
     } catch (error) {

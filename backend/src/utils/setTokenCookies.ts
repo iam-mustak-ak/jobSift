@@ -7,15 +7,15 @@ const setTokenCookies = (
 ) => {
     const accessTokenOptions: Record<string, string | boolean | number> = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
         maxAge: 5 * 60 * 1000,
     };
 
     const refreshTokenOptions: Record<string, string | boolean | number> = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: true,
+        sameSite: "none",
         maxAge: 5 * 24 * 60 * 60 * 1000,
     };
 

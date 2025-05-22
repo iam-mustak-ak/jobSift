@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:3000"],
+        origin: ["http://localhost:3000", "http://localhost:3000/*", "*"],
         credentials: true,
     })
 );
@@ -42,8 +42,6 @@ const limitrer = rateLimit({
 });
 app.use(limitrer);
 
-app.use(globalErrorHandler);
-
 const port = process.env.PORT || 3001;
 app.get("/", async (req: Request, res: Response) => {
     res.status(200).json({
@@ -59,6 +57,8 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/auth", userRouter);
+
+app.use(globalErrorHandler);
 
 const mongoUi = process.env.MONGO_URI!;
 

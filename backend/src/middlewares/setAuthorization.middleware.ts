@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model"; // 👈 make sure this path is correct
+import customError from "../utils/customError";
 import generateTokens from "../utils/generateTokens";
 import isTokenExpires from "../utils/isTokenExpires";
 import setTokenCookies from "../utils/setTokenCookies";
@@ -15,9 +16,8 @@ const setAuthorization: RequestHandler = async (req, res, next) => {
         console.log("Refresh Token:", refreshToken);
 
         if (!process.env.JWT_SECRET) {
-            throw new Error(
-                "JWT_SECRET is not defined in environment variables"
-            );
+            next(customError(500, "JWT secret not defined"));
+            return;
         }
 
         if (accessToken && !isTokenExpires(accessToken)) {

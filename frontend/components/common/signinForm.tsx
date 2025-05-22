@@ -1,38 +1,64 @@
 "use client";
 
-import signInAction from "@/actions/signInAction";
 import Googlesvg from "@/lib/LogoProvider/googlesvg";
 import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import CustomInput from "./customInput";
 import SubmitButton from "./submitButton";
 
-const initialState = {
-    success: false,
-    message: "",
-};
-
 const SigninForm = () => {
-    const [state, formAction, pending] = useActionState(
-        signInAction,
-        initialState
-    );
+    const [pending, setPending] = useState(false);
+    const router = useRouter();
 
-    useEffect(() => {
-        if (state?.success) {
-            toast.success(state.message);
-        } else if (state?.message && !state.success) {
-            toast.error(state.message);
+    async function handleSubmit(event: React.FormEvent) {
+        event.preventDefault();
+        setPending(true);
+
+        try {
+            const formData = new FormData(
+                event.currentTarget as HTMLFormElement
+            );
+            const email = formData.get("email") as string;
+            const password = formData.get("password") as string;
+
+            if (!email || !password) {
+                return toast.error("Please fill all the fields");
+            }
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email,
+                        password,
+                    }),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) throw await response.json();
+
+            const data = await response.json();
+            router.push(`/profile/${data.data._id}`);
+        } catch (error) {
+            return toast.error("Invalid credentials");
+        } finally {
+            setPending(false);
         }
-    }, [state]);
+    }
+
     return (
         <div className="w-full md:w-[425px] mx-4 md:mx-auto border p-4 rounded-md shadow-md ">
             <h4 className="font-bold text-lg">Login </h4>
             <p className="text-base">Welcome Back</p>
-            <form className="w-full" action={formAction}>
+            <form className="w-full" onSubmit={handleSubmit}>
                 <div className="grid gap-4 py-4">
                     <CustomInput
                         type="email"

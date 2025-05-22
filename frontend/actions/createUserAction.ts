@@ -39,6 +39,7 @@ export default async function createUserAction(
                 email,
                 password,
             }),
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },

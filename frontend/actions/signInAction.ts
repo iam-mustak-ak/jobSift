@@ -1,11 +1,13 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function signInAction(prevState: any, formData: FormData) {
     "use server";
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const cookieStore = await cookies();
 
     if (!email || !password) {
         return {
@@ -22,8 +24,10 @@ export default async function signInAction(prevState: any, formData: FormData) {
                 email,
                 password,
             }),
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
             },
         }
     );

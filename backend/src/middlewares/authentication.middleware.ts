@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env";
 import User from "../models/user.model";
+import customError from "../utils/customError";
 
 declare global {
     namespace Express {
@@ -15,7 +16,7 @@ const authecticationMiddleware: RequestHandler = async (req, res, next) => {
     const token = req.header("Authorization")?.split(" ")[1];
 
     if (!token) {
-        res.status(401).json({ message: "Access Denied. No token provided." });
+        next(customError(401, "Access Denied. No token provided."));
         return;
     }
 
@@ -24,7 +25,7 @@ const authecticationMiddleware: RequestHandler = async (req, res, next) => {
         const user = await User.findById(decoded.id);
 
         if (!user) {
-            res.status(404).json({ message: "User not found" });
+            next(customError(404, "User not found"));
             return;
         }
 
