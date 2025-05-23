@@ -40,6 +40,8 @@
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
         "@types/jsonwebtoken": "^9.0.9",
-        "@types/nodemailer": "^6.4.17"
+        "@types/nodemailer": "^6.4.17",
+        "@types/passport": "^1.0.17",
+        "@types/passport-google-oauth20": "^2.0.16"
     }
 }

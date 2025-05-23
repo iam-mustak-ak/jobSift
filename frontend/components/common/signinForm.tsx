@@ -1,13 +1,11 @@
 "use client";
 
-import Googlesvg from "@/lib/LogoProvider/googlesvg";
-import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
 import CustomInput from "./customInput";
+import SocialLoginButtons from "./socialLoginButtons";
 import SubmitButton from "./submitButton";
 
 const SigninForm = () => {
@@ -88,22 +86,7 @@ const SigninForm = () => {
                         <div className="w-full h-[1px] bg-black/10" />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Button
-                            variant="outline"
-                            className="flex items-center justify-center w-full cursor-pointer"
-                        >
-                            <Googlesvg />
-                            <span>Sign in With Google</span>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="flex items-center justify-center w-full cursor-pointer"
-                        >
-                            <LinkendInSvg />
-                            <span>Sign in With LinkedIn</span>
-                        </Button>
-                    </div>
+                    <SocialLoginButtons isLogIn={true} />
                 </div>
             </form>
         </div>

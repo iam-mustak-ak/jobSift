@@ -7,7 +7,7 @@ import customError from "../utils/customError";
 declare global {
     namespace Express {
         interface Request {
-            user?: Record<string, any>;
+            user?: User;
         }
     }
 }

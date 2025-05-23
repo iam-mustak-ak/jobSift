@@ -6,11 +6,20 @@ const userSchema = new Schema<IUserDocument, UserModel>(
     {
         name: String,
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        password: {
+            type: String,
+            required: function () {
+                return !this.isOAuthUser;
+            },
+        },
         role: {
             type: String,
             enum: ["candidate", "recruiter"],
             default: "candidate",
+        },
+        isOAuthUser: {
+            type: Boolean,
+            default: false,
         },
         phone: { type: String },
         location: String,

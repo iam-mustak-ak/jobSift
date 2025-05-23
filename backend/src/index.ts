@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import userAgent from "express-useragent";
 import morgan from "morgan";
 import connnectMongo from "./config/dbConfig";
+import "./config/googleSIgnStrategy";
 import globalErrorHandler from "./middlewares/globalError.middleware";
 import Session from "./models/session.model";
 import userRouter from "./routes/user.routes";

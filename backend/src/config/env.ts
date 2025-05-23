@@ -11,4 +11,5 @@ export const {
     MONGO_URI,
     APP_PASSWORD,
     SMTP_SENDER,
+    FRONTEND_URL,
 } = process.env;

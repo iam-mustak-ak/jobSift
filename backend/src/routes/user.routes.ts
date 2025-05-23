@@ -1,13 +1,18 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
+import passport from "passport";
+import { FRONTEND_URL } from "../config/env";
 import {
     createUser,
     getProfile,
+    googleMainController,
     loginUser,
     resendOtp,
     verifyUser,
 } from "../controllers/user.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
 import setAuthorization from "../middlewares/setAuthorization.middleware";
+import generateTokens from "../utils/generateTokens";
+import setTokenCookies from "../utils/setTokenCookies";
 const userRouter = Router();
 
 userRouter.post("/create-user", createUser);
@@ -25,5 +30,30 @@ userRouter.get(
 );
 
 userRouter.post("/resend-email", resendOtp);
+userRouter.get("/google", googleMainController);
+userRouter.get(
+    "/google/callback",
+    passport.authenticate("google", {
+        session: false,
+        failureRedirect: `http://localhost:3000/login?error=OAuthFailed`,
+    }),
+    async function (req: Request, res: Response) {
+        if (!req.user) {
+            return res.redirect(
+                `http://localhost:3000/login?error=OAuthFailed`
+            );
+        }
+
+        const { refreshToken, accessToken } = await generateTokens(
+            req.user as Record<string, any>,
+            req
+        );
+        setTokenCookies(res, accessToken, refreshToken);
+
+        // You might want to set tokens in cookies or session here
+
+        res.redirect(`${FRONTEND_URL}`);
+    }
+);
 
 export default userRouter;

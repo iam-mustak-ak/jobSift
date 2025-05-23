@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
+import passport from "passport";
 import User from "../models/user.model";
 import customError from "../utils/customError";
 import generateTokens from "../utils/generateTokens";
@@ -27,8 +28,8 @@ export const createUser: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        await checkOtpRestrictions(email, res, next);
-        await trackOtpRequest(email, next);
+        // await checkOtpRestrictions(email, res, next);
+        // await trackOtpRequest(email, next);
         await sendOtp(email);
         // Create a new user
         const newUser = new User({
@@ -127,6 +128,8 @@ export const verifyUser: RequestHandler = async (req, res, next) => {
 export const getProfile: RequestHandler = async (req, res, next) => {
     try {
         const userId = req.params.id;
+        const authUser = req.user;
+        // console.log("auth User", authUser?._id.toString());
 
         // Validate the input
         if (!userId) {
@@ -134,6 +137,10 @@ export const getProfile: RequestHandler = async (req, res, next) => {
             return;
         }
 
+        if (userId) {
+            next(customError(400, "Your are not valid user"));
+            return;
+        }
         // Check if the user exists
         const user = await User.findById(userId).select("-password");
         if (!user) {
@@ -179,4 +186,25 @@ export const resendOtp: RequestHandler = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+export const googleMainController: RequestHandler = (req, res, next) => {
+    const { mode, role } = req.query;
+
+    if (!mode || (mode !== "login" && mode !== "register")) {
+        res.status(400).json({ error: "Invalid or missing 'mode'" });
+        return;
+    }
+
+    const params = new URLSearchParams();
+    params.set("mode", mode as string);
+    if (role) params.set("role", role as string);
+
+    const state = params.toString();
+
+    passport.authenticate("google", {
+        session: false,
+        scope: ["profile", "email"],
+        state,
+    })(req, res, next);
 };

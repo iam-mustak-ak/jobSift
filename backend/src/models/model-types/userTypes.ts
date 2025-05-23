@@ -10,6 +10,7 @@ interface IUser {
     location?: string;
     experience?: string;
     resume?: string;
+    isOAuthUser?: boolean;
     about?: string;
     profilePicture?: string;
     isAvailableForHire?: boolean;

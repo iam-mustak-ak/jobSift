@@ -1,14 +1,12 @@
 "use client";
 import createUserAction from "@/actions/createUserAction";
-import Googlesvg from "@/lib/LogoProvider/googlesvg";
-import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomInput from "./customInput";
+import SocialLoginButtons from "./socialLoginButtons";
 import SubmitButton from "./submitButton";
 
 const initialState = {
@@ -97,22 +95,7 @@ const SignupForm = () => {
                         <div className="w-full h-[1px] bg-black/10" />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Button
-                            variant="outline"
-                            className="flex items-center justify-center w-full cursor-pointer"
-                        >
-                            <Googlesvg />
-                            <span>Sign Up With Google</span>
-                        </Button>
-                        <Button
-                            variant="outline"
-                            className="flex items-center justify-center w-full cursor-pointer"
-                        >
-                            <LinkendInSvg />
-                            <span>Sign Up With LinkedIn</span>
-                        </Button>
-                    </div>
+                    <SocialLoginButtons isLogIn={false} role="candidate" />
                 </div>
             </form>
         </div>

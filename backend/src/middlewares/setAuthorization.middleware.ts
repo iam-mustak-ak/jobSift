@@ -12,8 +12,6 @@ dotenv.config();
 const setAuthorization: RequestHandler = async (req, res, next) => {
     try {
         const { accessToken, refreshToken } = req.cookies;
-        console.log("Access Token:", accessToken);
-        console.log("Refresh Token:", refreshToken);
 
         if (!process.env.JWT_SECRET) {
             next(customError(500, "JWT secret not defined"));
