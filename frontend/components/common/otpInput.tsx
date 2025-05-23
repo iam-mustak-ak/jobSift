@@ -1,4 +1,5 @@
 "use client";
+import useCountdown from "@/hooks/userCountDown";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -12,10 +13,45 @@ import {
 } from "../ui/input-otp";
 
 const OtpInput = () => {
-    const [otp, setOtp] = useState("");
+    const [otp, setOtp] = useState<string>("");
     const router = useRouter();
     const email = useSearchParams().get("email");
-    const [isPending, setIsPending] = useState(false);
+    const [isPending, setIsPending] = useState<boolean>(false);
+
+    const { canResend, startTimer, timer } = useCountdown(60);
+
+    const handleResendOtp = async () => {
+        setIsPending(true);
+        try {
+            if (email === null) {
+                toast.error("Please enter a valid email");
+                return;
+            }
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/resend-email`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email,
+                    }),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const data = await res.json();
+            toast.success(data.message);
+
+            startTimer();
+        } catch (err) {
+            toast.error("Otp send Faild");
+        } finally {
+            setIsPending(false);
+        }
+    };
 
     const handleOtp = async () => {
         setIsPending(true);
@@ -38,6 +74,7 @@ const OtpInput = () => {
                         email,
                         otp,
                     }),
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -73,8 +110,25 @@ const OtpInput = () => {
                 {isPending ? <Loader2 className="animate-spin" /> : "Verify"}
             </Button>
             <div className="flex items-center justify-center text-sm mt-4">
-                <span>Didn't Receive the Code?</span>
-                <Button variant="link">Resend Code</Button>
+                <span>
+                    {canResend
+                        ? "Didn't Get The code? :"
+                        : `Please Try again after :${timer}`}
+                </span>
+
+                {canResend && (
+                    <Button
+                        disabled={isPending}
+                        onClick={handleResendOtp}
+                        variant="link"
+                    >
+                        {isPending ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            " Resend Code"
+                        )}
+                    </Button>
+                )}
             </div>
         </>
     );

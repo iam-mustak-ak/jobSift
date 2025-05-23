@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { model, models, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IUserDocument, UserModel } from "./model-types/userTypes";
 
 const userSchema = new Schema<IUserDocument, UserModel>(
@@ -12,7 +12,7 @@ const userSchema = new Schema<IUserDocument, UserModel>(
             enum: ["candidate", "recruiter"],
             default: "candidate",
         },
-        phone: { type: String, unique: true },
+        phone: { type: String },
         location: String,
         experience: String,
         skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
@@ -100,7 +100,5 @@ userSchema.pre<IUserDocument>("save", async function (next) {
     next();
 });
 
-const User =
-    (models.User as UserModel) ||
-    model<IUserDocument, UserModel>("User", userSchema);
+const User = model<IUserDocument, UserModel>("User", userSchema);
 export default User;

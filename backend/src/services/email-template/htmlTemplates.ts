@@ -343,7 +343,7 @@ export const htmlTemplates = {
                                                     >
                                                       <p>
                                                         This code is valid for
-                                                        15 minutes.
+                                                        5 minutes.
                                                       </p>
                                                     </div>
                                                   </td>
