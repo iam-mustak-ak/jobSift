@@ -3,6 +3,7 @@ import {
     createUser,
     getProfile,
     loginUser,
+    resendOtp,
     verifyUser,
 } from "../controllers/user.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
@@ -22,5 +23,7 @@ userRouter.get(
     authecticationMiddleware,
     getProfile
 );
+
+userRouter.post("/resend-email", resendOtp);
 
 export default userRouter;

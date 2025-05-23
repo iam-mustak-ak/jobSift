@@ -150,3 +150,33 @@ export const getProfile: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
+
+export const resendOtp: RequestHandler = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            next(customError(405, "Email is required"));
+            return;
+        }
+
+        const user = await User.findOne({ email }).select("-password");
+
+        if (!user) {
+            next(customError(404, "User Not Found!"));
+            return;
+        }
+
+        await checkOtpRestrictions(email, res, next);
+        await trackOtpRequest(email, next);
+        await sendOtp(email);
+
+        res.status(200).json({
+            success: true,
+            message: "An Otp sent to your provided Email Account",
+            data: null,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
