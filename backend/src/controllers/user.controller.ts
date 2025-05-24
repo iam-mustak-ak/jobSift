@@ -1,7 +1,10 @@
 import bcrypt from "bcrypt";
 import { RequestHandler } from "express";
 import passport from "passport";
+import { FRONTEND_URL } from "../config/env";
+import redis from "../libs/redis";
 import User from "../models/user.model";
+import EmailTemplates from "../services/email-template";
 import customError from "../utils/customError";
 import generateTokens from "../utils/generateTokens";
 import {
@@ -128,7 +131,7 @@ export const verifyUser: RequestHandler = async (req, res, next) => {
 export const getProfile: RequestHandler = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const authUser = req.user;
+        const authUser = req.user as { _id?: { toString: () => string } };
         // console.log("auth User", authUser?._id.toString());
 
         // Validate the input
@@ -137,7 +140,7 @@ export const getProfile: RequestHandler = async (req, res, next) => {
             return;
         }
 
-        if (userId) {
+        if (userId !== authUser?._id?.toString()) {
             next(customError(400, "Your are not valid user"));
             return;
         }
@@ -207,4 +210,42 @@ export const googleMainController: RequestHandler = (req, res, next) => {
         scope: ["profile", "email"],
         state,
     })(req, res, next);
+};
+
+export const forgotPassword: RequestHandler = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            next(customError(400, "Please provide a valid email"));
+            return;
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            next(customError(404, "User not found with that email!"));
+            return;
+        }
+
+        const hexValue = crypto.randomUUID();
+
+        await redis.set(`reset-password${email}`, hexValue, "EX", 300);
+
+        const emailTemplate = new EmailTemplates("password-reset");
+
+        await emailTemplate
+            .setOtp(
+                `${FRONTEND_URL}/reset-password?email=${email}&resetId=${hexValue}`
+            )
+            .sendEmail(email);
+
+        res.status(200).json({
+            success: true,
+            message: "An email sent to you Email with reset link",
+            data: null,
+        });
+    } catch (err) {
+        next(err);
+    }
 };

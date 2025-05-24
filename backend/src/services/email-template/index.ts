@@ -16,8 +16,8 @@ class EmailTemplates {
                 this.subject = htmlTemplates["otp-verification"].subject;
                 break;
             case "password-reset":
-                this.htmlContent = "password-reset";
-                this.subject = "Password Reset";
+                this.htmlContent = htmlTemplates["password-reset"].html(otp);
+                this.subject = htmlTemplates["password-reset"].subject;
                 break;
             default:
                 throw new Error("Invalid template type");

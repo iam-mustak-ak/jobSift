@@ -3,6 +3,7 @@ import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import {
     createUser,
+    forgotPassword,
     getProfile,
     googleMainController,
     loginUser,
@@ -55,5 +56,7 @@ userRouter.get(
         res.redirect(`${FRONTEND_URL}`);
     }
 );
+
+userRouter.post("/forgot-password", forgotPassword);
 
 export default userRouter;

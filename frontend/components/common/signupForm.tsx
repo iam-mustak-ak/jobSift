@@ -1,7 +1,7 @@
 "use client";
 import createUserAction from "@/actions/createUserAction";
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
@@ -19,6 +19,8 @@ const SignupForm = () => {
         createUserAction,
         initialState
     );
+
+    const [role, setRole] = useState("candidate");
 
     useEffect(() => {
         if (state.success) {
@@ -41,6 +43,7 @@ const SignupForm = () => {
                         defaultValue="candidate"
                         name="role"
                         className="flex items-center gap-4"
+                        onValueChange={(value) => setRole(value)}
                         required
                     >
                         <div className="flex items-center space-x-2">
@@ -94,10 +97,9 @@ const SignupForm = () => {
                         <p>OR</p>
                         <div className="w-full h-[1px] bg-black/10" />
                     </div>
-
-                    <SocialLoginButtons isLogIn={false} role="candidate" />
                 </div>
             </form>
+            <SocialLoginButtons isLogIn={false} role={role} />
         </div>
     );
 };

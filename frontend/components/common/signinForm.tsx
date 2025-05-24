@@ -71,6 +71,13 @@ const SigninForm = () => {
                         name="password"
                     />
 
+                    <Link
+                        href="/forgot-password"
+                        className="justify-end cursor-pointer text-primary text-right hover:underline"
+                    >
+                        Forgot Password?
+                    </Link>
+
                     <SubmitButton label="Sign In" pending={pending} />
 
                     <div className="flex items-center justify-center gap-2 text-sm">
@@ -85,10 +92,9 @@ const SigninForm = () => {
                         <p>OR</p>
                         <div className="w-full h-[1px] bg-black/10" />
                     </div>
-
-                    <SocialLoginButtons isLogIn={true} />
                 </div>
             </form>
+            <SocialLoginButtons isLogIn={true} />
         </div>
     );
 };

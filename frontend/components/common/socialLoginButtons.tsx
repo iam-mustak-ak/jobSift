@@ -1,5 +1,4 @@
 import Googlesvg from "@/lib/LogoProvider/googlesvg";
-import LinkendInSvg from "@/lib/LogoProvider/linkendInSvg";
 import { Button } from "../ui/button";
 
 const SocialLoginButtons = ({
@@ -29,13 +28,6 @@ const SocialLoginButtons = ({
             >
                 <Googlesvg />
                 <span>{isLogIn ? "Sign In" : "Sign Up"} With Google</span>
-            </Button>
-            <Button
-                variant="outline"
-                className="flex items-center justify-center w-full cursor-pointer"
-            >
-                <LinkendInSvg />
-                <span>{isLogIn ? "Sign In" : "Sign Up"} With LinkedIn</span>
             </Button>
         </div>
     );
