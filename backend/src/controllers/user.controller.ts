@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { error } from "console";
 import { RequestHandler } from "express";
 import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
@@ -13,6 +14,7 @@ import {
     trackOtpRequest,
     verifyOtp,
 } from "../utils/otpHelper";
+import { trackResetEmail } from "../utils/resetPasswordHelper";
 import setTokenCookies from "../utils/setTokenCookies";
 export const createUser: RequestHandler = async (req, res, next) => {
     try {
@@ -227,7 +229,17 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
             next(customError(404, "User not found with that email!"));
             return;
         }
+        await trackResetEmail(email, next);
 
+        if (await redis.get(`reset_lock${email}`)) {
+            next(
+                customError(
+                    429,
+                    "You have reached the maximum number of Reset requests. Please try after 1 hour."
+                )
+            );
+            return;
+        }
         const hexValue = crypto.randomUUID();
 
         await redis.set(`reset-password${email}`, hexValue, "EX", 300);
@@ -247,5 +259,45 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
         });
     } catch (err) {
         next(err);
+    }
+};
+
+export const resetPassword: RequestHandler = async (req, res, next) => {
+    try {
+        const { email, resetId, password, confirmPassword } = req.body;
+
+        if (!email || !resetId || !password || !confirmPassword) {
+            next(customError(400, "Parameter Missing"));
+            return;
+        }
+        if (password !== confirmPassword) {
+            next(
+                customError(204, "Password and confirm password do not match")
+            );
+        }
+
+        const storedResetId = await redis.get(`reset-password${email}`);
+
+        if (storedResetId !== resetId) {
+            next(customError(400, "Invalid Or expired Link"));
+            return;
+        }
+
+        let user = await User.findOne({ email });
+        if (!user) {
+            next(customError(404, "Invalid or Expired Link"));
+            return;
+        }
+
+        user.password = password;
+        user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Password reset successfull",
+            data: null,
+        });
+    } catch (err) {
+        next(error);
     }
 };

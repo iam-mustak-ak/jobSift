@@ -41,7 +41,7 @@ export const trackOtpRequest = async (email: string, next: NextFunction) => {
         (await redis.get(`otp_requests:${email}`)) || "0"
     );
 
-    if (otpRequests >= 2) {
+    if (otpRequests >= 3) {
         await redis.set(`otp_spam_lock:${email}`, "true", "EX", 3600);
 
         next(

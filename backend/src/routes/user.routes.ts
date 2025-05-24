@@ -8,6 +8,7 @@ import {
     googleMainController,
     loginUser,
     resendOtp,
+    resetPassword,
     verifyUser,
 } from "../controllers/user.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
@@ -58,5 +59,6 @@ userRouter.get(
 );
 
 userRouter.post("/forgot-password", forgotPassword);
+userRouter.post("/reset-password", resetPassword);
 
 export default userRouter;
