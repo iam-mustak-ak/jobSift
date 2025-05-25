@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import {
+    checkAuth,
     createUser,
     forgotPassword,
     getProfile,
@@ -60,5 +61,11 @@ userRouter.get(
 
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password", resetPassword);
+userRouter.get(
+    "/check-auth",
+    setAuthorization,
+    authecticationMiddleware,
+    checkAuth
+);
 
 export default userRouter;

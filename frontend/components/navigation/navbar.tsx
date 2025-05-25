@@ -1,6 +1,7 @@
 import { navbarItems } from "@/constants/navbar";
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
+import LoginInButton from "../common/loginInButton";
 import { Button } from "../ui/button";
 import { Drawer, DrawerTrigger } from "../ui/drawer";
 import {
@@ -75,7 +76,7 @@ export const Navbar = () => {
 
                     <NavigationMenuItem className="max-lg:hidden">
                         <Button asChild variant="outline">
-                            <Link href="/post-job">Build a Resume</Link>
+                            <Link href="/build-resume">Build a Resume</Link>
                         </Button>
                     </NavigationMenuItem>
                 </NavigationMenuList>
@@ -85,9 +86,8 @@ export const Navbar = () => {
                 <Button className="max-lg:hidden" asChild variant="outline">
                     <Link href="/post-job">Post A Job</Link>
                 </Button>
-                <Button className="max-lg:hidden" asChild>
-                    <Link href="/login">Login / Sign Up</Link>
-                </Button>
+
+                <LoginInButton />
                 <div className="lg:hidden">
                     <Drawer direction="left">
                         <DrawerTrigger asChild>

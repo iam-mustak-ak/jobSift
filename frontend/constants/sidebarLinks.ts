@@ -1,32 +1,37 @@
 import {
-    BookOpen,
-    Bot,
-    Frame,
-    Map,
-    PieChart,
+    CircleUserRound,
+    FileUser,
+    House,
+    NotepadText,
     Settings2,
-    SquareTerminal,
 } from "lucide-react";
 
 export const sideabrLinksData = {
-    user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
-    navMain: [
+    basic: [
         {
-            title: "Playground",
+            name: "Home",
+            url: "/",
+            icon: House,
+        },
+        {
+            name: "Build Resume",
+            url: "/",
+            icon: FileUser,
+        },
+    ],
+    account: [
+        {
+            title: "Account",
             url: "#",
-            icon: SquareTerminal,
+            icon: CircleUserRound,
             isActive: true,
             items: [
                 {
-                    title: "History",
+                    title: "Edit Profile",
                     url: "#",
                 },
                 {
-                    title: "Starred",
+                    title: "Change Password",
                     url: "#",
                 },
                 {
@@ -35,87 +40,40 @@ export const sideabrLinksData = {
                 },
             ],
         },
+    ],
+
+    navMain: [
         {
-            title: "Models",
+            title: "Job",
             url: "#",
-            icon: Bot,
+            icon: NotepadText,
+            isActive: true,
             items: [
                 {
-                    title: "Genesis",
+                    title: "Find a job",
                     url: "#",
                 },
                 {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
+                    title: "Suggested Job",
                     url: "#",
                 },
             ],
         },
-        {
-            title: "Documentation",
-            url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
-        },
+
         {
             title: "Settings",
             url: "#",
             icon: Settings2,
             items: [
                 {
-                    title: "General",
+                    title: "Sessions",
                     url: "#",
                 },
                 {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
+                    title: "Deactive Account",
                     url: "#",
                 },
             ],
-        },
-    ],
-    job: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
-        },
-        {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: Map,
         },
     ],
 };

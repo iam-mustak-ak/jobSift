@@ -33,7 +33,7 @@ interface limiterReq extends Request {
 
 const limitrer = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: (req: limiterReq) => (req.user ? 1000 : 100),
+    max: (req: limiterReq) => (req.user ? 1000 : 500),
     message: {
         error: "Too many request, Please try again later!",
     },

@@ -22,7 +22,7 @@ const authecticationMiddleware: RequestHandler = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET!) as { id: string };
-        const user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id).select("-password");
 
         if (!user) {
             next(customError(404, "User not found"));

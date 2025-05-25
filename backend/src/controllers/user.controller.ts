@@ -301,3 +301,27 @@ export const resetPassword: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
+
+export const checkAuth: RequestHandler = async (req, res, next) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            next(
+                customError(
+                    404,
+                    "User not found or invalid token or expired token"
+                )
+            );
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "User Is Valid",
+            data: user,
+        });
+    } catch (err) {
+        next(err);
+    }
+};

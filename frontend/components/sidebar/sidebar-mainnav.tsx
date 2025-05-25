@@ -21,6 +21,7 @@ import Link from "next/link";
 
 export default function NavMain({
     items,
+    label,
 }: {
     items: {
         title: string;
@@ -32,10 +33,11 @@ export default function NavMain({
             url: string;
         }[];
     }[];
+    label: string;
 }) {
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            <SidebarGroupLabel>{label}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => (
                     <Collapsible

@@ -14,26 +14,30 @@ import { SidebarNavUser } from "./sidebarUser";
 // This is sample data.
 import { sideabrLinksData as data } from "@/constants/sidebarLinks";
 import Image from "next/image";
+import Link from "next/link";
 export default function AppSidebar({
     ...props
 }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <Image
-                    src="/logo-main.svg"
-                    alt="logo"
-                    width={500}
-                    height={500}
-                    className="w-full h-10"
-                />
+                <Link href="/">
+                    <Image
+                        src="/logo-main.svg"
+                        alt="logo"
+                        width={500}
+                        height={500}
+                        className="w-full h-10"
+                    />
+                </Link>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
-                <SidebarJobNav projects={data.job} />
+                <SidebarJobNav projects={data.basic} />
+                <NavMain label="Account" items={data.account} />
+                <NavMain label="Job" items={data.navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <SidebarNavUser user={data.user} />
+                <SidebarNavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

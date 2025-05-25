@@ -2,6 +2,7 @@ import { navbarItems } from "@/constants/navbar";
 
 import { X } from "lucide-react";
 import Link from "next/link";
+import LoginInButton from "../common/loginInButton";
 import { Button } from "../ui/button";
 import {
     DrawerClose,
@@ -55,13 +56,11 @@ const MobileNav = () => {
 
                         <NavigationMenuItem>
                             <Button asChild variant="outline">
-                                <Link href="/post-job">Build a Resume</Link>
+                                <Link href="/build-resume">Build a Resume</Link>
                             </Button>
                         </NavigationMenuItem>
                         <NavigationMenuItem className="mt-2">
-                            <Button asChild>
-                                <Link href="/login">Login / Sign Up</Link>
-                            </Button>
+                            <LoginInButton />
                         </NavigationMenuItem>
                     </NavigationMenuList>
                 </NavigationMenu>
