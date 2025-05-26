@@ -26,13 +26,31 @@ const Page = async ({ params }: ProfilePrps) => {
     return (
         <div className="mt-5 columns-2 ">
             <BasicInfo data={data} />
-            <Card className="break-inside-avoid">
+            <Card className="break-inside-avoid mb-4">
                 <CardHeader className="flex items-center justify-between">
                     <CardTitle>Profile Complete</CardTitle>
                     <Badge variant="outline">60%</Badge>
                 </CardHeader>
                 <CardContent>
                     <Progress value={60} />
+                </CardContent>
+            </Card>
+            <Card className="break-inside-avoid mb-4">
+                <CardHeader>
+                    <CardTitle>About Me</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">
+                        Lorem ipsum, dolor sit amet consectetur adipisicing
+                        elit. Nihil sint explicabo quia vel magnam mollitia
+                        quod! Quis omnis harum quibusdam, at esse, voluptatem
+                        natus, assumenda ullam quidem rem qui dolor. Lorem ipsum
+                        dolor, sit amet consectetur adipisicing elit. Quo
+                        aspernatur quisquam suscipit quaerat iure earum iste
+                        distinctio repellendus necessitatibus fugit
+                        voluptatibus, officiis sed facere itaque, in atque
+                        porro, quis numquam?
+                    </p>
                 </CardContent>
             </Card>
         </div>

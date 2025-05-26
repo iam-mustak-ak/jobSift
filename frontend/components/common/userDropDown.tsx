@@ -32,8 +32,8 @@ export default function UserDropDown() {
                             src={user.profilePicture}
                             alt={user.name}
                         />
-                        <AvatarFallback className="rounded-lg">
-                            CN
+                        <AvatarFallback className="rounded-full">
+                            {user?.name?.slice(0, 2)}
                         </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">

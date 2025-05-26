@@ -14,7 +14,7 @@ import { Separator } from "../ui/separator";
 
 const BasicInfo = ({ data }: { data: Record<string, any> }) => {
     return (
-        <Card className="break-inside-avoid">
+        <Card className="break-inside-avoid mb-4">
             <CardHeader>
                 <div className="flex items-start justify-between">
                     <CardTitle>Basic Info</CardTitle>
