@@ -325,3 +325,26 @@ export const checkAuth: RequestHandler = async (req, res, next) => {
         next(err);
     }
 };
+
+export const logoutUser: RequestHandler = async (req, res, next) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            next(customError(404, "User not found"));
+            return;
+        }
+
+        res.clearCookie("refreshToken");
+
+        res.clearCookie("accessToken");
+
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully",
+            data: null,
+        });
+    } catch (error) {
+        next(error);
+    }
+};

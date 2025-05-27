@@ -1,7 +1,11 @@
 "use client";
+import useLogout from "@/hooks/useLogout";
 import { useAuthStore } from "@/state/store";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Loader2, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
@@ -15,7 +19,14 @@ import {
 
 const LoginInButton = () => {
     const user = useAuthStore((state) => state.user);
-    console.log(user?.name);
+    const { handleLogout, loading, error } = useLogout({
+        redirect: "login",
+    });
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
     return user! ? (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -36,6 +47,17 @@ const LoginInButton = () => {
                     <DropdownMenuItem>Billing</DropdownMenuItem>
                     <DropdownMenuItem>Settings</DropdownMenuItem>
                     <DropdownMenuItem>Keyboard shortcuts</DropdownMenuItem>
+                    <DropdownMenuItem disabled={loading} onClick={handleLogout}>
+                        {loading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            <>
+                                {" "}
+                                <LogOut />
+                                Log out
+                            </>
+                        )}
+                    </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>

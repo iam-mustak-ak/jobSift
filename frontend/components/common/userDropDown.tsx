@@ -1,6 +1,12 @@
 "use client";
 
-import { Bell, ChevronsUpDown, LayoutDashboard, LogOut } from "lucide-react";
+import {
+    Bell,
+    ChevronsUpDown,
+    LayoutDashboard,
+    Loader2,
+    LogOut,
+} from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,12 +19,25 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import useLogout from "@/hooks/useLogout";
 import { useAuthStore } from "@/state/store";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function UserDropDown() {
     const { isMobile } = useSidebar();
 
     const user = useAuthStore((state) => state.user) ?? {};
+
+    const { handleLogout, loading, error } = useLogout({
+        redirect: "login",
+    });
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
 
     return (
         <DropdownMenu>
@@ -86,9 +105,16 @@ export default function UserDropDown() {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    <LogOut />
-                    Log out
+                <DropdownMenuItem disabled={loading} onClick={handleLogout}>
+                    {loading ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <>
+                            {" "}
+                            <LogOut />
+                            Log out
+                        </>
+                    )}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

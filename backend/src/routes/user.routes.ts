@@ -8,6 +8,7 @@ import {
     getProfile,
     googleMainController,
     loginUser,
+    logoutUser,
     resendOtp,
     resetPassword,
     verifyUser,
@@ -66,6 +67,12 @@ userRouter.get(
     setAuthorization,
     authecticationMiddleware,
     checkAuth
+);
+userRouter.get(
+    "/logout",
+    setAuthorization,
+    authecticationMiddleware,
+    logoutUser
 );
 
 export default userRouter;
