@@ -1,8 +1,8 @@
 import { Mail, MapPin, Pen, Phone } from "lucide-react";
+import Link from "next/link";
 import IconInfo from "../common/iconInfo";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import {
     Card,
     CardContent,
@@ -18,12 +18,12 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
             <CardHeader>
                 <div className="flex items-start justify-between">
                     <CardTitle>Basic Info</CardTitle>
-                    <Button
-                        variant="outline"
+                    <Link
+                        href={`${data._id}/edit-profile`}
                         className="rounded-full h-12 w-12"
                     >
                         <Pen />
-                    </Button>
+                    </Link>
                 </div>
                 <div className="flex items-center gap-5">
                     <Avatar className="h-32 w-32 rounded-lg relative ">

@@ -12,6 +12,7 @@ interface IUser {
     resume?: string;
     isOAuthUser?: boolean;
     about?: string;
+    bio?: string;
     profilePicture?: string;
     isAvailableForHire?: boolean;
     isVerified?: boolean;

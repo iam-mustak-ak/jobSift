@@ -25,6 +25,10 @@ const userSchema = new Schema<IUserDocument, UserModel>(
         location: String,
         experience: String,
         skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+        bio: {
+            type: String,
+            default: "",
+        },
         educations: [
             {
                 degree: String,
