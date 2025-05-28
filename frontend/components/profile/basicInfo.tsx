@@ -19,7 +19,7 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                 <div className="flex items-start justify-between">
                     <CardTitle>Basic Info</CardTitle>
                     <Link
-                        href={`${data._id}/edit-profile`}
+                        href={`${data?._id}/edit-profile`}
                         className="rounded-full h-12 w-12"
                     >
                         <Pen />

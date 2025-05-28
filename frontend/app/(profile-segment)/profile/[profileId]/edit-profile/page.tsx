@@ -1,5 +1,6 @@
 import CustomInput from "@/components/common/customInput";
 import CustomSelect from "@/components/common/customSelect";
+import EditorWrapper from "@/components/common/EditorWrapper";
 import ProfileCompleteIndicator from "@/components/common/profileCompleteIndicator";
 import { AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,12 +12,12 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import ComboBox from "@/components/ui/comboBox";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Edit } from "lucide-react";
-
 const Page = () => {
     return (
-        <div>
+        <div className="pt-5">
             <h2 className="text-xl font-semibold mb-5">Edit Profile</h2>
 
             <div className="grid grid-cols-3 items-start gap-5 w-full">
@@ -85,6 +86,7 @@ const Page = () => {
                                     placeholder="Sylhet"
                                     name="location"
                                 />
+
                                 <CustomInput
                                     type="text"
                                     id="edit-experience"
@@ -92,9 +94,31 @@ const Page = () => {
                                     placeholder="5 years +"
                                     name="experience"
                                 />
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <div className="flex gap-4">
+                                <Button variant="outline">Cancel</Button>
+                                <Button>Save</Button>
+                            </div>
+                        </CardFooter>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <CardTitle>Job Preferences</CardTitle>
+                                <Button variant="outline">
+                                    <Edit />
+                                    Edit
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-2 gap-5 ">
                                 <CustomSelect
-                                    label="Job Preferences"
-                                    name="jobPreferences"
+                                    label="Job type"
+                                    name="jobType"
                                     placeholder="Full-time; Part-time"
                                     options={[
                                         "full-time",
@@ -102,6 +126,15 @@ const Page = () => {
                                         "contract",
                                         "internship",
                                     ]}
+                                />
+
+                                <ComboBox />
+                                <CustomInput
+                                    type="number"
+                                    id="edit-salary"
+                                    label="Expected Salary"
+                                    placeholder="1000"
+                                    name="expectedSalary"
                                 />
                             </div>
                         </CardContent>
@@ -117,6 +150,15 @@ const Page = () => {
                         <CardHeader>
                             <CardTitle>About</CardTitle>
                         </CardHeader>
+                        <CardContent>
+                            <EditorWrapper />
+                        </CardContent>
+                        <CardFooter>
+                            <div className="flex gap-4">
+                                <Button variant="outline">Cancel</Button>
+                                <Button>Save</Button>
+                            </div>
+                        </CardFooter>
                     </Card>
                 </div>
                 <div>
