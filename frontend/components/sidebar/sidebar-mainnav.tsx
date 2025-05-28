@@ -18,6 +18,7 @@ import {
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function NavMain({
     items,
@@ -35,6 +36,8 @@ export default function NavMain({
     }[];
     label: string;
 }) {
+    const { profileId } = useParams();
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>{label}</SidebarGroupLabel>
@@ -59,9 +62,22 @@ export default function NavMain({
                                     {item.items?.map((subItem) => (
                                         <SidebarMenuSubItem key={subItem.title}>
                                             <SidebarMenuSubButton asChild>
-                                                <Link href={subItem.url}>
-                                                    <span>{subItem.title}</span>
-                                                </Link>
+                                                {subItem.title ===
+                                                "Edit Profile" ? (
+                                                    <Link
+                                                        href={`/profile/${profileId}/${subItem.url}`}
+                                                    >
+                                                        <span>
+                                                            {subItem.title}
+                                                        </span>
+                                                    </Link>
+                                                ) : (
+                                                    <Link href={subItem.url}>
+                                                        <span>
+                                                            {subItem.title}
+                                                        </span>
+                                                    </Link>
+                                                )}
                                             </SidebarMenuSubButton>
                                         </SidebarMenuSubItem>
                                     ))}

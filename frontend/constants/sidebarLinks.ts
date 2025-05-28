@@ -28,7 +28,7 @@ export const sideabrLinksData = {
             items: [
                 {
                     title: "Edit Profile",
-                    url: "#",
+                    url: "/edit-profile",
                 },
                 {
                     title: "Change Password",

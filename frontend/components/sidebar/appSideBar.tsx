@@ -15,9 +15,14 @@ import { SidebarNavUser } from "./sidebarUser";
 import { sideabrLinksData as data } from "@/constants/sidebarLinks";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 export default function AppSidebar({
     ...props
 }: React.ComponentProps<typeof Sidebar>) {
+    const { profileId } = useParams();
+
+    console.log(profileId);
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>

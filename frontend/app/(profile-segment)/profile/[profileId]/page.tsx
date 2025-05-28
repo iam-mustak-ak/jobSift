@@ -1,7 +1,6 @@
+import ProfileCompleteIndicator from "@/components/common/profileCompleteIndicator";
 import BasicInfo from "@/components/profile/basicInfo";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { cookies } from "next/headers";
 
 type ProfilePrps = {
@@ -26,15 +25,7 @@ const Page = async ({ params }: ProfilePrps) => {
     return (
         <div className="mt-5 columns-2 ">
             <BasicInfo data={data} />
-            <Card className="break-inside-avoid mb-4">
-                <CardHeader className="flex items-center justify-between">
-                    <CardTitle>Profile Complete</CardTitle>
-                    <Badge variant="outline">60%</Badge>
-                </CardHeader>
-                <CardContent>
-                    <Progress value={60} />
-                </CardContent>
-            </Card>
+            <ProfileCompleteIndicator />
             <Card className="break-inside-avoid mb-4">
                 <CardHeader>
                     <CardTitle>About Me</CardTitle>
