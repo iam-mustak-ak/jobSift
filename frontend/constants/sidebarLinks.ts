@@ -28,15 +28,15 @@ export const sideabrLinksData = {
             items: [
                 {
                     title: "Edit Profile",
-                    url: "/edit-profile",
+                    url: "edit-profile",
                 },
                 {
                     title: "Change Password",
-                    url: "#",
+                    url: "change-password",
                 },
                 {
                     title: "Settings",
-                    url: "#",
+                    url: "settings",
                 },
             ],
         },
@@ -51,7 +51,7 @@ export const sideabrLinksData = {
             items: [
                 {
                     title: "Find a job",
-                    url: "#",
+                    url: "/find-jobs",
                 },
                 {
                     title: "Suggested Job",

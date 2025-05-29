@@ -63,7 +63,10 @@ export default function NavMain({
                                         <SidebarMenuSubItem key={subItem.title}>
                                             <SidebarMenuSubButton asChild>
                                                 {subItem.title ===
-                                                "Edit Profile" ? (
+                                                    "Edit Profile" ||
+                                                subItem.title === "Settings" ||
+                                                subItem.title ===
+                                                    "Change Password" ? (
                                                     <Link
                                                         href={`/profile/${profileId}/${subItem.url}`}
                                                     >

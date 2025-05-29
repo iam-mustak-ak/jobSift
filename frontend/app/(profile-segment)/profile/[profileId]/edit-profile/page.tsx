@@ -17,7 +17,7 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Edit } from "lucide-react";
 const Page = () => {
     return (
-        <div className="pt-5">
+        <div>
             <h2 className="text-xl font-semibold mb-5">Edit Profile</h2>
 
             <div className="grid grid-cols-3 items-start gap-5 w-full">

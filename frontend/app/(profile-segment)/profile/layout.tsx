@@ -35,7 +35,7 @@ export default function RootLayout({
                     <SidebarProvider>
                         <AppSidebar />
                         <main className="w-full p-5">
-                            <div className="w-full flex items-center justify-between sticky top-0 bg-white  border-b border-border">
+                            <div className="w-full flex items-center justify-between sticky top-0 bg-white  border-b border-border mb-5">
                                 <SidebarTrigger />
                                 <div>
                                     <UserDropDown />
