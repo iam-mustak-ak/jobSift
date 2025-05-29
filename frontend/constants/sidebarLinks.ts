@@ -1,9 +1,13 @@
 import {
+    Bookmark,
+    Building2,
     CircleUserRound,
     FileUser,
     House,
     NotepadText,
     Settings2,
+    UserRound,
+    UserRoundPlus,
 } from "lucide-react";
 
 export const sideabrLinksData = {
@@ -17,6 +21,32 @@ export const sideabrLinksData = {
             name: "Build Resume",
             url: "/",
             icon: FileUser,
+        },
+        {
+            name: "Saved Jobs",
+            url: "/",
+            icon: Bookmark,
+        },
+
+        {
+            name: "Applied Jobs",
+            url: "/",
+            icon: NotepadText,
+        },
+        {
+            name: "Saved Candidates",
+            url: "/",
+            icon: UserRound,
+        },
+        {
+            name: "Saved Recruiters",
+            url: "/",
+            icon: UserRoundPlus,
+        },
+        {
+            name: "Saved Companies",
+            url: "/",
+            icon: Building2,
         },
     ],
     account: [

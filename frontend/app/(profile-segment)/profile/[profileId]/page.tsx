@@ -1,5 +1,6 @@
 import ProfileCompleteIndicator from "@/components/common/profileCompleteIndicator";
 import BasicInfo from "@/components/profile/basicInfo";
+import EducationInfo from "@/components/profile/educationInfo";
 import SocialInfo from "@/components/profile/socialInfo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cookies } from "next/headers";
@@ -27,6 +28,7 @@ const Page = async ({ params }: ProfilePrps) => {
         <div className="mt-5 columns-2 ">
             <BasicInfo data={data} />
             <SocialInfo />
+            <EducationInfo />
             <ProfileCompleteIndicator />
             <Card className="break-inside-avoid mb-4">
                 <CardHeader>

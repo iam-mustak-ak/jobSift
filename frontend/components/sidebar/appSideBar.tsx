@@ -32,7 +32,7 @@ export default function AppSidebar({
                         alt="logo"
                         width={500}
                         height={500}
-                        className="w-full h-10"
+                        className="w-full max-w-28"
                     />
                 </Link>
             </SidebarHeader>

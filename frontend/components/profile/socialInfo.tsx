@@ -36,16 +36,18 @@ const SocialInfo = () => {
                     <CustomSelect
                         label="Platform"
                         options={["Facebook", "Instagram"]}
+                        placeholder="Facebook"
                     />
                     <span></span>
                     <CustomInput label="Url" name="url" type="text" id="url" />
                 </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="gap-2">
                 <Button variant="outline">
                     <Plus />
                     Add
                 </Button>
+                <Button>Save</Button>
             </CardFooter>
         </Card>
     );
