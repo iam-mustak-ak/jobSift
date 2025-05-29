@@ -66,7 +66,8 @@ export default function NavMain({
                                                     "Edit Profile" ||
                                                 subItem.title === "Settings" ||
                                                 subItem.title ===
-                                                    "Change Password" ? (
+                                                    "Change Password" ||
+                                                subItem.title === "Sessions" ? (
                                                     <Link
                                                         href={`/profile/${profileId}/${subItem.url}`}
                                                     >

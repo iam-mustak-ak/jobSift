@@ -68,6 +68,7 @@ const userSchema = new Schema<IUserDocument, UserModel>(
                     ],
                 },
                 url: String,
+                logo: String,
             },
         ],
         notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],

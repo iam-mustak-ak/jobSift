@@ -67,7 +67,7 @@ export const sideabrLinksData = {
             items: [
                 {
                     title: "Sessions",
-                    url: "#",
+                    url: "sessions",
                 },
                 {
                     title: "Deactive Account",
