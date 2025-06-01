@@ -10,6 +10,7 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function SidebarJobNav({
     projects,
@@ -20,6 +21,7 @@ export default function SidebarJobNav({
         icon: LucideIcon;
     }[];
 }) {
+    const { profileId } = useParams();
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Basic</SidebarGroupLabel>
@@ -27,10 +29,17 @@ export default function SidebarJobNav({
                 {projects.map((item) => (
                     <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton asChild>
-                            <Link href={item.url}>
-                                <item.icon />
-                                <span>{item.name}</span>
-                            </Link>
+                            {item.name === "Dashboard" ? (
+                                <Link href={`${item.url}/${profileId}`}>
+                                    <item.icon />
+                                    <span>{item.name}</span>
+                                </Link>
+                            ) : (
+                                <Link href={item.url}>
+                                    <item.icon />
+                                    <span>{item.name}</span>
+                                </Link>
+                            )}
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 ))}

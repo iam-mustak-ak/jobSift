@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    Bell,
-    ChevronsUpDown,
-    LayoutDashboard,
-    Loader2,
-    LogOut,
-} from "lucide-react";
+import { Bell, ChevronsUpDown, Home, Loader2, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -21,6 +15,7 @@ import {
 import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import useLogout from "@/hooks/useLogout";
 import { useAuthStore } from "@/state/store";
+import Link from "next/link";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -94,9 +89,11 @@ export default function UserDropDown() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        <LayoutDashboard />
-                        Dashboard
+                    <DropdownMenuItem asChild>
+                        <Link href="/">
+                            <Home />
+                            Home
+                        </Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuItem>

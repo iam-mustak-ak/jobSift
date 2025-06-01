@@ -3,7 +3,7 @@ import {
     Building2,
     CircleUserRound,
     FileUser,
-    House,
+    LayoutDashboard,
     NotepadText,
     Settings2,
     UserRound,
@@ -13,9 +13,9 @@ import {
 export const sideabrLinksData = {
     basic: [
         {
-            name: "Home",
-            url: "/",
-            icon: House,
+            name: "Dashboard",
+            url: "/profile",
+            icon: LayoutDashboard,
         },
         {
             name: "Build Resume",
