@@ -31,7 +31,6 @@ const SocialInfo = () => {
                         />
                     </Link>
                 </div>
-
                 <div className="mt-4 flex items-center gap-1">
                     <CustomSelect
                         label="Platform"
