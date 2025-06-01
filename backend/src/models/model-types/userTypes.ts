@@ -34,6 +34,7 @@ interface IUser {
             | "Instagram"
             | "Other";
         url: string;
+        logo: string;
     }[];
     skills?: Schema.Types.ObjectId[];
     educations?: {

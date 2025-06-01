@@ -348,3 +348,47 @@ export const logoutUser: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
+
+export const changePassword: RequestHandler = async (req, res, next) => {
+    try {
+        const user = req.user as { email?: string };
+        const { oldPassword, newPassword } = req.body;
+
+        if (!user || !user.email) {
+            next(customError(404, "User not found"));
+            return;
+        }
+        if (!oldPassword || !newPassword) {
+            next(customError(301, "Old password and new password is required"));
+            return;
+        }
+
+        const newUser = await User.findOne({ email: user.email });
+
+        if (!newUser) {
+            next(customError(301, "invalid"));
+            return;
+        }
+
+        const comparePassword = await bcrypt.compare(
+            oldPassword,
+            newUser.password
+        );
+
+        if (!comparePassword) {
+            next(customError(301, "Invalid credentials"));
+            return;
+        }
+
+        newUser.password = newPassword;
+        newUser.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Password Changed Successfully",
+            data: null,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
