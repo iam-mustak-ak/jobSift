@@ -383,10 +383,18 @@ export const changePassword: RequestHandler = async (req, res, next) => {
         newUser.password = newPassword;
         newUser.save();
 
+        const { accessToken, refreshToken } = await generateTokens(
+            newUser,
+            req
+        );
+
+        // Set the refresh token in a cookie
+        setTokenCookies(res, accessToken, refreshToken);
+
         res.status(200).json({
             success: true,
             message: "Password Changed Successfully",
-            data: null,
+            data: newUser,
         });
     } catch (err) {
         next(err);

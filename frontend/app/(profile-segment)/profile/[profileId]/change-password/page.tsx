@@ -1,7 +1,5 @@
-import IconInput from "@/components/common/iconInput";
-import { Button } from "@/components/ui/button";
+import ChangePasswordForm from "@/components/common/changePasswordForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock } from "lucide-react";
 
 const Page = () => {
     return (
@@ -10,31 +8,7 @@ const Page = () => {
                 <CardTitle>Change Password</CardTitle>
             </CardHeader>
             <CardContent>
-                <form action="" className="grid gap-2">
-                    <IconInput
-                        Icon={Lock}
-                        name="oldPassword"
-                        placeholder="Old password"
-                        type="password"
-                        className="w-full"
-                    />
-                    <IconInput
-                        Icon={Lock}
-                        name="password"
-                        placeholder="New Password"
-                        type="password"
-                        className="w-full"
-                    />
-                    <IconInput
-                        Icon={Lock}
-                        name="newPassword"
-                        placeholder="New Password"
-                        type="password"
-                        className="w-full"
-                    />
-
-                    <Button>Change Password</Button>
-                </form>
+                <ChangePasswordForm />
             </CardContent>
         </Card>
     );
