@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 import {
@@ -13,14 +14,21 @@ interface selectProps extends React.ComponentProps<"select"> {
     placeholder?: string;
     className?: string;
     label?: string;
+    onChangeValue?: (value: string) => void;
 }
 
 const CustomSelect = (props: selectProps) => {
-    const { name, placeholder, className, options, label } = props;
+    const { name, placeholder, className, options, label, onChangeValue } =
+        props;
     return (
         <div>
             {label && <Label className="mb-3">{label}</Label>}
-            <Select name={name}>
+            <Select
+                name={name}
+                onValueChange={(v) => {
+                    onChangeValue?.(v);
+                }}
+            >
                 <SelectTrigger
                     className={cn(
                         "w-full rounded-lg bg-background text-muted-foreground ",

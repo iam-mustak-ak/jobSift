@@ -28,7 +28,7 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                 <div className="flex items-center gap-5">
                     <Avatar className="h-32 w-32 rounded-lg relative ">
                         <AvatarImage
-                            src={data.profilePicture}
+                            src={data?.profilePicture}
                             alt={data.name}
                         />
                         <AvatarFallback className="rounded-lg">

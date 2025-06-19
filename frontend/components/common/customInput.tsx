@@ -1,3 +1,4 @@
+"use client";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -8,6 +9,7 @@ type CustomInputProps = {
     placeholder?: string;
     className?: string;
     name?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function CustomInput({ id, label, ...props }: CustomInputProps) {
