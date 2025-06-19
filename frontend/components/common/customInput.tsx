@@ -10,6 +10,7 @@ type CustomInputProps = {
     className?: string;
     name?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    value?: string;
 };
 
 function CustomInput({ id, label, ...props }: CustomInputProps) {

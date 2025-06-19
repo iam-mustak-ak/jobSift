@@ -12,6 +12,7 @@ import {
     logoutUser,
     resendOtp,
     resetPassword,
+    updateSocialLinks,
     verifyUser,
 } from "../controllers/user.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
@@ -80,6 +81,12 @@ userRouter.get(
     setAuthorization,
     authecticationMiddleware,
     logoutUser
+);
+userRouter.patch(
+    "/update-social-links",
+    setAuthorization,
+    authecticationMiddleware,
+    updateSocialLinks
 );
 
 export default userRouter;

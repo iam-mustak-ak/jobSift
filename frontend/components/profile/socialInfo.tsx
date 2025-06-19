@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash } from "lucide-react";
+import { Loader2, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,10 +31,12 @@ type SocialLink = {
     logo: string;
 };
 
-const SocialInfo = () => {
+const SocialInfo = ({ data }: { data: Record<string, any> }) => {
     const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
         // { platform: "", url: "", logo: "" },
+        ...data.socialLinks,
     ]);
+    const [loading, setLoading] = useState(false);
 
     const handleAddSocial = () => {
         if (socialLinks.length >= 6) {
@@ -76,6 +78,34 @@ const SocialInfo = () => {
 
     console.log(socialLinks);
 
+    const handleUpdateSocialLinks = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-social-links`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ socialLinks }),
+                    credentials: "include",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to update social links");
+            }
+
+            const data = await response.json();
+            toast.success("Social links updated successfully!");
+        } catch (error) {
+            toast.error("An error occurred while updating.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Card className="break-inside-avoid mb-4">
             <CardHeader>
@@ -108,6 +138,7 @@ const SocialInfo = () => {
                                     options={socialOptions}
                                     placeholder="Select Platform"
                                     label="Platform"
+                                    defaultValue={item.platform}
                                     onChangeValue={(value) =>
                                         handleSelectChange(i, value)
                                     }
@@ -119,6 +150,7 @@ const SocialInfo = () => {
                                     type="url"
                                     id={`socialLink-${i}`}
                                     onChange={(e) => handleChangeSocial(i, e)}
+                                    value={item.url}
                                 />
                             </div>
                         </div>
@@ -129,7 +161,18 @@ const SocialInfo = () => {
                     <Plus />
                     Add
                 </Button>
-                <Button>Save</Button>
+                {socialLinks.length > 0 && (
+                    <Button
+                        disabled={loading}
+                        onClick={handleUpdateSocialLinks}
+                    >
+                        {loading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            "Save"
+                        )}
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     );

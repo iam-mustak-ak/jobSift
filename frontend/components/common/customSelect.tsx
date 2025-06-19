@@ -15,16 +15,25 @@ interface selectProps extends React.ComponentProps<"select"> {
     className?: string;
     label?: string;
     onChangeValue?: (value: string) => void;
+    defaultValue?: string;
 }
 
 const CustomSelect = (props: selectProps) => {
-    const { name, placeholder, className, options, label, onChangeValue } =
-        props;
+    const {
+        name,
+        placeholder,
+        className,
+        options,
+        label,
+        onChangeValue,
+        defaultValue,
+    } = props;
     return (
         <div>
             {label && <Label className="mb-3">{label}</Label>}
             <Select
                 name={name}
+                defaultValue={defaultValue}
                 onValueChange={(v) => {
                     onChangeValue?.(v);
                 }}

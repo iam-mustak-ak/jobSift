@@ -400,3 +400,43 @@ export const changePassword: RequestHandler = async (req, res, next) => {
         next(err);
     }
 };
+
+export const updateSocialLinks: RequestHandler = async (req, res, next) => {
+    try {
+        const user = req.user as { _id?: string };
+        const { socialLinks } = req.body;
+
+        console.log(socialLinks);
+
+        if (!user || !user._id) {
+            next(customError(404, "User not found"));
+            return;
+        }
+
+        if (!socialLinks) {
+            next(customError(400, "Invalid social links data"));
+            return;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            {
+                socialLinks,
+            },
+            { new: true }
+        ).select("-password");
+
+        if (!updatedUser) {
+            next(customError(404, "User not found"));
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Social links updated successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
