@@ -29,7 +29,7 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                     <Avatar className="h-32 w-32 rounded-lg relative ">
                         <AvatarImage
                             src={data?.profilePicture}
-                            alt={data.name}
+                            alt={data?.name}
                         />
                         <AvatarFallback className="rounded-lg">
                             {data?.name?.slice(0, 2)}
