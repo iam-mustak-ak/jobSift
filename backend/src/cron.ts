@@ -1,8 +1,11 @@
+import cron from "node-cron";
+
 import axios from "axios";
 import dotenv from "dotenv";
+import Company from "./models/company.model";
+import Job from "./models/job.model";
 import JobCategory from "./models/jobCategory.model";
 import Skill from "./models/skill.model";
-// import cron from "node-cron";
 
 dotenv.config();
 
@@ -20,6 +23,8 @@ const fetchJobs = async () => {
         const allJobs = response.data;
         await getAndCreateCategories(allJobs);
         await getAndCreateSkills(allJobs);
+        await getAndCreateCompanies(allJobs);
+        await getAndCreateJobs(allJobs);
 
         console.log(`Processed ${allJobs.length} jobs`);
     } catch (err) {
@@ -71,8 +76,137 @@ const getAndCreateSkills = async (allJobs: any[]) => {
     }
 };
 
-// Run once
-fetchJobs();
+const getAndCreateCompanies = async (allJobs: any[]) => {
+    try {
+        for (const job of allJobs) {
+            if (!job.company) continue;
+            const name = job.company.name?.trim();
+            if (!name) continue;
+
+            const existingCompany = await Company.findOne({ name });
+            if (existingCompany) continue;
+
+            const data = job.company;
+
+            const socials = [
+                {
+                    platform: "LinkedIn",
+                    url: data.linkedinUrl,
+                },
+            ];
+
+            const newCompany = new Company({
+                name,
+                description: data.linkedinDescription,
+                website: data.website,
+                size: data.linkedinSize,
+                socialLinks: socials,
+                foundedYear: data.linkedinFounded,
+                industry: data.linkedinIndustry,
+                location:
+                    Array.isArray(data?.linkedinLocations) &&
+                    data.linkedinLocations.length > 0
+                        ? data.linkedinLocations[0]
+                        : "",
+            });
+
+            await newCompany.save();
+        }
+        console.log("Companies saved");
+    } catch (error) {
+        console.error("Error saving Companies:", error);
+    }
+};
+
+const levels = ["entry", "mid", "senior", "lead"];
+
+const getAndCreateJobs = async (allJobs: any[]) => {
+    try {
+        for (const job of allJobs) {
+            if (!job.id) continue;
+
+            const existingJob = await Job.findOne({ jobId: job.id });
+            if (existingJob) continue;
+
+            const categoryNames: string[] = Array.isArray(job.categories)
+                ? job.categories.filter((c: any) => typeof c === "string")
+                : [];
+
+            const categoriesInDb = categoryNames.length
+                ? await JobCategory.find({ name: { $in: categoryNames } })
+                : [];
+            const categoryIds = categoriesInDb.map((cat) => cat._id);
+
+            const skillNames: string[] = Array.isArray(job.skills)
+                ? job.skills.filter((s: any) => typeof s === "string")
+                : [];
+
+            const skillsInDB = skillNames.length
+                ? await Skill.find({ name: { $in: skillNames } })
+                : [];
+            const skillsName = skillsInDB.map((skill) => skill.name);
+            const skillIDS = skillsInDB.map((skill) => skill._id);
+
+            const companyName = job.company?.name?.trim();
+            if (!companyName) continue;
+
+            const findCompany = await Company.findOne({ name: companyName });
+            if (!findCompany) continue;
+
+            const type =
+                Array.isArray(job?.employmentTypes) &&
+                job.employmentTypes.length > 0
+                    ? job.employmentTypes[0].toLowerCase()
+                    : "full-time";
+
+            const mode =
+                Array.isArray(job?.locationTypes) &&
+                job.locationTypes.length > 0
+                    ? job.locationTypes[0].toLowerCase()
+                    : "onsite";
+
+            const minSalary = Math.floor(
+                Math.random() * (80000 - 30000) + 30000
+            );
+            const maxSalary = Math.floor(
+                Math.random() * (150000 - (minSalary + 10000)) +
+                    (minSalary + 10000)
+            );
+            const salaryRange = { min: minSalary, max: maxSalary };
+
+            const experienceLevel =
+                levels[Math.floor(Math.random() * levels.length)];
+
+            const newJobPayload: any = {
+                jobId: job.id,
+                title: job.title,
+                description: job.description,
+                jobType: type,
+                employmentMode: mode,
+                location: job?.location || "",
+                salaryRange,
+                experienceLevel,
+                company: findCompany._id,
+                jobCategory: categoryIds,
+                openings: job.datePosted || new Date(),
+                isActive: job.dateDeleted !== null ? false : true,
+                isFeatured: false,
+                tags: skillsName,
+            };
+
+            if (skillIDS.length > 0) {
+                newJobPayload.skillsRequired = skillIDS;
+            }
+
+            const newJob = new Job(newJobPayload);
+            await newJob.save();
+        }
+
+        console.log("Jobs saved");
+    } catch (error) {
+        console.error("Error saving Jobs:", error);
+    }
+};
 
 // If you want to schedule it at 7 AM every day, uncomment:
-// cron.schedule("0 7 * * *", fetchJobs);
+cron.schedule("0 7 * * *", fetchJobs);

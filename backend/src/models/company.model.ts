@@ -16,7 +16,6 @@ const companySchema = new Schema(
         },
         size: {
             type: String,
-            enum: ["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"],
         },
         foundedYear: {
             type: Number,
@@ -33,11 +32,7 @@ const companySchema = new Schema(
         banner: {
             type: String,
         },
-        recruiter: {
-            type: Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
+
         jobs: [
             {
                 type: Types.ObjectId,
@@ -56,7 +51,7 @@ const companySchema = new Schema(
         ],
         isVerified: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         isActive: {
             type: Boolean,

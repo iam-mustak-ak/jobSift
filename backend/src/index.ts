@@ -14,7 +14,7 @@ import skillRouter from "./routes/skill.routes";
 import userRouter from "./routes/user.routes";
 dotenv.config();
 
-// import "./cron";
+import "./cron";
 
 const app = express();
 

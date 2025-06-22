@@ -16,18 +16,10 @@ const jobSchema = new Schema(
         },
         jobType: {
             type: String,
-            enum: [
-                "full-time",
-                "part-time",
-                "contract",
-                "internship",
-                "temporary",
-            ],
             required: true,
         },
         employmentMode: {
             type: String,
-            enum: ["remote", "onsite", "hybrid"],
             default: "onsite",
         },
         location: {
@@ -41,19 +33,16 @@ const jobSchema = new Schema(
             type: String,
             enum: ["entry", "mid", "senior", "lead"],
         },
-        recruiter: {
-            type: Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
         company: {
             type: Types.ObjectId,
             ref: "Company",
         },
-        skillsRequired: {
-            type: [String],
-            default: [],
-        },
+        skillsRequired: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Skill",
+            },
+        ],
         jobCategory: [
             {
                 type: Schema.Types.ObjectId,
@@ -63,12 +52,10 @@ const jobSchema = new Schema(
         ],
 
         openings: {
-            type: Number,
-            default: 1,
-        },
-        deadline: {
             type: Date,
+            default: Date.now(),
         },
+
         isActive: {
             type: Boolean,
             default: true,
@@ -126,7 +113,7 @@ const jobSchema = new Schema(
     }
 );
 
-jobSchema.index({ title: "text", description: "text", skillsRequired: 1 });
+jobSchema.index({ title: "text", description: "text" });
 
 const Job = model("Job", jobSchema);
 export default Job;
