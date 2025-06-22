@@ -2,6 +2,9 @@ import { model, Schema, Types } from "mongoose";
 
 const jobSchema = new Schema(
     {
+        jobId: {
+            type: Number,
+        },
         title: {
             type: String,
             required: true,
@@ -51,11 +54,13 @@ const jobSchema = new Schema(
             type: [String],
             default: [],
         },
-        jobCategory: {
-            type: Schema.Types.ObjectId,
-            ref: "JobCategory",
-            required: true,
-        },
+        jobCategory: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "JobCategory",
+                required: true,
+            },
+        ],
 
         openings: {
             type: Number,
