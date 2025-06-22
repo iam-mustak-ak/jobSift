@@ -10,6 +10,7 @@ import "./config/googleSIgnStrategy";
 import globalErrorHandler from "./middlewares/globalError.middleware";
 import Session from "./models/session.model";
 import jobCategoryRouter from "./routes/jobCategory.routes";
+import skillRouter from "./routes/skill.routes";
 import userRouter from "./routes/user.routes";
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 app.use("/auth", userRouter);
 app.use("/job-category", jobCategoryRouter);
+app.use("/skill", skillRouter); // Assuming skill routes are similar to job category
 
 app.use(globalErrorHandler);
 
