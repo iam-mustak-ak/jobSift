@@ -74,12 +74,25 @@ export const createJobController: RequestHandler = async (req, res, next) => {
 
 export const getAllJobsController: RequestHandler = async (req, res, next) => {
     try {
-        const jobs = await Job.find();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const [jobs, total] = await Promise.all([
+            Job.find().skip(skip).limit(limit),
+            Job.countDocuments(),
+        ]);
 
         res.status(200).json({
             success: true,
             message: "Jobs fetched successfully",
             data: jobs,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
         });
     } catch (err) {
         next(err);
@@ -100,10 +113,40 @@ export const getJobByIdController: RequestHandler = async (req, res, next) => {
             return next(customError(404, "Job not found"));
         }
 
+        (job as any).views++;
+        await job.save();
+
         res.status(200).json({
             success: true,
             message: "Job fetched successfully",
             data: job,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getFeaturedJobs: RequestHandler = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const [jobs, total] = await Promise.all([
+            Job.find({ isFeatured: true }).skip(skip).limit(limit),
+            Job.countDocuments({ isFeatured: true }),
+        ]);
+
+        res.status(200).json({
+            success: true,
+            message: "Featured Jobs Fetch Successfully",
+            data: jobs,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
         });
     } catch (err) {
         next(err);

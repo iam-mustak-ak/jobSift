@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     createJobController,
     getAllJobsController,
+    getFeaturedJobs,
     getJobByIdController,
 } from "../controllers/job.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
@@ -16,16 +17,16 @@ jobRouter.post(
 );
 jobRouter.get(
     "/get-all-jobs",
-    setAuthorization,
-    authecticationMiddleware,
+
     getAllJobsController
 );
 
 jobRouter.get(
     "/get-job/:id",
-    setAuthorization,
-    authecticationMiddleware,
+
     getJobByIdController
 );
+
+jobRouter.get("/get-featured", getFeaturedJobs);
 
 export default jobRouter;
