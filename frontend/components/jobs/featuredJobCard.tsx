@@ -1,3 +1,5 @@
+import { dateFormate } from "@/utils/dateFormate";
+import { salaryFormat } from "@/utils/salaryFormat";
 import {
     Bookmark,
     BriefcaseBusiness,
@@ -11,7 +13,9 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import Tag from "./tag";
 
-const FeaturedJobCard = () => {
+const FeaturedJobCard = ({ featuredJobs }: { featuredJobs: any }) => {
+    const salary = salaryFormat(featuredJobs?.salaryRange);
+
     return (
         <Card>
             <CardContent>
@@ -28,9 +32,10 @@ const FeaturedJobCard = () => {
                     </div>
                     <div className="w-full flex flex-col gap-0">
                         <div className="w-full">
-                            <Link href="/job/123">
+                            <Link href={`/job/${featuredJobs._id}`}>
                                 <CardTitle className="float-left">
-                                    Software Engineer (Android), Libraries
+                                    {featuredJobs?.title}
+                                    {/* Software Engineer (Android), Libraries */}
                                 </CardTitle>
                             </Link>
                             <Button variant="outline" className="float-right">
@@ -39,23 +44,26 @@ const FeaturedJobCard = () => {
                         </div>
                         <ul className="flex items-center gap-5 max-md:flex-wrap">
                             <li className="flex gap-2 font-normal text-muted-foreground">
-                                <BriefcaseBusiness /> Segment
+                                <BriefcaseBusiness />{" "}
+                                {featuredJobs?.experienceLevel}
+                            </li>
+                            {featuredJobs?.location && (
+                                <li className="flex gap-2 font-normal text-muted-foreground">
+                                    <MapPin /> {featuredJobs.location}
+                                </li>
+                            )}
+
+                            <li className="flex gap-2 font-normal text-muted-foreground">
+                                <Clock3 /> {dateFormate(featuredJobs?.openings)}
                             </li>
                             <li className="flex gap-2 font-normal text-muted-foreground">
-                                <MapPin /> London, UK
-                            </li>
-                            <li className="flex gap-2 font-normal text-muted-foreground">
-                                <Clock3 /> 11 hours ago
-                            </li>
-                            <li className="flex gap-2 font-normal text-muted-foreground">
-                                <CircleDollarSign /> $35k - $45k
+                                <CircleDollarSign /> {salary.min} - {salary.max}
                             </li>
                         </ul>
 
                         <div className="flex items-center gap-3 mt-5">
-                            <Tag type="Full Time" />
-                            <Tag type="Private" />
-                            <Tag type="Urgent" />
+                            <Tag type={featuredJobs?.jobType} />
+                            <Tag type={featuredJobs?.employmentMode} />
                         </div>
                     </div>
                 </div>

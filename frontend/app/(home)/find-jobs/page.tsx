@@ -11,8 +11,11 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
+import { fetcherSever } from "@/utils/fetcherSever";
 
-const Page = () => {
+const Page = async () => {
+    const jobs = await fetcherSever("/job/get-all-jobs/?limit=8");
+
     return (
         <>
             <SectionBanner />
@@ -22,7 +25,7 @@ const Page = () => {
                         <p className="text-muted-foreground">
                             {" "}
                             <span className="font-semibold text-secondary-foreground">
-                                16
+                                {jobs.pagination?.total}
                             </span>{" "}
                             jobs available
                         </p>
@@ -35,8 +38,11 @@ const Page = () => {
                         </form>
                     </div>
                     <div className="grid grid-cols-2 gap-5">
-                        {[...Array(8)].map((item, i) => (
-                            <FeaturedJobCard key={i} />
+                        {jobs?.data.map((item: any) => (
+                            <FeaturedJobCard
+                                featuredJobs={item}
+                                key={item._id}
+                            />
                         ))}
                     </div>
                     <Pagination className="mt-12">
