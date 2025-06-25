@@ -3,26 +3,14 @@ import BasicInfo from "@/components/profile/basicInfo";
 import EducationInfo from "@/components/profile/educationInfo";
 import SocialInfo from "@/components/profile/socialInfo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cookies } from "next/headers";
+import { fetcherSever } from "@/utils/fetcherSever";
 
 type ProfilePrps = {
     params: Promise<{ profileId: string }>;
 };
 const Page = async ({ params }: ProfilePrps) => {
     const { profileId } = await params;
-    const cookieStore = await cookies();
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/me/${profileId}`,
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
-            },
-        }
-    );
-    const { data } = await res.json();
+    const { data } = await fetcherSever(`/auth/me/${profileId}`);
 
     return (
         <div className="mt-5 columns-2 ">

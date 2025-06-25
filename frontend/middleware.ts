@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { fetcherSever } from "./utils/fetcherSever";
 
 // 1. Specify protected and public routes
-const protectedRoutes = ["/build-resume", "/profile"];
+const protectedRoutes = ["/build-resume", "/profile", "/post-job"];
 const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
@@ -17,19 +18,7 @@ export default async function middleware(req: NextRequest) {
     const cookieStore = await cookies();
 
     // 3. Decrypt the session from the cookie
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-auth`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
-            },
-            credentials: "include",
-        }
-    );
-
-    const data = await res.json();
+    const data = await fetcherSever("/auth/check-auth");
 
     // 4. Redirect to /login if the user is not authenticated
     if (isProtectedRoute && !data.success) {

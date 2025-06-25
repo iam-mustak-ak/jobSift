@@ -3,25 +3,15 @@
 import { useAuthStore } from "@/state/store";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { fetcherClient } from "./fetcherClient";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const { user, setAuth } = useAuthStore((state) => state);
+    const { setAuth } = useAuthStore((state) => state);
 
     useEffect(() => {
         const getAuth = async () => {
             try {
-                const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-auth`,
-                    {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                    }
-                );
-
-                const data = await res.json();
+                const data = await fetcherClient("/auth/check-auth");
 
                 if (data.success) {
                     setAuth(data.data);
