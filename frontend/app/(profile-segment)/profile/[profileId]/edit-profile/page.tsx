@@ -128,7 +128,17 @@ const Page = () => {
                                     ]}
                                 />
 
-                                <ComboBox />
+                                <ComboBox
+                                    name="preferredLocation"
+                                    placeholder="Search Location"
+                                    title="Preferred Location"
+                                    values={[
+                                        {
+                                            value: "Sylhet",
+                                            label: "sylhet",
+                                        },
+                                    ]}
+                                />
                                 <CustomInput
                                     type="number"
                                     id="edit-salary"
