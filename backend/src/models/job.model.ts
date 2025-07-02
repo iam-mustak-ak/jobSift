@@ -37,6 +37,10 @@ const jobSchema = new Schema(
             type: Types.ObjectId,
             ref: "Company",
         },
+        recruiter: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
         skillsRequired: [
             {
                 type: Schema.Types.ObjectId,

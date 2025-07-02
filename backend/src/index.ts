@@ -9,6 +9,7 @@ import connnectMongo from "./config/dbConfig";
 import "./config/googleSIgnStrategy";
 import globalErrorHandler from "./middlewares/globalError.middleware";
 import Session from "./models/session.model";
+import companyRouter from "./routes/compnay.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
 import skillRouter from "./routes/skill.routes";
@@ -66,6 +67,7 @@ app.use("/auth", userRouter);
 app.use("/job-category", jobCategoryRouter);
 app.use("/skill", skillRouter);
 app.use("/job", jobRouter);
+app.use("/company", companyRouter);
 
 app.use(globalErrorHandler);
 

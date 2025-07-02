@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -39,15 +39,21 @@ const frameworks = [
     },
 ];
 
-export default function ComboBox() {
+type ComboProps = {
+    title: string;
+    values: Record<string, string>[];
+    name: string;
+    placeholder: string;
+};
+
+export default function ComboBox(props: ComboProps) {
+    const { title, values, name, placeholder } = props;
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState("");
 
     return (
         <div>
-            <Label className="text-sm font-medium mb-2">
-                Preferred Location
-            </Label>
+            <Label className="text-sm font-medium mb-2">{title}</Label>
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
@@ -57,26 +63,21 @@ export default function ComboBox() {
                         className="w-full justify-between"
                     >
                         {value
-                            ? frameworks.find(
-                                  (framework) => framework.value === value
-                              )?.label
-                            : "Search Location"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            ? values.find((item) => item.value === value)?.label
+                            : placeholder}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0">
                     <Command>
-                        <CommandInput
-                            placeholder="Search Location"
-                            name="preferredLocation"
-                        />
+                        <CommandInput placeholder={placeholder} name={name} />
                         <CommandList>
-                            <CommandEmpty>No framework found.</CommandEmpty>
+                            <CommandEmpty>No {title} found.</CommandEmpty>
                             <CommandGroup>
-                                {frameworks.map((framework) => (
+                                {values.map((item) => (
                                     <CommandItem
-                                        key={framework.value}
-                                        value={framework.value}
+                                        key={item.value}
+                                        value={item.value}
                                         onSelect={(currentValue) => {
                                             setValue(
                                                 currentValue === value
@@ -89,12 +90,12 @@ export default function ComboBox() {
                                         <Check
                                             className={cn(
                                                 "mr-2 h-4 w-4",
-                                                value === framework.value
+                                                value === item.value
                                                     ? "opacity-100"
                                                     : "opacity-0"
                                             )}
                                         />
-                                        {framework.label}
+                                        {item.label}
                                     </CommandItem>
                                 ))}
                             </CommandGroup>

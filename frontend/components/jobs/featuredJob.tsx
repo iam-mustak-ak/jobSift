@@ -16,26 +16,39 @@ const FeaturedJob = () => {
 
     useEffect(() => {
         setLoading(true);
-        try {
-            const getData = async () => {
+        let isMounted = true;
+
+        const getData = async () => {
+            try {
                 const fetcer = await fetcherClient(
                     `/job/get-featured/?limit=2&page=${currentPage}`
                 );
-                if (fetcer.success) {
-                    setFeaturedJobs((prevData) => [
-                        ...prevData,
-                        ...fetcer.data,
-                    ]);
+                if (isMounted && fetcer.success) {
+                    setFeaturedJobs((prevData) =>
+                        currentPage === 1
+                            ? fetcer.data
+                            : [...prevData, ...fetcer.data]
+                    );
                     setTotalPage(fetcer.pagination.totalPages);
                 }
-            };
-            getData();
-        } catch (err) {
-            console.log(err);
-        } finally {
-            setLoading(false);
-        }
+            } catch (err) {
+                console.log(err);
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        };
+
+        getData();
+
+        return () => {
+            isMounted = false;
+        };
     }, [currentPage]);
+
+    useEffect(() => {
+        setFeaturedJobs([]);
+        setCurrentPage(1);
+    }, []);
 
     const handlePage = () => {
         setCurrentPage((prevPage) => prevPage + 1);

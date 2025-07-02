@@ -2,6 +2,7 @@ import { navbarItems } from "@/constants/navbar";
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import LoginInButton from "../common/loginInButton";
+import PostJobButton from "../common/postJobButton";
 import { Button } from "../ui/button";
 import { Drawer, DrawerTrigger } from "../ui/drawer";
 import {
@@ -83,9 +84,7 @@ export const Navbar = () => {
             </NavigationMenu>
 
             <div className="flex gap-2">
-                <Button className="max-lg:hidden" asChild variant="outline">
-                    <Link href="/post-job">Post A Job</Link>
-                </Button>
+                <PostJobButton />
 
                 <LoginInButton />
                 <div className="lg:hidden">
