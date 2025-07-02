@@ -1,8 +1,12 @@
+import { fetcherSever } from "@/utils/fetcherSever";
 import ContainerWrapper from "../common/containerWrapper";
 import SectionHeading from "../common/sectionHeading";
 import JobCategoryCard from "./jobCategoryCard";
 
-const JobCategories = () => {
+const JobCategories = async () => {
+    const categoryData = await fetcherSever(`/job-category/get-all-categories`);
+    const categories = categoryData.data;
+
     return (
         <ContainerWrapper>
             <div className="pt-28 pb-12">
@@ -12,12 +16,11 @@ const JobCategories = () => {
                 />
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[...Array(9)].map((item, i) => (
+                    {categories.map((item: Record<string, any>) => (
                         <JobCategoryCard
-                            key={i}
-                            href="/category/accounting"
-                            title="Accounting / Finance"
-                            subTitle="2"
+                            key={item._id}
+                            href={`/category/${item.name}/?page=1&id=${item._id}`}
+                            title={item.name}
                         />
                     ))}
                 </div>

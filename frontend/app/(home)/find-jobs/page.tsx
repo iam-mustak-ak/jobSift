@@ -86,6 +86,7 @@ const Page = async ({
                         <CustomPagination
                             currentPage={parseInt(currentPage)}
                             totalPages={jobs.pagination.totalPages}
+                            uri="/find-jobs"
                         />
                     )}
                 </div>

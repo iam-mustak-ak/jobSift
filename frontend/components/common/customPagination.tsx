@@ -11,11 +11,13 @@ import {
 type PaginationProps = {
     currentPage: number;
     totalPages: number;
+    uri: string;
 };
 
 const CustomPagination: React.FC<PaginationProps> = ({
     currentPage,
     totalPages,
+    uri,
 }) => {
     const pageNumbers = [];
 
@@ -57,7 +59,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious
-                        href={`/find-jobs/${getQueryString(currentPage - 1)}`}
+                        href={`${uri}/${getQueryString(currentPage - 1)}`}
                         className={
                             currentPage === 1
                                 ? "pointer-events-none opacity-50"
@@ -70,7 +72,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
                     <>
                         <PaginationItem>
                             <PaginationLink
-                                href={`/find-jobs/${getQueryString(1)}`}
+                                href={`${uri}/${getQueryString(1)}`}
                             >
                                 1
                             </PaginationLink>
@@ -86,7 +88,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
                 {pageNumbers.map((num) => (
                     <PaginationItem key={num}>
                         <PaginationLink
-                            href={`/find-jobs/${getQueryString(num)}`}
+                            href={`${uri}/${getQueryString(num)}`}
                             isActive={currentPage === num}
                         >
                             {num}
@@ -103,9 +105,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
                         )}
                         <PaginationItem>
                             <PaginationLink
-                                href={`/find-jobs/${getQueryString(
-                                    totalPages
-                                )}`}
+                                href={`${uri}/${getQueryString(totalPages)}`}
                             >
                                 {totalPages}
                             </PaginationLink>
@@ -115,7 +115,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
 
                 <PaginationItem>
                     <PaginationNext
-                        href={`/find-jobs/?page=${currentPage + 1}`}
+                        href={`${uri}/?page=${currentPage + 1}`}
                         className={
                             currentPage === totalPages
                                 ? "pointer-events-none opacity-50"

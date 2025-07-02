@@ -1,15 +1,15 @@
 import { CircleDollarSign } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardTitle } from "../ui/card";
+import { Card, CardContent, CardTitle } from "../ui/card";
 
 type jobCardProps = {
     href: string;
     title: string;
-    subTitle: string;
+    subTitle?: string;
 };
 
 const JobCategoryCard = (props: jobCardProps) => {
-    const { href, title, subTitle } = props;
+    const { href, title } = props;
     return (
         <Link href={href}>
             <Card className="hover:border-primary">
@@ -20,9 +20,9 @@ const JobCategoryCard = (props: jobCardProps) => {
                         </div>
                         <div className="grid gap-3">
                             <CardTitle>{title}</CardTitle>
-                            <CardDescription>
+                            {/* <CardDescription>
                                 ({subTitle} open positions)
-                            </CardDescription>
+                            </CardDescription> */}
                         </div>
                     </div>
                 </CardContent>

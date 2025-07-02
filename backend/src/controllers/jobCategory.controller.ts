@@ -36,12 +36,23 @@ export const getAllCategoriesController: RequestHandler = async (
     next
 ) => {
     try {
-        const categories = await JobCategory.find();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 9;
+        const skip = (page - 1) * limit;
+
+        const categories = await JobCategory.find().skip(skip).limit(limit);
+        const total = await JobCategory.countDocuments();
 
         res.status(200).json({
             success: true,
             message: "Job categories fetched successfully",
             data: categories,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
         });
     } catch (err) {
         next(err);
