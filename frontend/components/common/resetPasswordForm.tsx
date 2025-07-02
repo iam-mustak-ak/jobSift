@@ -38,7 +38,7 @@ const ResetPasswordForm = ({
         } else if (state?.message && !state.success) {
             toast.error(state.message);
         }
-    }, [state]);
+    }, [state, router]);
 
     return (
         <form action={formAction} className="grid gap-2">

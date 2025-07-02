@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import FeaturedJobCard from "./featuredJobCard";
 
 const FeaturedJob = () => {
-    const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+    const [featuredJobs, setFeaturedJobs] = useState<Record<string, any>[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
@@ -65,7 +65,7 @@ const FeaturedJob = () => {
 
                     <div className="grid md:grid-cols-2 gap-5">
                         {featuredJobs &&
-                            featuredJobs.map((item: any) => (
+                            featuredJobs.map((item: Record<string, any>) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}

@@ -48,6 +48,7 @@ const OtpInput = () => {
             startTimer();
         } catch (err) {
             toast.error("Otp send Faild");
+            console.log(err);
         } finally {
             setIsPending(false);
         }
@@ -86,6 +87,7 @@ const OtpInput = () => {
             router.push("/login");
         } catch (error) {
             toast.error("Invalid OTP");
+            console.log(error);
         } finally {
             setIsPending(false);
         }

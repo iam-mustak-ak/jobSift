@@ -3,12 +3,12 @@ export const salaryFormat = (salary: Record<string, number>) => {
         notation: "compact",
         style: "currency",
         currency: "USD",
-    }).format(salary.min);
+    }).format(salary?.min);
     const max = Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
         notation: "compact",
-    }).format(salary.max);
+    }).format(salary?.max);
 
     const newSalary: Record<string, string> = {
         min,

@@ -1,20 +1,21 @@
 import ContainerWrapper from "@/components/common/containerWrapper";
+import CustomPagination from "@/components/common/customPagination";
 import CustomSelect from "@/components/common/customSelect";
 import SectionBanner from "@/components/common/sectionBanner";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
 import { fetcherSever } from "@/utils/fetcherSever";
 
-const Page = async () => {
-    const jobs = await fetcherSever("/job/get-all-jobs/?limit=8");
+const Page = async ({
+    searchParams,
+}: {
+    searchParams: Promise<{ page: string }>;
+}) => {
+    const { page: currentPage } = await searchParams;
+    const jobs = await fetcherSever(
+        `/job/get-all-jobs/?limit=8&page=${currentPage}`
+    );
+
+    console.log(jobs.pagination.totalPages);
 
     return (
         <>
@@ -38,39 +39,17 @@ const Page = async () => {
                         </form>
                     </div>
                     <div className="grid grid-cols-2 gap-5">
-                        {jobs?.data.map((item: any) => (
+                        {jobs?.data.map((item: Record<string, any>) => (
                             <FeaturedJobCard
                                 featuredJobs={item}
                                 key={item._id}
                             />
                         ))}
                     </div>
-                    <Pagination className="mt-12">
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious href="/hhh" />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="/job/1212">
-                                    1
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#" isActive>
-                                    2
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#">3</PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationNext href="#" />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
+                    <CustomPagination
+                        currentPage={parseInt(currentPage)}
+                        totalPages={jobs.pagination.totalPages}
+                    />
                 </div>
             </ContainerWrapper>
         </>

@@ -46,7 +46,8 @@ const SigninForm = () => {
             const data = await response.json();
             router.push(`/profile/${data.data._id}`);
         } catch (error) {
-            return toast.error("Invalid credentials");
+            toast.error("Invalid credentials");
+            console.log(error);
         } finally {
             setPending(false);
         }
@@ -81,7 +82,7 @@ const SigninForm = () => {
                     <SubmitButton label="Sign In" pending={pending} />
 
                     <div className="flex items-center justify-center gap-2 text-sm">
-                        <span>Don't Have an Account?</span>{" "}
+                        <span>Don&apos;t Have an Account?</span>
                         <Link href="/signup" className="hover:underline">
                             Sign Up
                         </Link>

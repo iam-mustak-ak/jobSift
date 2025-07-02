@@ -12,7 +12,7 @@ export const navbarItems = [
             {
                 id: 1,
                 name: "Find a Job",
-                href: "/find-jobs",
+                href: "/find-jobs/?page=1",
             },
             {
                 id: 2,

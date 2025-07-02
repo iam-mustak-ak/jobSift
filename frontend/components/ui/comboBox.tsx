@@ -16,29 +16,6 @@ import {
 import { Label } from "./label";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
-const frameworks = [
-    {
-        value: "next.js",
-        label: "Next.js",
-    },
-    {
-        value: "sveltekit",
-        label: "SvelteKit",
-    },
-    {
-        value: "nuxt.js",
-        label: "Nuxt.js",
-    },
-    {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
-    },
-];
-
 type ComboProps = {
     title: string;
     values: Record<string, string>[];

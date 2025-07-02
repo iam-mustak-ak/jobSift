@@ -13,7 +13,11 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import Tag from "./tag";
 
-const FeaturedJobCard = ({ featuredJobs }: { featuredJobs: any }) => {
+const FeaturedJobCard = ({
+    featuredJobs,
+}: {
+    featuredJobs: Record<string, any>;
+}) => {
     const salary = salaryFormat(featuredJobs?.salaryRange);
 
     return (

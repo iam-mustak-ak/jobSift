@@ -9,15 +9,17 @@ const SocialLoginButtons = ({
     role?: string;
 }) => {
     const hangleGooleSignUpLogin = () => {
-        isLogIn
-            ? window.open(
-                  `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=login`,
-                  "_self"
-              )
-            : window.open(
-                  `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=register&role=${role}`,
-                  "_self"
-              );
+        if (isLogIn) {
+            window.open(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=login`,
+                "_self"
+            );
+        } else {
+            window.open(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=register&role=${role}`,
+                "_self"
+            );
+        }
     };
     return (
         <div className="grid gap-2">

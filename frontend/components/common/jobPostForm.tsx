@@ -9,24 +9,10 @@ import CustomInput from "./customInput";
 import CustomSelect from "./customSelect";
 import EditorWrapper from "./EditorWrapper";
 
-const OPTIONS: Option[] = [
-    { label: "nextjs", value: "nextjs" },
-    { label: "Vite", value: "vite" },
-    { label: "Nuxt", value: "nuxt" },
-    { label: "Vue", value: "vue" },
-    { label: "Remix", value: "remix" },
-    { label: "Svelte", value: "svelte" },
-    { label: "Angular", value: "angular" },
-    { label: "Ember", value: "ember" },
-    { label: "React", value: "react" },
-    { label: "Gatsby", value: "gatsby" },
-    { label: "Astro", value: "astro" },
-];
-
 const JobPostForm: React.FC<{
-    categories: any[];
-    skills: any[];
-    company: any[];
+    categories: Record<string, any>[];
+    skills: Record<string, any>[];
+    company: Record<string, any>[];
 }> = ({ categories, skills, company }) => {
     const formattedCategories = formatData(categories);
     const formattedSkills = formatData(skills);
@@ -75,7 +61,12 @@ const JobPostForm: React.FC<{
                                 name="company"
                                 placeholder="Search Companies"
                                 title="Company"
-                                values={formattedCompnay}
+                                values={formattedCompnay.map(
+                                    (item: Option) => ({
+                                        value: String(item.value ?? ""),
+                                        label: String(item.label ?? ""),
+                                    })
+                                )}
                             />
                             <div className="w-full">
                                 <Label className="mb-3">Salary</Label>

@@ -1,4 +1,5 @@
 import { footerNavigation as navigation } from "@/constants/footerlinks";
+import Image from "next/image";
 import Link from "next/link";
 import ContainerWrapper from "./containerWrapper";
 
@@ -8,10 +9,12 @@ export default function Footer() {
             <ContainerWrapper>
                 <div className="xl:grid xl:grid-cols-3 xl:gap-8">
                     <div className="space-y-8">
-                        <img
+                        <Image
                             alt="Company name"
                             src="/logo-main.svg"
                             className="h-9"
+                            width={200}
+                            height={200}
                         />
                         <p className="text-sm/6 text-balance text-gray-600">
                             Making the world a better place through constructing

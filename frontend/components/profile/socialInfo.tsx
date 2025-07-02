@@ -97,10 +97,10 @@ const SocialInfo = ({ data }: { data: Record<string, any> }) => {
                 throw new Error("Failed to update social links");
             }
 
-            const data = await response.json();
             toast.success("Social links updated successfully!");
-        } catch (error) {
+        } catch (err: any) {
             toast.error("An error occurred while updating.");
+            console.log(err);
         } finally {
             setLoading(false);
         }

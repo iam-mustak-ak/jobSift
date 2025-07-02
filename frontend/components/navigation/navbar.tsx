@@ -1,5 +1,6 @@
 import { navbarItems } from "@/constants/navbar";
 import { MenuIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import LoginInButton from "../common/loginInButton";
 import PostJobButton from "../common/postJobButton";
@@ -23,10 +24,12 @@ export const Navbar = () => {
                     <NavigationMenuItem>
                         <NavigationMenuLink className={`mr-4`} asChild>
                             <Link href="/">
-                                <img
+                                <Image
                                     src="/logo-main.svg"
                                     alt="Logo"
                                     className="h-8 w-auto"
+                                    height={200}
+                                    width={600}
                                 />
                             </Link>
                         </NavigationMenuLink>
