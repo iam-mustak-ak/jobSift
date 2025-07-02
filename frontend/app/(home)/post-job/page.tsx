@@ -24,7 +24,6 @@ const Page = async () => {
     const categories = data1.data;
     const skills = data2.data;
     const company = data3.data;
-    console.log(company);
 
     return (
         <>

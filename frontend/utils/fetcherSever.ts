@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 
 export const fetcherSever = async (uri: string) => {
+    const cookieStore = await cookies();
     try {
-        const cookieStore = await cookies();
         const dataPromise = await fetch(
             `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
             {
