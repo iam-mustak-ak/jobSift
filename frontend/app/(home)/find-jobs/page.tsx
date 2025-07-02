@@ -10,8 +10,8 @@ type searchParamsPros = {
     title?: string;
     location?: string;
     jobCategory?: string;
-    jobtype?: string;
-    experiment?: string;
+    jobType?: string;
+    experienceLevel?: string;
 };
 
 const Page = async ({
@@ -25,8 +25,8 @@ const Page = async ({
         title,
         location,
         jobCategory,
-        jobtype,
-        experiment,
+        jobType,
+        experienceLevel,
     } = params;
 
     const queryParams = new URLSearchParams({
@@ -35,8 +35,8 @@ const Page = async ({
         ...(title ? { title } : {}),
         ...(location ? { location } : {}),
         ...(jobCategory ? { jobCategory } : {}),
-        ...(jobtype ? { jobtype } : {}),
-        ...(experiment ? { experiment } : {}),
+        ...(jobType ? { jobType } : {}),
+        ...(experienceLevel ? { experienceLevel } : {}),
     }).toString();
 
     const jobs = await fetcherSever(`/job/get-all-jobs/?${queryParams}`);

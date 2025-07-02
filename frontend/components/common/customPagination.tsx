@@ -30,8 +30,8 @@ const CustomPagination: React.FC<PaginationProps> = ({
             "title",
             "location",
             "jobCategory",
-            "jobtype",
-            "experiment",
+            "jobType",
+            "experienceLevel",
             "page",
         ];
         for (const key of Array.from(params.keys())) {

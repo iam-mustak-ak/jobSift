@@ -1,4 +1,5 @@
 import { dateFormate } from "@/utils/dateFormate";
+import { formateCapitalized } from "@/utils/formateCapitalized";
 import { salaryFormat } from "@/utils/salaryFormat";
 import {
     Bookmark,
@@ -39,7 +40,6 @@ const FeaturedJobCard = ({
                             <Link href={`/job/${featuredJobs._id}`}>
                                 <CardTitle className="float-left">
                                     {featuredJobs?.title}
-                                    {/* Software Engineer (Android), Libraries */}
                                 </CardTitle>
                             </Link>
                             <Button variant="outline" className="float-right">
@@ -49,11 +49,14 @@ const FeaturedJobCard = ({
                         <ul className="flex items-center gap-5 max-md:flex-wrap">
                             <li className="flex gap-2 font-normal text-muted-foreground">
                                 <BriefcaseBusiness />{" "}
-                                {featuredJobs?.experienceLevel}
+                                {formateCapitalized(
+                                    featuredJobs?.experienceLevel
+                                )}
                             </li>
                             {featuredJobs?.location && (
                                 <li className="flex gap-2 font-normal text-muted-foreground">
-                                    <MapPin /> {featuredJobs.location}
+                                    <MapPin />{" "}
+                                    {formateCapitalized(featuredJobs.location)}
                                 </li>
                             )}
 

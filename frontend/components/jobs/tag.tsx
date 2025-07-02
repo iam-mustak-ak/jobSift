@@ -1,9 +1,12 @@
-type tagtype = "fulltime" | "private" | "remote";
+import { formateCapitalized } from "@/utils/formateCapitalized";
+
+type tagtype = "fulltime" | "private" | "remote" | "contract";
 
 const types: Record<tagtype, string> = {
     fulltime: "bg-[#1967D2]/15 text-[#1967D2]",
     private: "bg-[#87E64B]/15 text-[#87E64B]",
     remote: "bg-[#F9AB00]/15 text-[#F9AB00]",
+    contract: "bg-[#1967D2]/15 text-[#1967D2]",
 };
 
 const Tag = ({ type }: { type: tagtype }) => {
@@ -13,7 +16,7 @@ const Tag = ({ type }: { type: tagtype }) => {
                 types[type as tagtype]
             }`}
         >
-            {type}
+            {formateCapitalized(type)}
         </p>
     );
 };

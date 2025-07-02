@@ -49,11 +49,16 @@ const HeroSearch = async ({ showCategory }: searchFormProps) => {
                 <Button className="py-5">Find Jobs</Button>
             </div>
             <div className="flex items-center gap-2 md:gap-5 mt-5 justify-center max-w-[600px] mx-auto max-md:flex-col">
-                <CustomSelect name="jobtype" placeholder="Job Type" />
+                <CustomSelect
+                    name="jobType"
+                    placeholder="Job Type"
+                    options={["Fulltime", "Contract"]}
+                />
 
                 <CustomSelect
                     name="experienceLevel"
-                    placeholder="Experiment Level"
+                    placeholder="Experience Level"
+                    options={["Entry", "Lead", "Mid", "Senior"]}
                 />
             </div>
         </form>

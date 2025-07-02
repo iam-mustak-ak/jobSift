@@ -7,15 +7,17 @@ export const jobSearchAction = async (formData: FormData) => {
     const title = formData.get("title") || undefined;
     const location = formData.get("location") || undefined;
     const jobCategory = formData.get("jobCategory") || undefined;
-    const jobtype = formData.get("jobtype") || undefined;
-    const experiment = formData.get("experiment") || undefined;
+    const jobtype = formData.get("jobType") || undefined;
+    const experienceLevel = formData.get("experienceLevel") || undefined;
 
     const params = new URLSearchParams({ page: "1" });
-    if (title) params.append("title", String(title));
-    if (location) params.append("location", String(location));
-    if (jobCategory) params.append("jobCategory", String(jobCategory));
-    if (jobtype) params.append("jobtype", String(jobtype));
-    if (experiment) params.append("experiment", String(experiment));
+    if (title) params.append("title", String(title).toLowerCase());
+    if (location) params.append("location", String(location).toLowerCase());
+    if (jobCategory)
+        params.append("jobCategory", String(jobCategory).toLowerCase());
+    if (jobtype) params.append("jobType", String(jobtype).toLowerCase());
+    if (experienceLevel)
+        params.append("experienceLevel", String(experienceLevel).toLowerCase());
 
     // Redirect
     redirect(`/find-jobs?${params.toString()}`);
