@@ -78,9 +78,30 @@ export const getAllJobsController: RequestHandler = async (req, res, next) => {
         const limit = parseInt(req.query.limit as string) || 10;
         const skip = (page - 1) * limit;
 
+        const filter: any = {};
+
+        if (req.query.title) {
+            filter.$or = [
+                { title: { $regex: req.query.title, $options: "i" } },
+                { description: { $regex: req.query.title, $options: "i" } },
+            ];
+        }
+        if (req.query.location) {
+            filter.location = { $regex: req.query.location, $options: "i" };
+        }
+        if (req.query.jobCategory) {
+            filter.jobCategory = req.query.jobCategory;
+        }
+        if (req.query.jobType) {
+            filter.jobType = req.query.jobType;
+        }
+        if (req.query.experienceLevel) {
+            filter.experienceLevel = req.query.experienceLevel;
+        }
+
         const [jobs, total] = await Promise.all([
-            Job.find().skip(skip).limit(limit),
-            Job.countDocuments(),
+            Job.find(filter).skip(skip).limit(limit),
+            Job.countDocuments(filter),
         ]);
 
         res.status(200).json({

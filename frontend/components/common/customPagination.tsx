@@ -19,6 +19,32 @@ const CustomPagination: React.FC<PaginationProps> = ({
 }) => {
     const pageNumbers = [];
 
+    const getQueryString = (page: number) => {
+        if (typeof window === "undefined") return `?page=${page}`;
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        params.set("page", page.toString());
+
+        const allowed = [
+            "title",
+            "location",
+            "jobCategory",
+            "jobtype",
+            "experiment",
+            "page",
+        ];
+        for (const key of Array.from(params.keys())) {
+            if (!allowed.includes(key)) {
+                params.delete(key);
+            }
+        }
+
+        console.log(params.toString());
+
+        return `?${params.toString()}`;
+    };
+
     const startPage = Math.max(1, currentPage - 1);
     const endPage = Math.min(totalPages, currentPage + 1);
 
@@ -31,7 +57,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious
-                        href={`/find-jobs/?page=${currentPage - 1}`}
+                        href={`/find-jobs/${getQueryString(currentPage - 1)}`}
                         className={
                             currentPage === 1
                                 ? "pointer-events-none opacity-50"
@@ -43,7 +69,9 @@ const CustomPagination: React.FC<PaginationProps> = ({
                 {startPage > 1 && (
                     <>
                         <PaginationItem>
-                            <PaginationLink href={`/find-jobs/?page=1`}>
+                            <PaginationLink
+                                href={`/find-jobs/${getQueryString(1)}`}
+                            >
                                 1
                             </PaginationLink>
                         </PaginationItem>
@@ -58,7 +86,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
                 {pageNumbers.map((num) => (
                     <PaginationItem key={num}>
                         <PaginationLink
-                            href={`/find-jobs/?page=${num}`}
+                            href={`/find-jobs/${getQueryString(num)}`}
                             isActive={currentPage === num}
                         >
                             {num}
@@ -75,7 +103,9 @@ const CustomPagination: React.FC<PaginationProps> = ({
                         )}
                         <PaginationItem>
                             <PaginationLink
-                                href={`/find-jobs/?page=${totalPages}`}
+                                href={`/find-jobs/${getQueryString(
+                                    totalPages
+                                )}`}
                             >
                                 {totalPages}
                             </PaginationLink>

@@ -117,7 +117,7 @@ const jobSchema = new Schema(
     }
 );
 
-jobSchema.index({ title: "text", description: "text" });
+jobSchema.index({ title: "text", description: "text", location: "text" });
 
 const Job = model("Job", jobSchema);
 export default Job;

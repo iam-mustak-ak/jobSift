@@ -1,3 +1,6 @@
+import { jobSearchAction } from "@/actions/jobSearchAction";
+import { fetcherSever } from "@/utils/fetcherSever";
+import { formateSelectValues } from "@/utils/formateSelectValues";
 import { BriefcaseBusiness, MapPin, SearchIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import CustomSelect from "./customSelect";
@@ -7,14 +10,18 @@ type searchFormProps = {
     showCategory?: boolean;
 };
 
-const HeroSearch = ({ showCategory }: searchFormProps) => {
+const HeroSearch = async ({ showCategory }: searchFormProps) => {
+    const categoryData = await fetcherSever("/job-category/get-all-categories");
+    const categories = categoryData.data;
+    const formattedCategries = formateSelectValues(categories);
+
     return (
-        <form action="">
+        <form action={jobSearchAction}>
             <div className="bg-white shadow-md py-5 px-4 rounded-md flex gap-2 items-stretch border border-border max-md:flex-col">
                 <IconInput
                     Icon={SearchIcon}
                     type="search"
-                    name="keyword"
+                    name="title"
                     placeholder="Job title, keywords, or company"
                     className="border-none shadow-none py-5"
                 />
@@ -22,8 +29,8 @@ const HeroSearch = ({ showCategory }: searchFormProps) => {
                 <IconInput
                     Icon={MapPin}
                     type="text"
-                    name="city"
-                    placeholder="City"
+                    name="location"
+                    placeholder="location"
                     className="border-none shadow-none py-5 "
                 />
                 {showCategory && (
@@ -33,6 +40,7 @@ const HeroSearch = ({ showCategory }: searchFormProps) => {
                             Icon={BriefcaseBusiness}
                             isSelect={true}
                             className="border-none shadow-none py-5 "
+                            selectValues={formattedCategries}
                         />
                     </>
                 )}
@@ -42,12 +50,11 @@ const HeroSearch = ({ showCategory }: searchFormProps) => {
             </div>
             <div className="flex items-center gap-2 md:gap-5 mt-5 justify-center max-w-[600px] mx-auto max-md:flex-col">
                 <CustomSelect name="jobtype" placeholder="Job Type" />
-                <CustomSelect name="publishedon" placeholder="All" />
+
                 <CustomSelect
-                    name="experiment"
+                    name="experienceLevel"
                     placeholder="Experiment Level"
                 />
-                <CustomSelect name="selary" placeholder="Selary Estimate" />
             </div>
         </form>
     );

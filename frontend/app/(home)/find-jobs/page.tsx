@@ -5,18 +5,48 @@ import SectionBanner from "@/components/common/sectionBanner";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { fetcherSever } from "@/utils/fetcherSever";
 
+type searchParamsPros = {
+    page: string;
+    title?: string;
+    location?: string;
+    jobCategory?: string;
+    jobtype?: string;
+    experiment?: string;
+};
+
 const Page = async ({
     searchParams,
 }: {
-    searchParams: Promise<{ page: string }>;
+    searchParams: Promise<searchParamsPros>;
 }) => {
-    const { page: currentPage } = await searchParams;
-    const jobs = await fetcherSever(
-        `/job/get-all-jobs/?limit=8&page=${currentPage}`
-    );
+    const params = await searchParams;
+    const {
+        page: currentPage,
+        title,
+        location,
+        jobCategory,
+        jobtype,
+        experiment,
+    } = params;
 
-    console.log(jobs.pagination.totalPages);
+    const queryParams = new URLSearchParams({
+        limit: "8",
+        page: currentPage || "1",
+        ...(title ? { title } : {}),
+        ...(location ? { location } : {}),
+        ...(jobCategory ? { jobCategory } : {}),
+        ...(jobtype ? { jobtype } : {}),
+        ...(experiment ? { experiment } : {}),
+    }).toString();
 
+    const jobs = await fetcherSever(`/job/get-all-jobs/?${queryParams}`);
+
+    const itemsPerPage = 8;
+    const totalItems = jobs.pagination?.total || 0;
+    const page = parseInt(currentPage) || 1;
+    const startItem = totalItems === 0 ? 0 : (page - 1) * itemsPerPage + 1;
+    const endItem = Math.min(page * itemsPerPage, totalItems);
+    const showingText = `Showing ${startItem}-${endItem} of ${totalItems} jobs`;
     return (
         <>
             <SectionBanner />
@@ -26,9 +56,8 @@ const Page = async ({
                         <p className="text-muted-foreground">
                             {" "}
                             <span className="font-semibold text-secondary-foreground">
-                                {jobs.pagination?.total}
+                                {showingText}
                             </span>{" "}
-                            jobs available
                         </p>
 
                         <form action="">
@@ -39,17 +68,26 @@ const Page = async ({
                         </form>
                     </div>
                     <div className="grid grid-cols-2 gap-5">
-                        {jobs?.data.map((item: Record<string, any>) => (
-                            <FeaturedJobCard
-                                featuredJobs={item}
-                                key={item._id}
-                            />
-                        ))}
+                        {jobs?.data.length > 0 ? (
+                            jobs?.data.map((item: Record<string, any>) => (
+                                <FeaturedJobCard
+                                    featuredJobs={item}
+                                    key={item._id}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-left text-2xl">
+                                No jobs Found !
+                            </p>
+                        )}
                     </div>
-                    <CustomPagination
-                        currentPage={parseInt(currentPage)}
-                        totalPages={jobs.pagination.totalPages}
-                    />
+
+                    {jobs?.data.length > 0 && (
+                        <CustomPagination
+                            currentPage={parseInt(currentPage)}
+                            totalPages={jobs.pagination.totalPages}
+                        />
+                    )}
                 </div>
             </ContainerWrapper>
         </>

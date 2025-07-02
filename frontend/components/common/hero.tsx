@@ -16,7 +16,7 @@ const Hero = () => {
                         <p className="text-base font-normal text-muted-foreground">
                             Find Jobs, Employment & Career Opportunities
                         </p>
-                        <HeroSearch />
+                        <HeroSearch showCategory={true} />
 
                         <div className="flex items-center gap-4">
                             <p className="text-base font-semibold text-muted-foreground">

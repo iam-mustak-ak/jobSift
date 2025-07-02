@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { formateCapitalized } from "@/utils/formateCapitalized";
 import { Input } from "../ui/input";
 import {
     Select,
@@ -11,9 +12,16 @@ import {
 interface iconinputProps extends React.ComponentProps<"input"> {
     Icon: React.ElementType;
     isSelect?: boolean;
+    selectValues?: Record<string, string>[];
 }
 
-const IconInput = ({ className, Icon, isSelect, ...props }: iconinputProps) => {
+const IconInput = ({
+    className,
+    Icon,
+    isSelect,
+    selectValues,
+    ...props
+}: iconinputProps) => {
     return (
         <div className="grid w-full max-w-sm items-center gap-1.5">
             <div className="relative flex items-center">
@@ -21,7 +29,7 @@ const IconInput = ({ className, Icon, isSelect, ...props }: iconinputProps) => {
                     <Icon className="h-4 w-4" />
                 </div>
                 {isSelect ? (
-                    <Select name="category">
+                    <Select name="jobCategory">
                         <SelectTrigger
                             className={cn(
                                 "w-full rounded-lg bg-background pl-8 text-muted-foreground",
@@ -31,9 +39,16 @@ const IconInput = ({ className, Icon, isSelect, ...props }: iconinputProps) => {
                             <SelectValue placeholder="Choose a category" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="light">Light</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
+                            {selectValues?.map(
+                                (selectItem: Record<string, string>) => (
+                                    <SelectItem
+                                        key={selectItem.value}
+                                        value={selectItem.value}
+                                    >
+                                        {formateCapitalized(selectItem.label)}
+                                    </SelectItem>
+                                )
+                            )}
                         </SelectContent>
                     </Select>
                 ) : (
