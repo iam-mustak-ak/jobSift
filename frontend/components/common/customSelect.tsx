@@ -16,6 +16,7 @@ interface selectProps extends React.ComponentProps<"select"> {
     label?: string;
     onChangeValue?: (value: string) => void;
     defaultValue?: string;
+    icon?: React.ReactNode;
 }
 
 const CustomSelect = (props: selectProps) => {
@@ -27,6 +28,7 @@ const CustomSelect = (props: selectProps) => {
         label,
         onChangeValue,
         defaultValue,
+        icon,
     } = props;
     return (
         <div>
@@ -44,6 +46,7 @@ const CustomSelect = (props: selectProps) => {
                         className
                     )}
                 >
+                    {icon && icon}
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent>
