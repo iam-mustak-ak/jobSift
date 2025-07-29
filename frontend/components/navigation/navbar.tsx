@@ -18,7 +18,7 @@ import MobileNav from "./mobileNav";
 
 export const Navbar = () => {
     return (
-        <div className="flex items-center justify-between px-[5%] py-3 bg-white shadow-md fixed w-full top-0">
+        <div className="flex items-center justify-between px-[5%] py-3 bg-white shadow-md fixed w-full top-0 z-20">
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>

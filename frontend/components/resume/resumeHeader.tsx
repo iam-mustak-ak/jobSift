@@ -1,10 +1,18 @@
-import { CaseSensitive, LayoutPanelLeft, Type } from "lucide-react";
+"use client";
+import { usePrintRef } from "@/state/store";
+import { CaseSensitive, Download, LayoutPanelLeft, Type } from "lucide-react";
+import { useReactToPrint } from "react-to-print";
 import CustomSelect from "../common/customSelect";
+import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 const ResumeHeader: React.FC = () => {
+    const { printRef } = usePrintRef((state) => state);
+
+    const reactToPrintFn = useReactToPrint({ contentRef: printRef });
+
     return (
-        <div className="backdrop-blur-2xl bg-neutral-50 shadow-md py-5 px-10">
+        <div className="backdrop-blur-2xl bg-neutral-50 shadow-md py-5 px-10  sticky top-16">
             <div className="flex items-center justify-between">
                 <div className="max-w-[20rem]">
                     <Input
@@ -35,6 +43,10 @@ const ResumeHeader: React.FC = () => {
                         icon={<Type />}
                         title="Font Size"
                     />
+                    <Button onClick={reactToPrintFn}>
+                        <Download />
+                        Download
+                    </Button>
                 </div>
             </div>
         </div>
