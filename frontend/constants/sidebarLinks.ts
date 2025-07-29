@@ -81,7 +81,7 @@ export const sideabrLinksData = {
             items: [
                 {
                     title: "Find a job",
-                    url: "/find-jobs",
+                    url: "/find-jobs/?page=1",
                 },
                 {
                     title: "Suggested Job",

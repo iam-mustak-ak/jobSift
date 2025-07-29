@@ -1,3 +1,4 @@
+import { formateCapitalized } from "@/utils/formateCapitalized";
 import { CircleDollarSign } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardTitle } from "../ui/card";
@@ -19,7 +20,7 @@ const JobCategoryCard = (props: jobCardProps) => {
                             <CircleDollarSign className="text-primary" />
                         </div>
                         <div className="grid gap-3">
-                            <CardTitle>{title}</CardTitle>
+                            <CardTitle>{formateCapitalized(title)}</CardTitle>
                             {/* <CardDescription>
                                 ({subTitle} open positions)
                             </CardDescription> */}
