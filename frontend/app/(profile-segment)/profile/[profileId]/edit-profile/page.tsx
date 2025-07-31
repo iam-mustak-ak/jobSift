@@ -1,6 +1,5 @@
 import CustomInput from "@/components/common/customInput";
 import CustomSelect from "@/components/common/customSelect";
-import EditorWrapper from "@/components/common/EditorWrapper";
 import ProfileCompleteIndicator from "@/components/common/profileCompleteIndicator";
 import { AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -160,9 +159,7 @@ const Page = () => {
                         <CardHeader>
                             <CardTitle>About</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <EditorWrapper />
-                        </CardContent>
+                        <CardContent>{/* <EditorWrapper /> */}</CardContent>
                         <CardFooter>
                             <div className="flex gap-4">
                                 <Button variant="outline">Cancel</Button>

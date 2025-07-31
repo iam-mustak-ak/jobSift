@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Accordion,
     AccordionContent,
@@ -14,6 +16,7 @@ const ResumeForm: React.FC = () => {
                 <AccordionItem value="item-1">
                     <AccordionTrigger className="cursor-pointer">
                         <input
+                            onChange={() => {}}
                             type="text"
                             value="Personal Details"
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
@@ -26,6 +29,7 @@ const ResumeForm: React.FC = () => {
                 <AccordionItem value="item-2">
                     <AccordionTrigger className="cursor-pointer">
                         <input
+                            onChange={() => {}}
                             type="text"
                             value="Education"
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"

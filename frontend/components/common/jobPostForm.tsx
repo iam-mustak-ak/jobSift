@@ -7,7 +7,6 @@ import { Label } from "../ui/label";
 import MultipleSelector, { Option } from "../ui/multiSelect";
 import CustomInput from "./customInput";
 import CustomSelect from "./customSelect";
-import EditorWrapper from "./EditorWrapper";
 
 const JobPostForm: React.FC<{
     categories: Record<string, any>[];
@@ -111,7 +110,7 @@ const JobPostForm: React.FC<{
                         <div>
                             <Label className="mb-3">Job Description</Label>
 
-                            <EditorWrapper />
+                            {/* <EditorWrapper /> */}
                         </div>
 
                         <div className="flex items-center gap-3 ">

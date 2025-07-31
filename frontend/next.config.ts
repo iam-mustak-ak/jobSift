@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "cdn.brandfetch.io",
             },
+            {
+                hostname: "localhost",
+            },
         ],
     },
 };

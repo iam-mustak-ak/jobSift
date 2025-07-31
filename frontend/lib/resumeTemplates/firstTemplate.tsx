@@ -3,13 +3,15 @@ import LanguageCard from "@/components/resume/languageCard";
 import ResumeSocial from "@/components/resume/resumeSocial";
 import TemplatesTile from "@/components/resume/templatesTile";
 import { Separator } from "@/components/ui/separator";
-import { usePrintRef } from "@/state/store";
+import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
     const { setPrintRef } = usePrintRef((state) => state);
+    const { image, about, tagline, name, socials } =
+        useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
         setPrintRef(printRef);
@@ -19,33 +21,34 @@ const FirstTemplate: React.FC = () => {
         <div ref={printRef} className="flex items-start gap-5 max-h-[842px]">
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
                 <Image
-                    src="/avatar-pl.jpg"
+                    src={image ? image : `/avatar-pl.jpg`}
                     width={200}
                     height={200}
                     alt="profile"
                     className="w-full max-w-[1050px] h-full max-h-[200px] rounded-full"
                 />
 
-                <div className="mt-4">
-                    <TemplatesTile title="Socials" />
-                    <div className="flex flex-col gap-2 mt-4">
-                        <ResumeSocial
-                            link="#"
-                            text="mustakahmedkhan32@gmail.com"
-                            type="email"
-                        />
-                        <ResumeSocial
-                            link="#"
-                            text="github.com/claire_russel"
-                            type="github"
-                        />
-                        <ResumeSocial
-                            link="#"
-                            text="linkedin.com/n/clairevrussel"
-                            type="linkedin"
-                        />
+                {Array.isArray(socials) && socials.length > 0 && (
+                    <div className="mt-4">
+                        <TemplatesTile title="Socials" />
+                        <div className="flex flex-col gap-2 mt-4">
+                            {socials.map((socialItem, i) => (
+                                <ResumeSocial
+                                    key={i}
+                                    link="#"
+                                    text={socialItem?.link}
+                                    type={
+                                        socialItem?.type as
+                                            | "email"
+                                            | "linkedin"
+                                            | "github"
+                                    }
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
+
                 <div className="mt-4">
                     <div className="w-full mt-4">
                         <TemplatesTile title="Languages" />
@@ -66,6 +69,7 @@ const FirstTemplate: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
                 <div className="mt-4">
                     <div className="w-full mt-4">
                         <TemplatesTile title="Interests" />
@@ -92,19 +96,20 @@ const FirstTemplate: React.FC = () => {
             </div>
 
             <div className="w-full">
-                <div className="w-full bg-primary p-5 mt-5">
-                    <h2 className="text-2xl text-white font-bold">
-                        Mustak Ahmed Khan
-                    </h2>
-                    <h6 className="text-base text-white">Web developer</h6>
-                    <Separator className="h-0.5 bg-white w-full" />
-                    <p className="text-sm text-white mt-3 leading-4">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Quisquam facilis odio illum quam dolorum? Optio minus
-                        hic perferendis! Ab tenetur laborum ea sint, dolore
-                        harum. Non, tempore! Nemo, doloribus debitis.
-                    </p>
-                </div>
+                {name || tagline || about ? (
+                    <div className="w-full bg-primary p-5 mt-5">
+                        <h2 className="text-2xl text-white font-bold">
+                            {name}
+                        </h2>
+                        <h6 className="text-base text-white">{tagline}</h6>
+                        <Separator className="h-0.5 bg-white w-full" />
+                        {/* <p className="">{about}</p> */}
+                        <div
+                            className="text-sm text-white mt-3 leading-4 prose"
+                            dangerouslySetInnerHTML={{ __html: about }}
+                        ></div>
+                    </div>
+                ) : null}
 
                 <div className="mt-5 pr-5">
                     <TemplatesTile title="Education" />
