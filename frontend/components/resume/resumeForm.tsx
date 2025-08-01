@@ -1,5 +1,6 @@
 "use client";
 
+import { useResumeData } from "@/state/store";
 import {
     Accordion,
     AccordionContent,
@@ -11,6 +12,9 @@ import LanguageInfoForm from "./resumeFormSections/languageInfoForm";
 import PersonalInfoForm from "./resumeFormSections/personalInfoForm";
 
 const ResumeForm: React.FC = () => {
+    const resumeData = useResumeData((state) => state);
+    const setResumeData = useResumeData((state) => state.setResumeData);
+
     return (
         <div className="w-full rounded-md shadow p-5 border">
             <Accordion type="single" collapsible>
@@ -30,9 +34,18 @@ const ResumeForm: React.FC = () => {
                 <AccordionItem value="item-2">
                     <AccordionTrigger className="cursor-pointer">
                         <input
-                            onChange={() => {}}
+                            onChange={(e) => {
+                                setResumeData({
+                                    ...resumeData,
+                                    languages: {
+                                        title: e.target.value,
+                                        langs:
+                                            resumeData.languages?.langs ?? [],
+                                    },
+                                });
+                            }}
                             type="text"
-                            value="Languages"
+                            value={resumeData.languages?.title ?? "Languages"}
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
