@@ -145,7 +145,7 @@ const PersonalInfoForm = () => {
             <h5 className="text-lg font-semibold my-3">Social Info</h5>
             {socialLinks?.map((_, i) => (
                 <div key={i} className="flex items-end gap-3 mb-4">
-                    <div className="w-64">
+                    <div className="w-auto">
                         <label
                             htmlFor="type"
                             className="mb-2 block text-sm font-medium text-foreground"
@@ -183,7 +183,7 @@ const PersonalInfoForm = () => {
                 </div>
             ))}
             <div className="flex items-center gap-3">
-                <Button onClick={addSocial}>
+                <Button variant="outline" onClick={addSocial}>
                     <Plus />
                     Add Social
                 </Button>

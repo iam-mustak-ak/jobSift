@@ -7,6 +7,7 @@ import {
     AccordionTrigger,
 } from "../ui/accordion";
 import EducationInfoForm from "./resumeFormSections/EducationInfoForm";
+import LanguageInfoForm from "./resumeFormSections/languageInfoForm";
 import PersonalInfoForm from "./resumeFormSections/personalInfoForm";
 
 const ResumeForm: React.FC = () => {
@@ -27,6 +28,19 @@ const ResumeForm: React.FC = () => {
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
+                    <AccordionTrigger className="cursor-pointer">
+                        <input
+                            onChange={() => {}}
+                            type="text"
+                            value="Languages"
+                            className="text-2xl font-bold text-muted-foreground outline-none border-none"
+                        />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <LanguageInfoForm />
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
                     <AccordionTrigger className="cursor-pointer">
                         <input
                             onChange={() => {}}

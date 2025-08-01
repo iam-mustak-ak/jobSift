@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
     const { setPrintRef } = usePrintRef((state) => state);
-    const { image, about, tagline, name, socials } =
+    const { image, about, tagline, name, socials, languages } =
         useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
@@ -49,26 +49,30 @@ const FirstTemplate: React.FC = () => {
                     </div>
                 )}
 
-                <div className="mt-4">
-                    <div className="w-full mt-4">
-                        <TemplatesTile title="Languages" />
+                {languages?.langs && languages.langs.length > 0 && (
+                    <div className="mt-4">
+                        <div className="w-full mt-4">
+                            <TemplatesTile
+                                title={languages?.title ?? "Languages"}
+                            />
 
-                        <div className="mt-4">
-                            <LanguageCard
-                                language="English"
-                                status="Professional"
-                            />
-                            <LanguageCard
-                                language="Bangla"
-                                status="Native or Bilingual"
-                            />
-                            <LanguageCard
-                                language="French"
-                                status="Working Proftaency"
-                            />
+                            <div className="mt-4">
+                                {languages.langs.map((v, i) => (
+                                    <LanguageCard
+                                        key={i}
+                                        language={v.title}
+                                        status={
+                                            v.experience as
+                                                | "Professional"
+                                                | "Working Proficiency"
+                                                | "Native or Bilingual"
+                                        }
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 <div className="mt-4">
                     <div className="w-full mt-4">

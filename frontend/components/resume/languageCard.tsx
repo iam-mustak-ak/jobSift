@@ -1,6 +1,6 @@
 type LanguageProps = {
     language: string;
-    status: "Working Proftaency" | "Native or Bilingual" | "Professional";
+    status: "Working Proficiency" | "Native or Bilingual" | "Professional";
 };
 const LanguageCard: React.FC<LanguageProps> = ({ language, status }) => {
     return (

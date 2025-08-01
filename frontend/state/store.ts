@@ -31,12 +31,21 @@ export const usePrintRef = create<PrintState & PrintActions>((set) => ({
     },
 }));
 
+export type LanguagesTypes = {
+    title?: string;
+    langs: {
+        title: string;
+        experience: string;
+    }[];
+};
+
 export type ResumeDataTypes = {
     image: string | null;
     name: string | null;
     tagline: string | null;
     about: any | null;
     socials: Record<string, string>[] | null;
+    languages: LanguagesTypes | null;
 };
 
 type ResumeDataActions = {
@@ -50,6 +59,10 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
         tagline: null,
         about: null,
         socials: null,
+        languages: {
+            title: "Languages",
+            langs: [],
+        },
         setResumeData: (resumeData: ResumeDataTypes) => {
             set((prev) => ({ ...prev, ...resumeData }));
         },
