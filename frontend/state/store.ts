@@ -50,6 +50,26 @@ export type ResumeDataTypes = {
         title: string;
         items: string;
     };
+    educations: {
+        title: string;
+        items: {
+            degree: string;
+            university: string;
+            startingDate: Date | string;
+            endingDate: Date | string;
+            courses: string;
+        }[];
+    };
+    experience: {
+        title: string;
+        items: {
+            position: string;
+            institute: string;
+            startingDate: Date | string;
+            endingDate: Date | string;
+            achivments: string;
+        }[];
+    };
 };
 
 type ResumeDataActions = {
@@ -71,6 +91,15 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
             title: "Interests",
             items: "",
         },
+        educations: {
+            title: "Education",
+            items: [],
+        },
+        experience: {
+            title: "Experience",
+            items: [],
+        },
+
         setResumeData: (resumeData: ResumeDataTypes) => {
             set((prev) => ({ ...prev, ...resumeData }));
         },

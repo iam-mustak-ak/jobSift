@@ -6,29 +6,29 @@ import { Switch } from "@/components/ui/switch";
 import { useResumeData } from "@/state/store";
 import { Plus, Trash } from "lucide-react";
 
-const EducationInfoForm = () => {
+const ExperienceInfoForm = () => {
     const resumeData = useResumeData((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
-    const addEducations = () => {
+    const addExperience = () => {
         setResumeData({
             ...resumeData,
-            educations: {
-                ...resumeData.educations,
+            experience: {
+                ...resumeData.experience,
                 items: [
-                    ...resumeData.educations.items,
+                    ...resumeData.experience.items,
                     {
-                        degree: "",
-                        university: "",
+                        position: "",
+                        institute: "",
                         startingDate: new Date(),
                         endingDate: new Date(),
-                        courses: "",
+                        achivments: "",
                     },
                 ],
             },
         });
     };
 
-    const handleEducations = (
+    const handleExperience = (
         i: number,
         e: React.ChangeEvent<
             HTMLSelectElement | HTMLInputElement | HTMLButtonElement
@@ -36,52 +36,52 @@ const EducationInfoForm = () => {
     ) => {
         const { name, value } = e.target;
 
-        const updatedEducations = [...(resumeData.educations.items ?? [])];
+        const updatedExperience = [...(resumeData.experience.items ?? [])];
 
-        if (!updatedEducations[i]) {
-            updatedEducations[i] = {
-                degree: "",
-                university: "",
+        if (!updatedExperience[i]) {
+            updatedExperience[i] = {
+                position: "",
+                institute: "",
                 startingDate: new Date(),
                 endingDate: new Date(),
-                courses: "",
+                achivments: "",
             };
         }
 
-        updatedEducations[i][name as "degree"] = value;
+        updatedExperience[i][name as "position"] = value;
         setResumeData({
             ...resumeData,
-            educations: {
-                ...resumeData.educations,
-                items: updatedEducations,
+            experience: {
+                ...resumeData.experience,
+                items: updatedExperience,
             },
         });
     };
 
     const handleEndingDate = (i: number, v: boolean) => {
-        const updatedEducations = [...(resumeData.educations.items ?? [])];
+        const updatedtExperience = [...(resumeData.experience.items ?? [])];
 
         if (v) {
-            updatedEducations[i]["endingDate"] = "Present";
+            updatedtExperience[i]["endingDate"] = "Present";
         } else {
-            updatedEducations[i]["endingDate"] = new Date();
+            updatedtExperience[i]["endingDate"] = new Date();
         }
         setResumeData({
             ...resumeData,
-            educations: {
-                ...resumeData.educations,
-                items: updatedEducations,
+            experience: {
+                ...resumeData.experience,
+                items: updatedtExperience,
             },
         });
     };
 
     const handleDelete = (i: number) => {
-        const updatedEducations = [...(resumeData.educations.items ?? [])];
-        const filtered = updatedEducations.filter((v, idx) => idx != i);
+        const updatedtExperience = [...(resumeData.experience.items ?? [])];
+        const filtered = updatedtExperience.filter((v, idx) => idx != i);
         setResumeData({
             ...resumeData,
-            educations: {
-                ...resumeData.educations,
+            experience: {
+                ...resumeData.experience,
                 items: filtered,
             },
         });
@@ -90,27 +90,27 @@ const EducationInfoForm = () => {
     return (
         <>
             <div className="flex flex-col gap-3">
-                {resumeData.educations.items.map((v, i) => (
+                {resumeData.experience.items.map((v, i) => (
                     <div key={i} className="flex items-start gap-2">
                         <div className="border p-3 rounded-md">
                             <div className="flex text-end gap-4 mb-3">
                                 <CustomInput
                                     type="text"
-                                    id="degree"
-                                    name="degree"
-                                    placeholder="Enter your degree"
-                                    label="Degree"
-                                    onChange={(e) => handleEducations(i, e)}
-                                    value={v.degree}
+                                    id="position"
+                                    name="position"
+                                    placeholder="Enter your position"
+                                    label="Position"
+                                    onChange={(e) => handleExperience(i, e)}
+                                    value={v.position}
                                 />
                                 <CustomInput
                                     type="text"
-                                    id="university"
-                                    name="university"
-                                    placeholder="Enter your University"
-                                    label="University"
-                                    onChange={(e) => handleEducations(i, e)}
-                                    value={v.university}
+                                    id="institute"
+                                    name="institute"
+                                    placeholder="Enter your institute"
+                                    label="Institute/Company"
+                                    onChange={(e) => handleExperience(i, e)}
+                                    value={v.institute}
                                 />
                                 <div>
                                     <Label>Starting Date</Label>
@@ -118,7 +118,7 @@ const EducationInfoForm = () => {
                                         type="date"
                                         className="mt-3"
                                         name="startingDate"
-                                        onChange={(e) => handleEducations(i, e)}
+                                        onChange={(e) => handleExperience(i, e)}
                                         value={
                                             v.startingDate instanceof Date
                                                 ? v.startingDate
@@ -137,7 +137,7 @@ const EducationInfoForm = () => {
                                                 className="mt-3"
                                                 name="endingDate"
                                                 onChange={(e) =>
-                                                    handleEducations(i, e)
+                                                    handleExperience(i, e)
                                                 }
                                                 value={
                                                     v.endingDate instanceof Date
@@ -170,12 +170,12 @@ const EducationInfoForm = () => {
                             </div>
                             <CustomInput
                                 type="text"
-                                id="courses"
-                                name="courses"
-                                placeholder="Enter your Major courses (comma separeted)"
-                                label="Courses"
-                                onChange={(e) => handleEducations(i, e)}
-                                value={v.courses ?? ""}
+                                id="achivments"
+                                name="achivments"
+                                placeholder="Enter your Major achivments (comma separeted)"
+                                label="Achivments"
+                                onChange={(e) => handleExperience(i, e)}
+                                value={v.achivments ?? ""}
                             />
                         </div>
                         <Button
@@ -190,16 +190,16 @@ const EducationInfoForm = () => {
             </div>
             <div className="mt-4">
                 <Button
-                    onClick={addEducations}
+                    onClick={addExperience}
                     variant="outline"
                     className="cursor-pointer"
                 >
                     <Plus />
-                    Add Eduations
+                    Add Experience
                 </Button>
             </div>
         </>
     );
 };
 
-export default EducationInfoForm;
+export default ExperienceInfoForm;

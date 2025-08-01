@@ -8,6 +8,7 @@ import {
     AccordionTrigger,
 } from "../ui/accordion";
 import EducationInfoForm from "./resumeFormSections/EducationInfoForm";
+import ExperienceInfoForm from "./resumeFormSections/ExperienceInfoForm";
 import InterestedInfoForm from "./resumeFormSections/interestedInfoForm";
 import LanguageInfoForm from "./resumeFormSections/languageInfoForm";
 import PersonalInfoForm from "./resumeFormSections/personalInfoForm";
@@ -79,14 +80,45 @@ const ResumeForm: React.FC = () => {
                 <AccordionItem value="item-4">
                     <AccordionTrigger className="cursor-pointer">
                         <input
-                            onChange={() => {}}
+                            onChange={(e) => {
+                                setResumeData({
+                                    ...resumeData,
+                                    educations: {
+                                        title: e.target.value,
+                                        items:
+                                            resumeData.educations?.items ?? [],
+                                    },
+                                });
+                            }}
+                            value={resumeData.educations?.title ?? "Education"}
                             type="text"
-                            value="Education"
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
                     <AccordionContent>
                         <EducationInfoForm />
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-5">
+                    <AccordionTrigger className="cursor-pointer">
+                        <input
+                            onChange={(e) => {
+                                setResumeData({
+                                    ...resumeData,
+                                    experience: {
+                                        title: e.target.value,
+                                        items:
+                                            resumeData.experience?.items ?? [],
+                                    },
+                                });
+                            }}
+                            value={resumeData.experience?.title ?? "Experience"}
+                            type="text"
+                            className="text-2xl font-bold text-muted-foreground outline-none border-none"
+                        />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <ExperienceInfoForm />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

@@ -10,15 +10,27 @@ import { useEffect, useRef } from "react";
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
     const { setPrintRef } = usePrintRef((state) => state);
-    const { image, about, tagline, name, socials, languages, interests } =
-        useResumeData<ResumeDataTypes>((state) => state);
+    const {
+        image,
+        about,
+        tagline,
+        name,
+        socials,
+        languages,
+        interests,
+        educations,
+        experience,
+    } = useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
         setPrintRef(printRef);
     }, []);
 
     return (
-        <div ref={printRef} className="flex items-start gap-5 max-h-[842px]">
+        <div
+            ref={printRef}
+            className="flex items-start gap-5 max-h-[842px] py-5"
+        >
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
                 <Image
                     src={image ? image : `/avatar-pl.jpg`}
@@ -110,44 +122,81 @@ const FirstTemplate: React.FC = () => {
                     </div>
                 ) : null}
 
-                <div className="mt-5 pr-5">
-                    <TemplatesTile title="Education" />
+                {educations.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={educations.title} />
 
-                    <div className="mt-2">
-                        <h6 className="text-sm font-semibold text-primary">
-                            Bsc in CSE
-                        </h6>
-                        <p className="text-xs">Leading University</p>
-                        <p className="text-xs text-primary">2023 - present</p>
-                        <p className="text-xs text-primary mt-1 underline mb-1">
-                            Major Courses
-                        </p>
-                        <ul className="text-xs list-disc pl-4">
-                            <li>Data Structure</li>
-                            <li>Software Engineering</li>
-                            <li>Machine Learning</li>
-                        </ul>
+                        <div className="flex flex-col gap-3">
+                            {educations.items.map((v, i) => (
+                                <div key={i} className="mt-2">
+                                    <h6 className="text-sm font-semibold text-primary">
+                                        {v.degree}
+                                    </h6>
+                                    <p className="text-xs">{v.university}</p>
+                                    <p className="text-xs text-primary">
+                                        <span>
+                                            {new Date(
+                                                v.startingDate
+                                            ).getFullYear()}
+                                        </span>{" "}
+                                        -{" "}
+                                        {v.endingDate instanceof Date
+                                            ? new Date(
+                                                  v.endingDate
+                                              ).getFullYear()
+                                            : v.endingDate}
+                                    </p>
+                                    <p className="text-xs text-primary mt-1 underline mb-1">
+                                        Major Courses
+                                    </p>
+                                    <ul className="text-xs list-disc pl-4">
+                                        {v.courses.split(",").map((v, i) => (
+                                            <li key={i}>{v}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-                <div className="mt-5 pr-5">
-                    <TemplatesTile title="Experience" />
+                )}
 
-                    <div className="mt-2">
-                        <h6 className="text-sm font-semibold text-primary">
-                            Bsc in CSE
-                        </h6>
-                        <p className="text-xs">Leading University</p>
-                        <p className="text-xs text-primary">2023 - present</p>
-                        <p className="text-xs text-primary mt-1 underline mb-1">
-                            Achivements
-                        </p>
-                        <ul className="text-xs list-disc pl-4">
-                            <li>Data Structure</li>
-                            <li>Software Engineering</li>
-                            <li>Machine Learning</li>
-                        </ul>
+                {experience.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={experience.title} />
+
+                        <div className="flex flex-col gap-3">
+                            {experience.items.map((v, i) => (
+                                <div key={i} className="mt-2">
+                                    <h6 className="text-sm font-semibold text-primary">
+                                        {v.position}
+                                    </h6>
+                                    <p className="text-xs">{v.institute}</p>
+                                    <p className="text-xs text-primary">
+                                        <span>
+                                            {new Date(
+                                                v.startingDate
+                                            ).getFullYear()}
+                                        </span>{" "}
+                                        -{" "}
+                                        {v.endingDate instanceof Date
+                                            ? new Date(
+                                                  v.endingDate
+                                              ).getFullYear()
+                                            : v.endingDate}
+                                    </p>
+                                    <p className="text-xs text-primary mt-1 underline mb-1">
+                                        Achivments
+                                    </p>
+                                    <ul className="text-xs list-disc pl-4">
+                                        {v.achivments.split(",").map((v, i) => (
+                                            <li key={i}>{v}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
