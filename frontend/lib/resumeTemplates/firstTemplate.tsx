@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
     const { setPrintRef } = usePrintRef((state) => state);
-    const { image, about, tagline, name, socials, languages } =
+    const { image, about, tagline, name, socials, languages, interests } =
         useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
@@ -74,29 +74,24 @@ const FirstTemplate: React.FC = () => {
                     </div>
                 )}
 
-                <div className="mt-4">
-                    <div className="w-full mt-4">
-                        <TemplatesTile title="Interests" />
+                {interests.items && (
+                    <div className="mt-4">
+                        <div className="w-full mt-4">
+                            <TemplatesTile title={interests.title} />
 
-                        <div className="mt-4 flex flex-col gap-2">
-                            <div className="rounded-md border border-primary p-2">
-                                <p className="text-xs">
-                                    Emerging Technologies in Education
-                                </p>
-                            </div>
-                            <div className="rounded-md border border-primary p-2">
-                                <p className="text-xs">
-                                    Emerging Technologies in Education
-                                </p>
-                            </div>
-                            <div className="rounded-md border border-primary p-2">
-                                <p className="text-xs">
-                                    Emerging Technologies in Education
-                                </p>
+                            <div className="mt-4 flex flex-col gap-2">
+                                {interests.items.split(",").map((v, i) => (
+                                    <div
+                                        key={i}
+                                        className="rounded-md border border-primary p-2"
+                                    >
+                                        <p className="text-xs">{v}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className="w-full">

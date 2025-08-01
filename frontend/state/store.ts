@@ -46,6 +46,10 @@ export type ResumeDataTypes = {
     about: any | null;
     socials: Record<string, string>[] | null;
     languages: LanguagesTypes | null;
+    interests: {
+        title: string;
+        items: string;
+    };
 };
 
 type ResumeDataActions = {
@@ -62,6 +66,10 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
         languages: {
             title: "Languages",
             langs: [],
+        },
+        interests: {
+            title: "Interests",
+            items: "",
         },
         setResumeData: (resumeData: ResumeDataTypes) => {
             set((prev) => ({ ...prev, ...resumeData }));

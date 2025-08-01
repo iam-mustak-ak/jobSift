@@ -78,6 +78,7 @@ const LanguageInfoForm = () => {
                             name="title"
                             placeholder="Enter a language"
                             onChange={(e) => updateLanguages(i, e)}
+                            value={l.title}
                         />
                         <div className="w-auto">
                             <label
@@ -91,7 +92,7 @@ const LanguageInfoForm = () => {
                                 name="experience"
                                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 onChange={(e) => updateLanguages(i, e)}
-                                defaultValue="Professional"
+                                value={l.experience ?? "Professional"}
                             >
                                 <option value="Professional">
                                     Professional

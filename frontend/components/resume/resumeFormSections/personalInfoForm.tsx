@@ -2,7 +2,6 @@
 
 import CustomInput from "@/components/common/customInput";
 import EditorWrapper from "@/components/common/EditorWrapper";
-import { RichTextEditorProps } from "@/components/common/richTextEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,15 +9,11 @@ import { ResumeDataTypes, useResumeData } from "@/state/store";
 import { base64Generator } from "@/utils/base64Generator";
 import { Camera, Delete, Plus } from "lucide-react";
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { FormEvent } from "react";
 
 const PersonalInfoForm = () => {
     const persoanlInfoData = useResumeData<ResumeDataTypes>((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
-    const [editrValue, setEditorValue] = useState<RichTextEditorProps>();
-    const [socialLinks, setSocialLinks] = useState<
-        Record<string, string>[] | null
-    >(null);
 
     const handleInputs = async (e: FormEvent) => {
         const target = e.target as HTMLInputElement;
@@ -44,17 +39,19 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             about: editrValue,
         });
-        setEditorValue(editrValue);
     };
 
     const addSocial = () => {
-        setSocialLinks([
-            ...(socialLinks ?? []),
-            {
-                type: "",
-                link: "",
-            },
-        ]);
+        setResumeData({
+            ...persoanlInfoData,
+            socials: [
+                ...(persoanlInfoData.socials ?? []),
+                {
+                    type: "email",
+                    link: "",
+                },
+            ],
+        });
     };
 
     const handleSocial = (
@@ -81,14 +78,11 @@ const PersonalInfoForm = () => {
         const updatedSocials = [...(persoanlInfoData.socials ?? [])];
 
         const newSocial = updatedSocials.filter((v, idx) => idx !== i);
-        const newSocialLinks =
-            socialLinks?.filter((v, idx) => idx !== i) ?? null;
 
         setResumeData({
             ...persoanlInfoData,
             socials: newSocial,
         });
-        setSocialLinks(newSocialLinks);
     };
 
     console.log(persoanlInfoData);
@@ -131,6 +125,7 @@ const PersonalInfoForm = () => {
                         type="text"
                         name="name"
                         onChange={handleInputs}
+                        value={persoanlInfoData.name ?? ""}
                     />
                     <CustomInput
                         label="Tagline"
@@ -139,11 +134,12 @@ const PersonalInfoForm = () => {
                         type="text"
                         name="tagline"
                         onChange={handleInputs}
+                        value={persoanlInfoData.tagline ?? ""}
                     />
                 </div>
             </div>
             <h5 className="text-lg font-semibold my-3">Social Info</h5>
-            {socialLinks?.map((_, i) => (
+            {persoanlInfoData.socials?.map((v, i) => (
                 <div key={i} className="flex items-end gap-3 mb-4">
                     <div className="w-auto">
                         <label
@@ -158,6 +154,7 @@ const PersonalInfoForm = () => {
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             onChange={(e) => handleSocial(i, e)}
                             defaultValue="email"
+                            value={v.type ?? "email"}
                         >
                             <option value="email">email</option>
                             <option value="linkedin">linkedin</option>
@@ -190,7 +187,10 @@ const PersonalInfoForm = () => {
             </div>
             <h5 className="text-lg font-semibold my-3">About</h5>
             <div>
-                <EditorWrapper value={editrValue} setValue={handleEditorText} />
+                <EditorWrapper
+                    value={persoanlInfoData.about}
+                    setValue={handleEditorText}
+                />
             </div>
         </div>
     );
