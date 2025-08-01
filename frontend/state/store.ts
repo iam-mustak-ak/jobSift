@@ -70,6 +70,13 @@ export type ResumeDataTypes = {
             achivments: string;
         }[];
     };
+    skills: {
+        title: string;
+        items: {
+            skill: string;
+            experience: "Noob" | "Medium" | "Professional" | "Expert";
+        }[];
+    };
 };
 
 type ResumeDataActions = {
@@ -99,7 +106,10 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
             title: "Experience",
             items: [],
         },
-
+        skills: {
+            title: "Skills",
+            items: [],
+        },
         setResumeData: (resumeData: ResumeDataTypes) => {
             set((prev) => ({ ...prev, ...resumeData }));
         },

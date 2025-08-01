@@ -146,14 +146,13 @@ const PersonalInfoForm = () => {
                             htmlFor="type"
                             className="mb-2 block text-sm font-medium text-foreground"
                         >
-                            Selecet Social Handle
+                            Select Social Handle
                         </label>
                         <select
                             id="type"
                             name="type"
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             onChange={(e) => handleSocial(i, e)}
-                            defaultValue="email"
                             value={v.type ?? "email"}
                         >
                             <option value="email">email</option>

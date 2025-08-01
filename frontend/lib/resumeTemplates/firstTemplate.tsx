@@ -2,10 +2,18 @@
 import LanguageCard from "@/components/resume/languageCard";
 import ResumeSocial from "@/components/resume/resumeSocial";
 import TemplatesTile from "@/components/resume/templatesTile";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+
+const expLevel = {
+    Noob: 30,
+    Medium: 45,
+    Professional: 75,
+    Expert: 100,
+};
 
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
@@ -20,6 +28,7 @@ const FirstTemplate: React.FC = () => {
         interests,
         educations,
         experience,
+        skills,
     } = useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
@@ -32,13 +41,15 @@ const FirstTemplate: React.FC = () => {
             className="flex items-start gap-5 max-h-[842px] py-5"
         >
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
-                <Image
-                    src={image ? image : `/avatar-pl.jpg`}
-                    width={200}
-                    height={200}
-                    alt="profile"
-                    className="w-full max-w-[1050px] h-full max-h-[200px] rounded-full"
-                />
+                {image && (
+                    <Image
+                        src={image ? image : `/avatar-pl.jpg`}
+                        width={200}
+                        height={200}
+                        alt="profile"
+                        className="w-full max-w-[1050px] h-full max-h-[200px] rounded-full"
+                    />
+                )}
 
                 {Array.isArray(socials) && socials.length > 0 && (
                     <div className="mt-4">
@@ -107,7 +118,7 @@ const FirstTemplate: React.FC = () => {
             </div>
 
             <div className="w-full">
-                {name || tagline || about ? (
+                {name || tagline ? (
                     <div className="w-full bg-primary p-5 mt-5">
                         <h2 className="text-2xl text-white font-bold">
                             {name}
@@ -192,6 +203,30 @@ const FirstTemplate: React.FC = () => {
                                             <li key={i}>{v}</li>
                                         ))}
                                     </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {skills.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={skills.title ?? "Skills"} />
+
+                        <div className="mt-2">
+                            {skills.items.map((v, i) => (
+                                <div
+                                    key={i}
+                                    className=" grid grid-cols-3 items-center gap-4"
+                                >
+                                    <h6 className="text-sm font-semibold text-primary">
+                                        {v.skill}
+                                    </h6>
+                                    <Progress
+                                        value={expLevel[v.experience!]}
+                                        className="w-full"
+                                    />
+                                    <p className="text-sm">{v.experience}</p>
                                 </div>
                             ))}
                         </div>

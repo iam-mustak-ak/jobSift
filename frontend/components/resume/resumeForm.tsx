@@ -12,6 +12,7 @@ import ExperienceInfoForm from "./resumeFormSections/ExperienceInfoForm";
 import InterestedInfoForm from "./resumeFormSections/interestedInfoForm";
 import LanguageInfoForm from "./resumeFormSections/languageInfoForm";
 import PersonalInfoForm from "./resumeFormSections/personalInfoForm";
+import SkillsInfoForm from "./resumeFormSections/SkillsInfoForm";
 
 const ResumeForm: React.FC = () => {
     const resumeData = useResumeData((state) => state);
@@ -119,6 +120,27 @@ const ResumeForm: React.FC = () => {
                     </AccordionTrigger>
                     <AccordionContent>
                         <ExperienceInfoForm />
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-5">
+                    <AccordionTrigger className="cursor-pointer">
+                        <input
+                            onChange={(e) => {
+                                setResumeData({
+                                    ...resumeData,
+                                    skills: {
+                                        title: e.target.value,
+                                        items: resumeData.skills?.items ?? [],
+                                    },
+                                });
+                            }}
+                            value={resumeData.skills.title ?? "Skills"}
+                            type="text"
+                            className="text-2xl font-bold text-muted-foreground outline-none border-none"
+                        />
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <SkillsInfoForm />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

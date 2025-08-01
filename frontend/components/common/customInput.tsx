@@ -15,7 +15,7 @@ type CustomInputProps = {
 
 function CustomInput({ id, label, ...props }: CustomInputProps) {
     return (
-        <div className="grid gap-2">
+        <div className="grid gap-2 w-full">
             {label && (
                 <Label htmlFor={id} className="text-sm font-medium">
                     {label}

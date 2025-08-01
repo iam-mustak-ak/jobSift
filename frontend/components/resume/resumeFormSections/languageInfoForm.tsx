@@ -119,13 +119,17 @@ const LanguageInfoForm = () => {
                 ))}
             </div>
 
-            <Button
-                onClick={addLangues}
-                variant="outline"
-                className="mt-4 cursor-pointer"
-            >
-                <Plus /> Add Language
-            </Button>
+            <div>
+                <div className="flex items-end gap-3">
+                    <Button
+                        onClick={addLangues}
+                        variant="outline"
+                        className="mt-4 cursor-pointer"
+                    >
+                        <Plus /> Add Language
+                    </Button>
+                </div>
+            </div>
         </>
     );
 };
