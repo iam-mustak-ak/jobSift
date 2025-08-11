@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
             {
                 hostname: "localhost",
             },
+            { protocol: "https", hostname: "placehold.co" },
         ],
     },
 };

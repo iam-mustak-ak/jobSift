@@ -40,6 +40,7 @@ export type LanguagesTypes = {
 };
 
 export type ResumeDataTypes = {
+    resumeName: string | null;
     image: string | null;
     name: string | null;
     tagline: string | null;
@@ -85,6 +86,7 @@ type ResumeDataActions = {
 
 export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
     (set) => ({
+        resumeName: "Untitled",
         image: null,
         name: null,
         tagline: null,

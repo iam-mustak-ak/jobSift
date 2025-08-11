@@ -12,6 +12,7 @@ import Session from "./models/session.model";
 import companyRouter from "./routes/compnay.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
+import resumeRouter from "./routes/resume.routes";
 import skillRouter from "./routes/skill.routes";
 import userRouter from "./routes/user.routes";
 dotenv.config();
@@ -68,6 +69,7 @@ app.use("/job-category", jobCategoryRouter);
 app.use("/skill", skillRouter);
 app.use("/job", jobRouter);
 app.use("/company", companyRouter);
+app.use("/resume", resumeRouter);
 
 app.use(globalErrorHandler);
 

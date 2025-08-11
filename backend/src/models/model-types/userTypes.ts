@@ -67,5 +67,5 @@ interface IUser {
 }
 
 // Combine with Document for model typing
-export type IUserDocument = IUser & Document;
+export type IUserDocument = IUser & Document & { _id: Schema.Types.ObjectId };
 export type UserModel = Model<IUserDocument>;
