@@ -143,7 +143,9 @@ const FirstTemplate: React.FC = () => {
                                     <h6 className="text-sm font-semibold text-primary">
                                         {v.degree}
                                     </h6>
-                                    <p className="text-xs">{v.university}</p>
+                                    <p className="text-xs">
+                                        {v.university} - {v.location}
+                                    </p>
                                     <p className="text-xs text-primary">
                                         <span>
                                             {new Date(
@@ -151,7 +153,8 @@ const FirstTemplate: React.FC = () => {
                                             ).getFullYear()}
                                         </span>{" "}
                                         -{" "}
-                                        {v.endingDate instanceof Date
+                                        {v.endingDate &&
+                                        v.endingDate !== "Present"
                                             ? new Date(
                                                   v.endingDate
                                               ).getFullYear()
@@ -181,7 +184,9 @@ const FirstTemplate: React.FC = () => {
                                     <h6 className="text-sm font-semibold text-primary">
                                         {v.position}
                                     </h6>
-                                    <p className="text-xs">{v.institute}</p>
+                                    <p className="text-xs">
+                                        {v.institute} - {v.location}
+                                    </p>
                                     <p className="text-xs text-primary">
                                         <span>
                                             {new Date(
@@ -189,7 +194,8 @@ const FirstTemplate: React.FC = () => {
                                             ).getFullYear()}
                                         </span>{" "}
                                         -{" "}
-                                        {v.endingDate instanceof Date
+                                        {v.endingDate &&
+                                        v.endingDate !== "Present"
                                             ? new Date(
                                                   v.endingDate
                                               ).getFullYear()

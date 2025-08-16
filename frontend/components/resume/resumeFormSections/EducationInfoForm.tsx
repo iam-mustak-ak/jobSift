@@ -22,6 +22,7 @@ const EducationInfoForm = () => {
                         startingDate: new Date(),
                         endingDate: new Date(),
                         courses: "",
+                        location: "",
                     },
                 ],
             },
@@ -45,6 +46,7 @@ const EducationInfoForm = () => {
                 startingDate: new Date(),
                 endingDate: new Date(),
                 courses: "",
+                location: "",
             };
         }
 
@@ -120,8 +122,8 @@ const EducationInfoForm = () => {
                                         name="startingDate"
                                         onChange={(e) => handleEducations(i, e)}
                                         value={
-                                            v.startingDate instanceof Date
-                                                ? v.startingDate
+                                            v.startingDate
+                                                ? new Date(v.startingDate)
                                                       .toISOString()
                                                       .split("T")[0]
                                                 : v.startingDate
@@ -131,7 +133,8 @@ const EducationInfoForm = () => {
                                 <div className="flex items-start">
                                     <div>
                                         <Label>Ending Date</Label>
-                                        {v.endingDate instanceof Date ? (
+                                        {v.endingDate &&
+                                        v.endingDate !== "Present" ? (
                                             <Input
                                                 type="date"
                                                 className="mt-3"
@@ -140,11 +143,9 @@ const EducationInfoForm = () => {
                                                     handleEducations(i, e)
                                                 }
                                                 value={
-                                                    v.endingDate instanceof Date
-                                                        ? v.endingDate
-                                                              .toISOString()
-                                                              .split("T")[0]
-                                                        : v.endingDate
+                                                    new Date(v.endingDate)
+                                                        .toISOString()
+                                                        .split("T")[0]
                                                 }
                                             />
                                         ) : (
@@ -168,6 +169,16 @@ const EducationInfoForm = () => {
                                     </div>
                                 </div>
                             </div>
+                            <CustomInput
+                                type="text"
+                                id="location"
+                                name="location"
+                                placeholder="Location"
+                                label="Location"
+                                onChange={(e) => handleEducations(i, e)}
+                                value={v.location ?? ""}
+                                className="mb-2"
+                            />
                             <CustomInput
                                 type="text"
                                 id="courses"

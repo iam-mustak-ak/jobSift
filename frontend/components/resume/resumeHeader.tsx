@@ -90,7 +90,7 @@ const ResumeHeader: React.FC = () => {
     };
 
     return (
-        <div className="backdrop-blur-2xl bg-neutral-50 shadow-md py-5 px-10  sticky top-16">
+        <div className="backdrop-blur-2xl bg-neutral-50 shadow-md py-5 px-10 z-10 sticky top-16">
             <div className="flex items-center justify-between">
                 <div className="max-w-[20rem]">
                     <Input

@@ -40,7 +40,7 @@ export const getAllResume: RequestHandler = async (req, res, next) => {
         }
         const resumes = await Resume.find({
             user: _id,
-        });
+        }).sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,

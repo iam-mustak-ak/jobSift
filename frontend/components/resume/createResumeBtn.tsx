@@ -27,6 +27,7 @@ const CreateResumeBtn: React.FC = () => {
 
     const handleCreate = async () => {
         setLoading(true);
+
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_SERVER_URL!}/resume/create`,
@@ -37,17 +38,32 @@ const CreateResumeBtn: React.FC = () => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        about,
-                        educations,
-                        experience,
-                        image,
-                        interests,
-                        languages,
-                        name,
-                        resumeName,
-                        skills,
-                        socials,
-                        tagline,
+                        resumeName: "Untitled",
+                        image: null,
+                        name: null,
+                        tagline: null,
+                        about: null,
+                        socials: null,
+                        languages: {
+                            title: "Languages",
+                            langs: [],
+                        },
+                        interests: {
+                            title: "Interests",
+                            items: "",
+                        },
+                        educations: {
+                            title: "Education",
+                            items: [],
+                        },
+                        experience: {
+                            title: "Experience",
+                            items: [],
+                        },
+                        skills: {
+                            title: "Skills",
+                            items: [],
+                        },
                     }),
                 }
             );

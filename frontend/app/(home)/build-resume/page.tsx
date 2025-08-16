@@ -2,6 +2,8 @@
 import ContainerWrapper from "@/components/common/containerWrapper";
 import CreateResumeBtn from "@/components/resume/createResumeBtn";
 import { Button } from "@/components/ui/button";
+import ResumeCardSkeleton from "@/lib/loaders/resumeLoader";
+import { ResumeDataTypes } from "@/state/store";
 import { fetcherClient } from "@/utils/fetcherClient";
 import { Loader2, Trash } from "lucide-react";
 import Image from "next/image";
@@ -13,25 +15,25 @@ import { toast } from "sonner";
 const Page = () => {
     const [data, setData] = useState<Record<string, any>>();
     const [loading, setLoading] = useState<boolean>(false);
-
-    const fetchResume = async () => {
-        const resume = await fetcherClient(`/resume/get-all-resume`);
-
-        console.log(resume);
-        if (resume.success) {
-            setData(resume);
-            setLoading(false);
-        }
-    };
+    const [deleteLoader, setDeleteLoader] = useState<boolean>(false);
 
     useEffect(() => {
         setLoading(true);
+        const fetchResume = async () => {
+            const resume = await fetcherClient(`/resume/get-all-resume`);
+
+            if (resume.success) {
+                setData(resume);
+                setLoading(false);
+            }
+        };
 
         fetchResume();
     }, []);
 
     const handleDeleteResume = async (resumeId: string) => {
-        setLoading(true);
+        // setLoading(true);
+        setDeleteLoader(true);
 
         try {
             const res = await fetch(
@@ -48,11 +50,20 @@ const Page = () => {
             if (!res.ok) {
                 toast.error("error");
             }
-            fetchResume();
+
+            console.log(data);
+            const newData = data?.data.filter(
+                (dataItem: ResumeDataTypes & { _id: string }) =>
+                    dataItem._id !== resumeId
+            );
+            setData({ data: newData });
 
             toast.success("Deleted");
         } catch (error) {
             toast.error("Error While Deleting");
+        } finally {
+            // setLoading(false);
+            setDeleteLoader(false);
         }
     };
 
@@ -73,7 +84,7 @@ const Page = () => {
                         </h2>
 
                         {loading ? (
-                            <Loader2 className="animate-spin" />
+                            <ResumeCardSkeleton />
                         ) : (
                             <div className="flex items-stretch gap-5 flex-wrap">
                                 {data?.data && data.data.length > 0
@@ -91,8 +102,13 @@ const Page = () => {
                                                               item._id
                                                           )
                                                       }
+                                                      disabled={deleteLoader}
                                                   >
-                                                      <Trash />
+                                                      {deleteLoader ? (
+                                                          <Loader2 className="animate-spin" />
+                                                      ) : (
+                                                          <Trash />
+                                                      )}
                                                   </Button>
 
                                                   <Button

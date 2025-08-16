@@ -27,6 +27,7 @@ const ResumeForm: React.FC = () => {
                             onChange={() => {}}
                             type="text"
                             value="Personal Details"
+                            readOnly
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
@@ -49,6 +50,7 @@ const ResumeForm: React.FC = () => {
                             }}
                             type="text"
                             value={resumeData.languages?.title ?? "Languages"}
+                            readOnly
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
@@ -70,6 +72,7 @@ const ResumeForm: React.FC = () => {
                                 });
                             }}
                             type="text"
+                            readOnly
                             value={resumeData.interests?.title ?? "Interests"}
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
@@ -93,6 +96,7 @@ const ResumeForm: React.FC = () => {
                             }}
                             value={resumeData.educations?.title ?? "Education"}
                             type="text"
+                            readOnly
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
@@ -115,6 +119,7 @@ const ResumeForm: React.FC = () => {
                             }}
                             value={resumeData.experience?.title ?? "Experience"}
                             type="text"
+                            readOnly
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>
@@ -122,7 +127,7 @@ const ResumeForm: React.FC = () => {
                         <ExperienceInfoForm />
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-5">
+                <AccordionItem value="item-6">
                     <AccordionTrigger className="cursor-pointer">
                         <input
                             onChange={(e) => {
@@ -136,6 +141,7 @@ const ResumeForm: React.FC = () => {
                             }}
                             value={resumeData.skills.title ?? "Skills"}
                             type="text"
+                            readOnly
                             className="text-2xl font-bold text-muted-foreground outline-none border-none"
                         />
                     </AccordionTrigger>

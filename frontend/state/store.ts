@@ -59,6 +59,7 @@ export type ResumeDataTypes = {
             startingDate: Date | string;
             endingDate: Date | string;
             courses: string;
+            location: string;
         }[];
     };
     experience: {
@@ -69,6 +70,7 @@ export type ResumeDataTypes = {
             startingDate: Date | string;
             endingDate: Date | string;
             achivments: string;
+            location: string;
         }[];
     };
     skills: {

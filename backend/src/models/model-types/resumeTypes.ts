@@ -26,6 +26,7 @@ interface IResume {
             startingDate?: Date | string;
             endingDate?: Date | string;
             courses?: string;
+            location?: string;
         }[];
     };
     experience?: {
@@ -36,6 +37,7 @@ interface IResume {
             startingDate?: Date | string;
             endingDate?: Date | string;
             achivments?: string;
+            location?: string;
         }[];
     };
     skills?: {

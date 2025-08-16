@@ -22,6 +22,7 @@ const ExperienceInfoForm = () => {
                         startingDate: new Date(),
                         endingDate: new Date(),
                         achivments: "",
+                        location: "",
                     },
                 ],
             },
@@ -45,6 +46,7 @@ const ExperienceInfoForm = () => {
                 startingDate: new Date(),
                 endingDate: new Date(),
                 achivments: "",
+                location: "",
             };
         }
 
@@ -131,7 +133,8 @@ const ExperienceInfoForm = () => {
                                 <div className="flex items-start">
                                     <div>
                                         <Label>Ending Date</Label>
-                                        {v.endingDate instanceof Date ? (
+                                        {v.endingDate &&
+                                        v.endingDate !== "Present" ? (
                                             <Input
                                                 type="date"
                                                 className="mt-3"
@@ -140,11 +143,9 @@ const ExperienceInfoForm = () => {
                                                     handleExperience(i, e)
                                                 }
                                                 value={
-                                                    v.endingDate instanceof Date
-                                                        ? v.endingDate
-                                                              .toISOString()
-                                                              .split("T")[0]
-                                                        : v.endingDate
+                                                    new Date(v.endingDate)
+                                                        .toISOString()
+                                                        .split("T")[0]
                                                 }
                                             />
                                         ) : (
@@ -168,6 +169,17 @@ const ExperienceInfoForm = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <CustomInput
+                                type="text"
+                                id="location"
+                                name="location"
+                                placeholder="Location"
+                                label="Location"
+                                onChange={(e) => handleExperience(i, e)}
+                                value={v.location ?? ""}
+                                className="mb-2"
+                            />
                             <CustomInput
                                 type="text"
                                 id="achivments"
