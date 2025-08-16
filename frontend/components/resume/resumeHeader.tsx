@@ -1,15 +1,20 @@
 "use client";
-import { usePrintRef, useResumeData } from "@/state/store";
 import {
-    CaseSensitive,
+    ResumeDataTypes,
+    usePrintRef,
+    useResumeData,
+    useSaveLoader,
+} from "@/state/store";
+import { debounce } from "@/utils/debounce";
+import { saveResume } from "@/utils/saveResume";
+import {
     CloudUploadIcon,
     Download,
     LayoutPanelLeft,
     Loader2,
-    Type,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { useReactToPrint } from "react-to-print";
 import { toast } from "sonner";
 import CustomSelect from "../common/customSelect";
@@ -18,7 +23,8 @@ import { Input } from "../ui/input";
 
 const ResumeHeader: React.FC = () => {
     const { printRef } = usePrintRef((state) => state);
-    const [loading, setLoading] = useState<boolean>(false);
+
+    const { setIsloading, isLoading } = useSaveLoader((state) => state);
 
     const reactToPrintFn = useReactToPrint({ contentRef: printRef });
     const { resumeId } = useParams();
@@ -38,54 +44,57 @@ const ResumeHeader: React.FC = () => {
         socials,
         tagline,
     } = useResumeData((state) => state);
+    const resumeFormData = {
+        about,
+        educations,
+        experience,
+        image,
+        interests,
+        languages,
+        name,
+        resumeName,
+        skills,
+        socials,
+        tagline,
+    };
+
+    const debouncedSave = useCallback(
+        debounce(async (data: ResumeDataTypes) => {
+            setIsloading(true);
+            try {
+                await saveResume(resumeId ?? "", data);
+                toast.success("Resume Updated");
+            } catch (error) {
+                toast.error("Error while saving");
+            } finally {
+                setIsloading(false);
+            }
+        }, 1500),
+        [resumeId]
+    );
 
     const handleResumeName = (e: ChangeEvent<HTMLInputElement>) => {
+        const newName = e.target.value;
+
         setResumeName({
             ...resumeData,
-            resumeName: e.target.value,
+            resumeName: newName,
         });
+
+        const updatedData = { ...resumeData, resumeName: newName };
+
+        debouncedSave(updatedData);
     };
 
     const handleSaveResume = async () => {
-        setLoading(true);
+        setIsloading(true);
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/resume/save-resume/${resumeId}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        about,
-                        educations,
-                        experience,
-                        image,
-                        interests,
-                        languages,
-                        name,
-                        resumeName,
-                        skills,
-                        socials,
-                        tagline,
-                    }),
-                }
-            );
-
-            const result = await response.json();
-
-            console.log(result);
-
-            if (!response.ok) {
-                return toast.error("Saving Error Occured");
-            }
-
+            await saveResume(resumeId ?? "", resumeFormData);
             toast.success("Resume Updated");
         } catch (error) {
             toast.error("Erro while saving");
         } finally {
-            setLoading(false);
+            setIsloading(false);
         }
     };
 
@@ -102,7 +111,7 @@ const ResumeHeader: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                     <Button onClick={handleSaveResume}>
-                        {loading ? (
+                        {isLoading ? (
                             <Loader2 className="animate-spin" />
                         ) : (
                             <CloudUploadIcon />
@@ -116,7 +125,7 @@ const ResumeHeader: React.FC = () => {
                         icon={<LayoutPanelLeft />}
                         title="Templates"
                     />
-                    <CustomSelect
+                    {/* <CustomSelect
                         name="font"
                         placeholder="Font"
                         options={["Arial", "Times new Roman"]}
@@ -129,7 +138,7 @@ const ResumeHeader: React.FC = () => {
                         options={["XS", "M"]}
                         icon={<Type />}
                         title="Font Size"
-                    />
+                    /> */}
                     <Button onClick={reactToPrintFn}>
                         <Download />
                         Download

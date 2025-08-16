@@ -5,15 +5,37 @@ import EditorWrapper from "@/components/common/EditorWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ResumeDataTypes, useResumeData } from "@/state/store";
+import { ResumeDataTypes, useResumeData, useSaveLoader } from "@/state/store";
 import { base64Generator } from "@/utils/base64Generator";
+import { debounce } from "@/utils/debounce";
+import { saveResume } from "@/utils/saveResume";
 import { Camera, Delete, Plus } from "lucide-react";
 import Image from "next/image";
-import { FormEvent } from "react";
+import { useParams } from "next/navigation";
+import { FormEvent, useCallback } from "react";
+import { toast } from "sonner";
 
 const PersonalInfoForm = () => {
     const persoanlInfoData = useResumeData<ResumeDataTypes>((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
+
+    const { setIsloading } = useSaveLoader((state) => state);
+    const { resumeId } = useParams();
+
+    const debouncedSave = useCallback(
+        debounce(async (data: ResumeDataTypes) => {
+            setIsloading(true);
+            try {
+                await saveResume(resumeId ?? "", data);
+                toast.success("Resume Updated");
+            } catch (error) {
+                toast.error("Error while saving");
+            } finally {
+                setIsloading(false);
+            }
+        }, 1500),
+        [resumeId]
+    );
 
     const handleInputs = async (e: FormEvent) => {
         const target = e.target as HTMLInputElement;
@@ -32,6 +54,10 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             [target.name]: value,
         });
+
+        const updatedInfo = { ...persoanlInfoData, [target.name]: value };
+
+        debouncedSave(updatedInfo);
     };
 
     const handleEditorText = (editrValue: any) => {
@@ -39,6 +65,10 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             about: editrValue,
         });
+
+        const updatedInfo = { ...persoanlInfoData, about: editrValue };
+
+        debouncedSave(updatedInfo);
     };
 
     const addSocial = () => {
@@ -52,6 +82,19 @@ const PersonalInfoForm = () => {
                 },
             ],
         });
+
+        const updatedtInfo = {
+            ...persoanlInfoData,
+            socials: [
+                ...(persoanlInfoData.socials ?? []),
+                {
+                    type: "email",
+                    link: "",
+                },
+            ],
+        };
+
+        debouncedSave(updatedtInfo);
     };
 
     const handleSocial = (
@@ -72,6 +115,12 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             socials: updatedSocials,
         });
+
+        const updatedInfo = {
+            ...persoanlInfoData,
+            socials: updatedSocials,
+        };
+        debouncedSave(updatedInfo);
     };
 
     const handleDelete = (i: number) => {
@@ -83,9 +132,10 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             socials: newSocial,
         });
-    };
 
-    console.log(persoanlInfoData);
+        const updatedInfo = { ...persoanlInfoData, socials: newSocial };
+        debouncedSave(updatedInfo);
+    };
 
     return (
         <div>
@@ -167,6 +217,7 @@ const PersonalInfoForm = () => {
                         placeholder="Link"
                         name="link"
                         onChange={(e) => handleSocial(i, e)}
+                        value={v.link}
                     />
 
                     <Button

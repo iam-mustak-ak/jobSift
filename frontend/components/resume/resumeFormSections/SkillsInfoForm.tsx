@@ -1,8 +1,12 @@
 import CustomInput from "@/components/common/customInput";
 import { Button } from "@/components/ui/button";
-import { useResumeData } from "@/state/store";
+import { ResumeDataTypes, useResumeData, useSaveLoader } from "@/state/store";
+import { debounce } from "@/utils/debounce";
+import { saveResume } from "@/utils/saveResume";
 import { Trash } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { useParams } from "next/navigation";
+import { FormEvent, useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type Skill = {
     skill: string;
@@ -16,6 +20,23 @@ const SkillsInfoForm = () => {
     });
     const resumeData = useResumeData((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
+    const { setIsloading } = useSaveLoader((state) => state);
+    const { resumeId } = useParams();
+
+    const debouncedSave = useCallback(
+        debounce(async (data: ResumeDataTypes) => {
+            setIsloading(true);
+            try {
+                await saveResume(resumeId ?? "", data);
+                toast.success("Resume Updated");
+            } catch (error) {
+                toast.error("Error while saving");
+            } finally {
+                setIsloading(false);
+            }
+        }, 1500),
+        [resumeId]
+    );
 
     const handleEnter = (e: FormEvent) => {
         e.preventDefault();
@@ -29,6 +50,16 @@ const SkillsInfoForm = () => {
                 items: [...(resumeData.skills.items ?? []), { ...skills }],
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            skills: {
+                ...resumeData.skills,
+                items: [...(resumeData.skills.items ?? []), { ...skills }],
+            },
+        };
+
+        debouncedSave(updatedInfo);
 
         setSkills({
             skill: "",
@@ -47,6 +78,15 @@ const SkillsInfoForm = () => {
                 items: filtered,
             },
         });
+        const updatedInfo = {
+            ...resumeData,
+            skills: {
+                ...resumeData.skills,
+                items: filtered,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     return (

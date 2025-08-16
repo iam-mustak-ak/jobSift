@@ -1,11 +1,33 @@
 import CustomInput from "@/components/common/customInput";
 import { Button } from "@/components/ui/button";
-import { useResumeData } from "@/state/store";
+import { ResumeDataTypes, useResumeData, useSaveLoader } from "@/state/store";
+import { debounce } from "@/utils/debounce";
+import { saveResume } from "@/utils/saveResume";
 import { Delete, Plus } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 const LanguageInfoForm = () => {
     const resumeData = useResumeData((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
+    const { setIsloading } = useSaveLoader((state) => state);
+    const { resumeId } = useParams();
+
+    const debouncedSave = useCallback(
+        debounce(async (data: ResumeDataTypes) => {
+            setIsloading(true);
+            try {
+                await saveResume(resumeId ?? "", data);
+                toast.success("Resume Updated");
+            } catch (error) {
+                toast.error("Error while saving");
+            } finally {
+                setIsloading(false);
+            }
+        }, 1500),
+        [resumeId]
+    );
 
     const addLangues = () => {
         setResumeData({
@@ -22,6 +44,23 @@ const LanguageInfoForm = () => {
                 ],
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            languages: {
+                ...resumeData.languages,
+
+                langs: [
+                    ...(resumeData.languages?.langs ?? []),
+                    {
+                        title: "",
+                        experience: "Professional",
+                    },
+                ],
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     const updateLanguages = (
@@ -51,6 +90,17 @@ const LanguageInfoForm = () => {
                 langs: updatedLanguages,
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            languages: {
+                ...resumeData.languages,
+
+                langs: updatedLanguages,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     const handleDeleteLanguages = (i: number) => {
@@ -64,6 +114,17 @@ const LanguageInfoForm = () => {
                 langs: updatedLn,
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            languages: {
+                ...resumeData.languages,
+
+                langs: updatedLn,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     return (

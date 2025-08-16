@@ -3,12 +3,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useResumeData } from "@/state/store";
+import { ResumeDataTypes, useResumeData, useSaveLoader } from "@/state/store";
+import { debounce } from "@/utils/debounce";
+import { saveResume } from "@/utils/saveResume";
 import { Plus, Trash } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 const EducationInfoForm = () => {
     const resumeData = useResumeData((state) => state);
     const setResumeData = useResumeData((state) => state.setResumeData);
+
+    const { setIsloading } = useSaveLoader((state) => state);
+    const { resumeId } = useParams();
+
+    const debouncedSave = useCallback(
+        debounce(async (data: ResumeDataTypes) => {
+            setIsloading(true);
+            try {
+                await saveResume(resumeId ?? "", data);
+                toast.success("Resume Updated");
+            } catch (error) {
+                toast.error("Error while saving");
+            } finally {
+                setIsloading(false);
+            }
+        }, 1500),
+        [resumeId]
+    );
     const addEducations = () => {
         setResumeData({
             ...resumeData,
@@ -27,6 +50,26 @@ const EducationInfoForm = () => {
                 ],
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            educations: {
+                ...resumeData.educations,
+                items: [
+                    ...resumeData.educations.items,
+                    {
+                        degree: "",
+                        university: "",
+                        startingDate: new Date(),
+                        endingDate: new Date(),
+                        courses: "",
+                        location: "",
+                    },
+                ],
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     const handleEducations = (
@@ -58,6 +101,16 @@ const EducationInfoForm = () => {
                 items: updatedEducations,
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            educations: {
+                ...resumeData.educations,
+                items: updatedEducations,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     const handleEndingDate = (i: number, v: boolean) => {
@@ -75,6 +128,16 @@ const EducationInfoForm = () => {
                 items: updatedEducations,
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            educations: {
+                ...resumeData.educations,
+                items: updatedEducations,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     const handleDelete = (i: number) => {
@@ -87,6 +150,16 @@ const EducationInfoForm = () => {
                 items: filtered,
             },
         });
+
+        const updatedInfo = {
+            ...resumeData,
+            educations: {
+                ...resumeData.educations,
+                items: filtered,
+            },
+        };
+
+        debouncedSave(updatedInfo);
     };
 
     return (

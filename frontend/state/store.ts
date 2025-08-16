@@ -119,3 +119,15 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
         },
     })
 );
+
+type ResumeSaveLoader = {
+    isLoading: boolean;
+    setIsloading: (isLoading: boolean) => void;
+};
+
+export const useSaveLoader = create<ResumeSaveLoader>((set) => ({
+    isLoading: false,
+    setIsloading: (isLoading: boolean) => {
+        set({ isLoading });
+    },
+}));
