@@ -10,6 +10,7 @@ import "./config/googleSIgnStrategy";
 import globalErrorHandler from "./middlewares/globalError.middleware";
 import Session from "./models/session.model";
 import companyRouter from "./routes/compnay.routes";
+import imageRouter from "./routes/image.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
 import resumeRouter from "./routes/resume.routes";
@@ -70,6 +71,7 @@ app.use("/skill", skillRouter);
 app.use("/job", jobRouter);
 app.use("/company", companyRouter);
 app.use("/resume", resumeRouter);
+app.use("/image", imageRouter);
 
 app.use(globalErrorHandler);
 

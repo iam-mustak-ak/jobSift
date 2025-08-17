@@ -40,22 +40,15 @@ const PersonalInfoForm = () => {
     const handleInputs = async (e: FormEvent) => {
         const target = e.target as HTMLInputElement;
 
-        let value;
-        if (target.name === "image") {
-            if (target.files && target.files.length > 0) {
-                value = await base64Generator(target.files[0]);
-            } else {
-                value = null;
-            }
-        } else {
-            value = target.value;
-        }
         setResumeData({
             ...persoanlInfoData,
-            [target.name]: value,
+            [target.name]: target.value,
         });
 
-        const updatedInfo = { ...persoanlInfoData, [target.name]: value };
+        const updatedInfo = {
+            ...persoanlInfoData,
+            [target.name]: target.value,
+        };
 
         debouncedSave(updatedInfo);
     };
@@ -69,6 +62,53 @@ const PersonalInfoForm = () => {
         const updatedInfo = { ...persoanlInfoData, about: editrValue };
 
         debouncedSave(updatedInfo);
+    };
+
+    const handleImageUpload = async (e: FormEvent) => {
+        const target = e.target as HTMLInputElement;
+
+        try {
+            if (target.files && target.files.length > 0) {
+                const base64 = await base64Generator(target.files[0]);
+                setResumeData({
+                    ...persoanlInfoData,
+                    image: base64,
+                });
+
+                const formData = new FormData();
+                formData.append("image", target.files[0]);
+
+                const uploadImage = await fetch(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/image/?type=resume&resumeId=${resumeId}`,
+                    {
+                        method: "POST",
+                        credentials: "include",
+
+                        body: formData,
+                    }
+                );
+                const data = await uploadImage.json();
+
+                if (!data.success) {
+                    toast.error("Error Uploading");
+                }
+                setResumeData({
+                    ...persoanlInfoData,
+                    image: data.data,
+                });
+
+                const updatedInfo = {
+                    ...persoanlInfoData,
+                    image: data.data,
+                };
+
+                debouncedSave(updatedInfo);
+            } else {
+                toast.error("Error Uploading");
+            }
+        } catch (err) {
+            toast.error("Somthing is wrong");
+        }
     };
 
     const addSocial = () => {
@@ -163,7 +203,7 @@ const PersonalInfoForm = () => {
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={handleInputs}
+                            onChange={handleImageUpload}
                         />
                     </Label>
                 </div>

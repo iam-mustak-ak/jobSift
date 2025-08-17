@@ -38,7 +38,7 @@ const FirstTemplate: React.FC = () => {
     return (
         <div
             ref={printRef}
-            className="flex items-start gap-5 min-h-[842px] py-5"
+            className="flex items-start gap-5 max-h-[842px] py-5"
         >
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
                 {image && (
