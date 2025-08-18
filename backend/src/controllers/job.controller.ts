@@ -1,8 +1,12 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import Job from "../models/job.model";
 import customError from "../utils/customError";
 
-export const createJobController: RequestHandler = async (req, res, next) => {
+export const createJobController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const {
             title,
@@ -72,7 +76,11 @@ export const createJobController: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getAllJobsController: RequestHandler = async (req, res, next) => {
+export const getAllJobsController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
@@ -120,7 +128,11 @@ export const getAllJobsController: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getJobByIdController: RequestHandler = async (req, res, next) => {
+export const getJobByIdController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { id } = req.params;
 
@@ -147,7 +159,11 @@ export const getJobByIdController: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getFeaturedJobs: RequestHandler = async (req, res, next) => {
+export const getFeaturedJobs = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;

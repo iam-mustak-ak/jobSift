@@ -1,9 +1,13 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import cloudinary from "../config/cloudinary";
 import ImageModel from "../models/images.model";
 import customError from "../utils/customError";
 
-export const postImage: RequestHandler = async (req, res, next) => {
+export const postImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const image = req.file;
     const { type, resumeId, jobId } = req.query;
 
@@ -43,7 +47,11 @@ export const postImage: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getImageById: RequestHandler = async (req, res, next) => {
+export const getImageById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { id } = req.params;
 
     try {

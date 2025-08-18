@@ -1,11 +1,11 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import JobCategory from "../models/jobCategory.model";
 import customError from "../utils/customError";
 
-export const createCategoryController: RequestHandler = async (
-    req,
-    res,
-    next
+export const createCategoryController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const { name, description } = req.body;
@@ -30,10 +30,10 @@ export const createCategoryController: RequestHandler = async (
     }
 };
 
-export const getAllCategoriesController: RequestHandler = async (
-    req,
-    res,
-    next
+export const getAllCategoriesController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
@@ -59,10 +59,10 @@ export const getAllCategoriesController: RequestHandler = async (
     }
 };
 
-export const getCategoryByIdController: RequestHandler = async (
-    req,
-    res,
-    next
+export const getCategoryByIdController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const { id } = req.params;
@@ -87,10 +87,10 @@ export const getCategoryByIdController: RequestHandler = async (
     }
 };
 
-export const updateCategoryController: RequestHandler = async (
-    req,
-    res,
-    next
+export const updateCategoryController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const { id } = req.params;
@@ -120,10 +120,10 @@ export const updateCategoryController: RequestHandler = async (
     }
 };
 
-export const deleteCategoryController: RequestHandler = async (
-    req,
-    res,
-    next
+export const deleteCategoryController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const { id } = req.params;

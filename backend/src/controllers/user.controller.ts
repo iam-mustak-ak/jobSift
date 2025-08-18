@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { error } from "console";
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import redis from "../libs/redis";
@@ -16,7 +16,11 @@ import {
 } from "../utils/otpHelper";
 import { trackResetEmail } from "../utils/resetPasswordHelper";
 import setTokenCookies from "../utils/setTokenCookies";
-export const createUser: RequestHandler = async (req, res, next) => {
+export const createUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { role, name, email, password } = req.body;
 
@@ -56,7 +60,11 @@ export const createUser: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const loginUser: RequestHandler = async (req, res, next) => {
+export const loginUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email, password } = req.body;
 
@@ -98,7 +106,11 @@ export const loginUser: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const verifyUser: RequestHandler = async (req, res, next) => {
+export const verifyUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email, otp } = req.body;
 
@@ -130,7 +142,11 @@ export const verifyUser: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getProfile: RequestHandler = async (req, res, next) => {
+export const getProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const userId = req.params.id;
         const authUser = req.user as { _id?: { toString: () => string } };
@@ -163,7 +179,11 @@ export const getProfile: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const resendOtp: RequestHandler = async (req, res, next) => {
+export const resendOtp = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email } = req.body;
 
@@ -193,7 +213,11 @@ export const resendOtp: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const googleMainController: RequestHandler = (req, res, next) => {
+export const googleMainController = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { mode, role } = req.query;
 
     if (!mode || (mode !== "login" && mode !== "register")) {
@@ -214,7 +238,11 @@ export const googleMainController: RequestHandler = (req, res, next) => {
     })(req, res, next);
 };
 
-export const forgotPassword: RequestHandler = async (req, res, next) => {
+export const forgotPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email } = req.body;
 
@@ -262,7 +290,11 @@ export const forgotPassword: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const resetPassword: RequestHandler = async (req, res, next) => {
+export const resetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { email, resetId, password, confirmPassword } = req.body;
 
@@ -302,7 +334,11 @@ export const resetPassword: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const checkAuth: RequestHandler = async (req, res, next) => {
+export const checkAuth = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const user = req.user;
 
@@ -326,7 +362,11 @@ export const checkAuth: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const logoutUser: RequestHandler = async (req, res, next) => {
+export const logoutUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const user = req.user;
 
@@ -349,7 +389,11 @@ export const logoutUser: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const changePassword: RequestHandler = async (req, res, next) => {
+export const changePassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const user = req.user as { email?: string };
         const { oldPassword, newPassword } = req.body;
@@ -401,7 +445,11 @@ export const changePassword: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const updateSocialLinks: RequestHandler = async (req, res, next) => {
+export const updateSocialLinks = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const user = req.user as { _id?: string };
         const { socialLinks } = req.body;

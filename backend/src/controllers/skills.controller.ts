@@ -1,9 +1,13 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import Skill from "../models/skill.model";
 import customError from "../utils/customError";
 
-export const creatSkillController: RequestHandler = async (req, res, next) => {
+export const creatSkillController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { name, description } = req.body;
 
@@ -27,10 +31,10 @@ export const creatSkillController: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getAllSkillsController: RequestHandler = async (
-    req,
-    res,
-    next
+export const getAllSkillsController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const skills = await Skill.find();
@@ -45,10 +49,10 @@ export const getAllSkillsController: RequestHandler = async (
     }
 };
 
-export const getSkillByIdController: RequestHandler = async (
-    req,
-    res,
-    next
+export const getSkillByIdController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
     try {
         const { id } = req.params;
@@ -73,7 +77,11 @@ export const getSkillByIdController: RequestHandler = async (
     }
 };
 
-export const updateSkillController: RequestHandler = async (req, res, next) => {
+export const updateSkillController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { id } = req.params;
         const { name, description } = req.body;
@@ -102,7 +110,11 @@ export const updateSkillController: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const deleteSkillController: RequestHandler = async (req, res, next) => {
+export const deleteSkillController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { id } = req.params;
 

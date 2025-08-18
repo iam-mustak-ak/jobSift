@@ -1,9 +1,13 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Schema } from "mongoose";
 import Resume from "../models/resume.model";
 import customError from "../utils/customError";
 
-export const createResume: RequestHandler = async (req, res, next) => {
+export const createResume = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const user = req.user;
     const data = req.body;
 
@@ -29,7 +33,11 @@ export const createResume: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getAllResume: RequestHandler = async (req, res, next) => {
+export const getAllResume = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const user = req.user;
     const { _id } = user as { _id: { _id: string } };
 
@@ -52,7 +60,11 @@ export const getAllResume: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getResumeById: RequestHandler = async (req, res, next) => {
+export const getResumeById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { resumeId } = req.params;
 
     console.log(resumeId);
@@ -80,7 +92,11 @@ export const getResumeById: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const saveResume: RequestHandler = async (req, res, next) => {
+export const saveResume = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { resumeUpdateId } = req.params;
     const data = req.body;
     const user = req.user;
@@ -117,7 +133,11 @@ export const saveResume: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const deleteResume: RequestHandler = async (req, res, next) => {
+export const deleteResume = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     const { deleteResumeId } = req.params;
     const user = req.user as { _id: Schema.Types.ObjectId };
 

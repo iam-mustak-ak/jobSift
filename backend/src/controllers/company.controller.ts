@@ -1,7 +1,11 @@
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import Company from "../models/company.model";
 
-export const createCompany: RequestHandler = async (req, res, next) => {
+export const createCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const {} = req.body;
     } catch (err) {
@@ -9,7 +13,11 @@ export const createCompany: RequestHandler = async (req, res, next) => {
     }
 };
 
-export const getAllCompany: RequestHandler = async (req, res, next) => {
+export const getAllCompany = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const allCompnay = await Company.find();
 
