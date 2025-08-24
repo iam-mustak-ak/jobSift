@@ -1,12 +1,15 @@
 "use client";
+import StarRating from "@/components/common/ratingStars";
 import LanguageCard from "@/components/resume/languageCard";
 import ResumeSocial from "@/components/resume/resumeSocial";
 import TemplatesTile from "@/components/resume/templatesTile";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { Fragment, useEffect, useRef } from "react";
 
 const expLevel = {
     Noob: 30,
@@ -29,6 +32,10 @@ const FirstTemplate: React.FC = () => {
         educations,
         experience,
         skills,
+        projects,
+        researches,
+        references,
+        cp,
     } = useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
@@ -36,10 +43,7 @@ const FirstTemplate: React.FC = () => {
     }, []);
 
     return (
-        <div
-            ref={printRef}
-            className="flex items-start gap-5 max-h-[842px] py-5"
-        >
+        <div ref={printRef} className="flex items-start gap-5 h-auto py-5">
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
                 {image && (
                     <Image
@@ -109,6 +113,37 @@ const FirstTemplate: React.FC = () => {
                                         className="rounded-md border border-primary p-2"
                                     >
                                         <p className="text-xs">{v}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {cp.items && (
+                    <div className="mt-4">
+                        <div className="w-full mt-4">
+                            <TemplatesTile title={cp.title} />
+
+                            <div className="mt-4 flex flex-col gap-2">
+                                {cp.items.map((v, i) => (
+                                    <div
+                                        key={i}
+                                        className="rounded-md border border-primary p-2 "
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-base">
+                                                {v.platform}
+                                            </p>
+                                            <StarRating rating={v.rating} />
+                                        </div>
+
+                                        <Link
+                                            href="#"
+                                            className="text-sm text-primary"
+                                        >
+                                            {v.username}
+                                        </Link>
                                     </div>
                                 ))}
                             </div>
@@ -235,6 +270,146 @@ const FirstTemplate: React.FC = () => {
                                     <p className="text-sm">{v.experience}</p>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {projects.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={projects.title} />
+
+                        <div className="flex flex-col gap-3">
+                            {projects.items.map((v, i) => (
+                                <div key={i} className="mt-2">
+                                    <h6 className="text-base font-semibold text-primary">
+                                        {v.title}
+                                    </h6>
+                                    <p className="text-sm">{v.description}</p>
+                                    <div className="flex items-center gap-4 mt-3">
+                                        {v.livelink && (
+                                            <Link
+                                                href={v.livelink ?? "#"}
+                                                className="flex items-center gap-2 text-sm"
+                                            >
+                                                <span>Visit</span>
+                                                <ExternalLink className="w-3 " />
+                                            </Link>
+                                        )}
+                                        {v.codelink && (
+                                            <Link
+                                                href={v.codelink ?? "#"}
+                                                className="flex items-center gap-2 text-sm"
+                                            >
+                                                <span>Code</span>
+                                                <ExternalLink className="w-3 " />
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {researches.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={researches.title} />
+
+                        <div className="flex flex-col gap-3">
+                            {researches.items.map((v, i) => (
+                                <div key={i} className="mt-2">
+                                    <h6 className="text-sm font-semibold ">
+                                        <span>Title: </span>
+                                        <span className="text-primary">
+                                            {v.title}
+                                        </span>
+                                    </h6>
+
+                                    <p className="text-sm ">
+                                        <span>Year Of Publish: </span>
+                                        <span className="text-primary">
+                                            {" "}
+                                            {new Date(
+                                                v.yearofpublish
+                                            ).getFullYear()}
+                                        </span>
+                                    </p>
+                                    <p className="text-sm">
+                                        <span>Publisher: </span>{" "}
+                                        <span className="text-primary">
+                                            {" "}
+                                            {v.publisher}
+                                        </span>
+                                    </p>
+
+                                    <Link
+                                        href={v.link ?? "#"}
+                                        className="flex items-center gap-2 text-sm mt-3"
+                                    >
+                                        <span>Visit</span>
+                                        <ExternalLink className="w-3 " />
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {references.items.length > 0 && (
+                    <div className="mt-5 pr-5">
+                        <TemplatesTile title={references.title} />
+
+                        <div className="flex flex-col gap-3">
+                            <table>
+                                <tbody>
+                                    {references.items.map((v, i) => (
+                                        <Fragment key={i}>
+                                            <tr>
+                                                <td>{i + 1}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border text-xs">
+                                                    Name
+                                                </td>
+                                                <td className="border text-xs">
+                                                    {v.name}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border text-xs">
+                                                    Institute/Compnay
+                                                </td>
+                                                <td className="border text-xs">
+                                                    {v.institute}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border text-xs">
+                                                    Position
+                                                </td>
+                                                <td className="border text-xs">
+                                                    {v.position}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border text-xs">
+                                                    Phone
+                                                </td>
+                                                <td className="border text-xs">
+                                                    {v.phone}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="border text-xs">
+                                                    Email
+                                                </td>
+                                                <td className="border text-xs">
+                                                    {v.email}
+                                                </td>
+                                            </tr>
+                                        </Fragment>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

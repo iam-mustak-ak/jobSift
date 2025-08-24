@@ -60,6 +60,17 @@ const resumeSchema = new Schema<IResumeDocument, ResumeModel>(
                 },
             ],
         },
+        projects: {
+            title: { type: String },
+            items: [
+                {
+                    title: { type: String },
+                    description: { type: String },
+                    livelink: { type: String },
+                    codelink: { type: String },
+                },
+            ],
+        },
 
         skills: {
             title: { type: String },
@@ -76,6 +87,39 @@ const resumeSchema = new Schema<IResumeDocument, ResumeModel>(
         user: {
             type: Schema.Types.ObjectId,
             ref: "user",
+        },
+        researches: {
+            title: { type: String },
+            items: [
+                {
+                    title: { type: String },
+                    yearofpublish: { type: Date },
+                    publisher: { type: String },
+                    link: { type: String },
+                },
+            ],
+        },
+        references: {
+            title: { type: String },
+            items: [
+                {
+                    name: { type: String },
+                    institute: { type: String },
+                    position: { type: String },
+                    phone: { type: String },
+                    email: { type: String },
+                },
+            ],
+        },
+        cp: {
+            title: { type: String },
+            items: [
+                {
+                    platform: { type: String },
+                    rating: { type: Number },
+                    username: { type: String },
+                },
+            ],
         },
     },
     {

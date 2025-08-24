@@ -79,7 +79,7 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.606 0.25 292.717);
   --sidebar-background: 0 0% 98%;
-
+  --rating: 2.5
 }
 
 .dark {
@@ -132,4 +132,26 @@
 
 .ql-container {
   height: 300px !important;
+}
+
+/* .star-rating {
+  display: block;
+  position: relative;
+  height: 30px;
+} */
+
+/* globals.css */
+.star-rating::after {
+  content: "★★★★★";
+  font-size: 1.2rem;
+
+  background: linear-gradient(90deg,
+      #facc15 calc(var(--rating)/ 5 * 100%),
+      #d1d5db calc(var(--rating)/ 5 * 100%));
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
 }

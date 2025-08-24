@@ -40,11 +40,47 @@ interface IResume {
             location?: string;
         }[];
     };
+    projects?: {
+        title?: string;
+        items?: {
+            title?: string;
+            description?: string;
+            livelink?: string;
+            codelink?: string;
+        }[];
+    };
     skills?: {
         title?: string;
         items?: {
             skill?: string;
             experience?: "Noob" | "Medium" | "Professional" | "Expert";
+        }[];
+    };
+    researches: {
+        title?: string;
+        items?: {
+            title?: string;
+            yearofpublish?: Date | string;
+            publisher?: string;
+            link?: string;
+        }[];
+    };
+    references: {
+        title?: string;
+        items?: {
+            name?: string;
+            position?: string;
+            institute?: string;
+            phone?: string;
+            email?: string;
+        }[];
+    };
+    cp: {
+        title?: string;
+        items?: {
+            platform?: string;
+            rating?: number;
+            username?: string;
         }[];
     };
     user: Schema.Types.ObjectId;

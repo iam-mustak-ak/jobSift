@@ -26,7 +26,6 @@ const ResumeHeader: React.FC = () => {
 
     const { setIsloading, isLoading } = useSaveLoader((state) => state);
 
-    const reactToPrintFn = useReactToPrint({ contentRef: printRef });
     const { resumeId } = useParams();
 
     const resumeData = useResumeData((state) => state);
@@ -43,7 +42,15 @@ const ResumeHeader: React.FC = () => {
         skills,
         socials,
         tagline,
+        references,
+        researches,
+        projects,
+        cp,
     } = useResumeData((state) => state);
+    const reactToPrintFn = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: resumeName ?? "Untitled",
+    });
     const resumeFormData = {
         about,
         educations,
@@ -56,6 +63,10 @@ const ResumeHeader: React.FC = () => {
         skills,
         socials,
         tagline,
+        references,
+        researches,
+        projects,
+        cp,
     };
 
     const debouncedSave = useCallback(
