@@ -117,7 +117,7 @@ const PersonalInfoForm = () => {
             socials: [
                 ...(persoanlInfoData.socials ?? []),
                 {
-                    type: "email",
+                    socialType: "email",
                     link: "",
                 },
             ],
@@ -128,7 +128,7 @@ const PersonalInfoForm = () => {
             socials: [
                 ...(persoanlInfoData.socials ?? []),
                 {
-                    type: "email",
+                    socialType: "email",
                     link: "",
                 },
             ],
@@ -146,7 +146,7 @@ const PersonalInfoForm = () => {
         const updatedSocials = [...(persoanlInfoData.socials ?? [])];
 
         if (!updatedSocials[index]) {
-            updatedSocials[index] = { type: "email", link: "" };
+            updatedSocials[index] = { socialType: "email", link: "" };
         }
 
         updatedSocials[index][name] = value;
@@ -160,6 +160,8 @@ const PersonalInfoForm = () => {
             ...persoanlInfoData,
             socials: updatedSocials,
         };
+
+        console.log(updatedSocials);
         debouncedSave(updatedInfo);
     };
 
@@ -233,17 +235,17 @@ const PersonalInfoForm = () => {
                 <div key={i} className="flex items-end gap-3 mb-4">
                     <div className="w-auto">
                         <label
-                            htmlFor="type"
+                            htmlFor="socialType"
                             className="mb-2 block text-sm font-medium text-foreground"
                         >
                             Select Social Handle
                         </label>
                         <select
-                            id="type"
-                            name="type"
+                            id="socialType"
+                            name="socialType"
                             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             onChange={(e) => handleSocial(i, e)}
-                            value={v.type ?? "email"}
+                            value={v.socialType ?? "email"}
                         >
                             <option value="email">email</option>
                             <option value="linkedin">linkedin</option>

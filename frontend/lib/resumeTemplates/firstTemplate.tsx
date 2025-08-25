@@ -65,7 +65,7 @@ const FirstTemplate: React.FC = () => {
                                     link="#"
                                     text={socialItem?.link}
                                     type={
-                                        socialItem?.type as
+                                        socialItem?.socialType as
                                             | "email"
                                             | "linkedin"
                                             | "github"
@@ -120,7 +120,7 @@ const FirstTemplate: React.FC = () => {
                     </div>
                 )}
 
-                {cp.items && (
+                {educations.items.length > 0 && (
                     <div className="mt-4">
                         <div className="w-full mt-4">
                             <TemplatesTile title={cp.title} />
