@@ -104,7 +104,7 @@ const FirstTemplate: React.FC = () => {
                 {interests.items && (
                     <div className="mt-4">
                         <div className="w-full mt-4">
-                            <TemplatesTile title={interests.title} />
+                            <TemplatesTile title={interests?.title} />
 
                             <div className="mt-4 flex flex-col gap-2">
                                 {interests.items.split(",").map((v, i) => (
@@ -123,7 +123,7 @@ const FirstTemplate: React.FC = () => {
                 {educations.items.length > 0 && (
                     <div className="mt-4">
                         <div className="w-full mt-4">
-                            <TemplatesTile title={cp.title} />
+                            <TemplatesTile title={cp?.title} />
 
                             <div className="mt-4 flex flex-col gap-2">
                                 {cp.items.map((v, i) => (
@@ -170,7 +170,7 @@ const FirstTemplate: React.FC = () => {
 
                 {educations.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={educations.title} />
+                        <TemplatesTile title={educations?.title} />
 
                         <div className="flex flex-col gap-3">
                             {educations.items.map((v, i) => (
@@ -211,7 +211,7 @@ const FirstTemplate: React.FC = () => {
 
                 {experience.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={experience.title} />
+                        <TemplatesTile title={experience?.title} />
 
                         <div className="flex flex-col gap-3">
                             {experience.items.map((v, i) => (
@@ -252,7 +252,7 @@ const FirstTemplate: React.FC = () => {
 
                 {skills.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={skills.title ?? "Skills"} />
+                        <TemplatesTile title={skills?.title ?? "Skills"} />
 
                         <div className="mt-2">
                             {skills.items.map((v, i) => (
@@ -276,7 +276,7 @@ const FirstTemplate: React.FC = () => {
 
                 {projects.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={projects.title ?? "Projects"} />
+                        <TemplatesTile title={projects?.title ?? "Projects"} />
 
                         <div className="flex flex-col gap-3">
                             {projects.items.map((v, i) => (
@@ -313,7 +313,7 @@ const FirstTemplate: React.FC = () => {
 
                 {researches.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={researches.title} />
+                        <TemplatesTile title={researches?.title} />
 
                         <div className="flex flex-col gap-3">
                             {researches.items.map((v, i) => (
@@ -356,7 +356,7 @@ const FirstTemplate: React.FC = () => {
                 )}
                 {references.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={references.title} />
+                        <TemplatesTile title={references?.title} />
 
                         <div className="flex flex-col gap-3">
                             <table>
