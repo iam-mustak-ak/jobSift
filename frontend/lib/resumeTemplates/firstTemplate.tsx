@@ -276,7 +276,7 @@ const FirstTemplate: React.FC = () => {
 
                 {projects.items.length > 0 && (
                     <div className="mt-5 pr-5">
-                        <TemplatesTile title={projects.title} />
+                        <TemplatesTile title={projects.title ?? "Projects"} />
 
                         <div className="flex flex-col gap-3">
                             {projects.items.map((v, i) => (
@@ -291,7 +291,7 @@ const FirstTemplate: React.FC = () => {
                                                 href={v.livelink ?? "#"}
                                                 className="flex items-center gap-2 text-sm"
                                             >
-                                                <span>Visit</span>
+                                                <span>{v.livelink}</span>
                                                 <ExternalLink className="w-3 " />
                                             </Link>
                                         )}
@@ -300,7 +300,7 @@ const FirstTemplate: React.FC = () => {
                                                 href={v.codelink ?? "#"}
                                                 className="flex items-center gap-2 text-sm"
                                             >
-                                                <span>Code</span>
+                                                <span>{v.codelink}</span>
                                                 <ExternalLink className="w-3 " />
                                             </Link>
                                         )}
@@ -346,7 +346,7 @@ const FirstTemplate: React.FC = () => {
                                         href={v.link ?? "#"}
                                         className="flex items-center gap-2 text-sm mt-3"
                                     >
-                                        <span>Visit</span>
+                                        <span>{v.link}</span>
                                         <ExternalLink className="w-3 " />
                                     </Link>
                                 </div>
