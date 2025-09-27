@@ -36,4 +36,9 @@ export const navbarItems = [
         name: "Candidates",
         href: "/candidates",
     },
+    {
+        id: 5,
+        name: "Analyze Resume",
+        href: "/analyze-resume",
+    },
 ];
