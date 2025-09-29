@@ -14,6 +14,7 @@ import imageRouter from "./routes/image.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
 import resumeRouter from "./routes/resume.routes";
+import analyzeRouter from "./routes/resumeAnalyze.route";
 import skillRouter from "./routes/skill.routes";
 import userRouter from "./routes/user.routes";
 dotenv.config();
@@ -72,6 +73,7 @@ app.use("/job", jobRouter);
 app.use("/company", companyRouter);
 app.use("/resume", resumeRouter);
 app.use("/image", imageRouter);
+app.use("/analyze", analyzeRouter);
 
 app.use(globalErrorHandler);
 
