@@ -6,7 +6,7 @@ const openAi = async (prompt: string) => {
     const res = await client.chat.completions.create({
         model,
         temperature: 0,
-        response_format: { type: "json_object" }, // JSON mode
+        response_format: { type: "json_object" },
         messages: [{ role: "user", content: prompt }],
     });
     return res.choices?.[0]?.message?.content || "{}";
