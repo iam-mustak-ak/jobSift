@@ -10,16 +10,6 @@ import {
 
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 
-const atsScore = 90;
-
-const chartData = [
-    {
-        browser: "safari",
-        atsScore,
-        fill: atsScore < 50 ? "red" : "var(--color-safari)",
-    },
-];
-
 const chartConfig = {
     atsScore: {
         label: "Ats-Score",
@@ -30,7 +20,15 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export default function AtsChart() {
+export default function AtsChart({ atsScore = 60 }: { atsScore: number }) {
+    const chartData = [
+        {
+            browser: "safari",
+            atsScore,
+            fill: atsScore < 50 ? "red" : "var(--color-safari)",
+        },
+    ];
+
     const endAngle = (360 * atsScore) / 100;
 
     return (
