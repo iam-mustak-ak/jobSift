@@ -36,7 +36,7 @@ interface IUser {
         url: string;
         logo: string;
     }[];
-    skills?: Schema.Types.ObjectId[];
+    skills?: String[];
     educations?: {
         degree?: string;
         institution?: string;

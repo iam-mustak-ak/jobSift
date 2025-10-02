@@ -17,7 +17,7 @@ export const analyzeReumeController: RequestHandler = async (
 
         if (!file) return res.status(400).json({ error: "PDF file required" });
         if (file.mimetype !== "application/pdf") {
-            return customError(400, "Only PDF files are accepted");
+            return next(customError(400, "Only PDF files are accepted"));
         }
 
         // Extract text from PDF buffer
@@ -25,9 +25,11 @@ export const analyzeReumeController: RequestHandler = async (
         let resumeText = (data.text || "").trim();
 
         if (!resumeText) {
-            return customError(
-                422,
-                "No text extracted. This PDF may be image-based. Add OCR (e.g., tesseract-ocr) to continue."
+            return next(
+                customError(
+                    422,
+                    "No text extracted. This PDF may be image-based. Add OCR (e.g., tesseract-ocr) to continue."
+                )
             );
         }
 

@@ -12,6 +12,7 @@ import {
     logoutUser,
     resendOtp,
     resetPassword,
+    updateProfile,
     updateSocialLinks,
     verifyUser,
 } from "../controllers/user.controller";
@@ -87,6 +88,18 @@ userRouter.patch(
     setAuthorization,
     authecticationMiddleware,
     updateSocialLinks
+);
+userRouter.patch(
+    "/update-social-links",
+    setAuthorization,
+    authecticationMiddleware,
+    updateSocialLinks
+);
+userRouter.patch(
+    "/update-profile",
+    setAuthorization,
+    authecticationMiddleware,
+    updateProfile
 );
 
 export default userRouter;

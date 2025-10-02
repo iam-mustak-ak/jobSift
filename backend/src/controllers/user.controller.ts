@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { error } from "console";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import redis from "../libs/redis";
@@ -486,5 +486,35 @@ export const updateSocialLinks = async (
         });
     } catch (error) {
         next(error);
+    }
+};
+
+export const updateProfile: RequestHandler = async (req, res, next) => {
+    try {
+        const user = req.user as { _id?: string };
+        if (!user || !user._id) {
+            return next(customError(404, "User not found"));
+        }
+
+        const updates = req.body;
+
+        // Find and update the user
+        const updatedUser = await User.findByIdAndUpdate(
+            user._id,
+            { $set: updates },
+            { new: true, runValidators: true }
+        ).select("-password");
+
+        if (!updatedUser) {
+            return next(customError(404, "User not found"));
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            user: updatedUser,
+        });
+    } catch (err) {
+        next(err);
     }
 };

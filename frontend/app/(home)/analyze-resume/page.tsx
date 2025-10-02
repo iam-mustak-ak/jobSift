@@ -44,7 +44,6 @@ const Page = () => {
     };
 
     const data = result?.data;
-    console.log(Object.entries(data.sectionQuality));
 
     return (
         <ContainerWrapper>

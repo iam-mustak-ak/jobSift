@@ -66,7 +66,9 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                     />
                     <IconInfo
                         icon={<MapPin className="text-muted-foreground w-4 " />}
-                        label={data.phone ? data.address : "Add your address"}
+                        label={
+                            data.location ? data.location : "Add your address"
+                        }
                     />
                 </div>
             </CardContent>

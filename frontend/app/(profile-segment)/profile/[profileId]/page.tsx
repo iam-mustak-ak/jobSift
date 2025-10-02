@@ -16,24 +16,17 @@ const Page = async ({ params }: ProfilePrps) => {
         <div className="mt-5 columns-2 ">
             <BasicInfo data={data} />
             <SocialInfo data={data} />
-            <EducationInfo />
             <ProfileCompleteIndicator />
+            <EducationInfo />
             <Card className="break-inside-avoid mb-4">
                 <CardHeader>
                     <CardTitle>About Me</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Nihil sint explicabo quia vel magnam mollitia
-                        quod! Quis omnis harum quibusdam, at esse, voluptatem
-                        natus, assumenda ullam quidem rem qui dolor. Lorem ipsum
-                        dolor, sit amet consectetur adipisicing elit. Quo
-                        aspernatur quisquam suscipit quaerat iure earum iste
-                        distinctio repellendus necessitatibus fugit
-                        voluptatibus, officiis sed facere itaque, in atque
-                        porro, quis numquam?
-                    </p>
+                    <div
+                        className="text-muted-foreground prose"
+                        dangerouslySetInnerHTML={{ __html: data.about }}
+                    ></div>
                 </CardContent>
             </Card>
         </div>

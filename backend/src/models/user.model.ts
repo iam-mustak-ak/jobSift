@@ -24,7 +24,7 @@ const userSchema = new Schema<IUserDocument, UserModel>(
         phone: { type: String },
         location: String,
         experience: String,
-        skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+        skills: [String],
         bio: {
             type: String,
             default: "",
