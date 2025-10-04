@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from "@/state/store";
 import { Loader2, Plus, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,11 +32,11 @@ type SocialLink = {
     logo: string;
 };
 
-const SocialInfo = ({ data }: { data: Record<string, any> }) => {
-    const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
-        // { platform: "", url: "", logo: "" },
-        ...data.socialLinks,
-    ]);
+const SocialInfo = () => {
+    const { user, setAuth } = useAuthStore((state) => state);
+
+    const socialLinks: SocialLink[] = user?.socialLinks || [];
+
     const [loading, setLoading] = useState(false);
 
     const handleAddSocial = () => {
@@ -43,40 +44,37 @@ const SocialInfo = ({ data }: { data: Record<string, any> }) => {
             return toast.error("You can only add up to 6 social links.");
         }
 
-        setSocialLinks((prevLinks) => [
-            ...prevLinks,
-            { platform: "", url: "", logo: "" },
-        ]);
+        const updated = [...socialLinks, { platform: "", url: "", logo: "" }];
+        setAuth({ ...user, socialLinks: updated });
     };
 
     const handleRemoveSocial = (index: number) => {
-        setSocialLinks((prevLinks) => prevLinks.filter((_, i) => i !== index));
+        const updated = socialLinks.filter((_, i) => i !== index);
+        setAuth({ ...user, socialLinks: updated });
     };
 
     const handleChangeSocial = (index: number, e: any) => {
         const { name, value } = e.target;
-        setSocialLinks((prevLinks) =>
-            prevLinks.map((link, i) =>
-                i === index ? { ...link, [name]: value } : link
-            )
+        const updated = socialLinks.map((link, i) =>
+            i === index ? { ...link, [name]: value } : link
         );
+        setAuth({ ...user, socialLinks: updated });
     };
+
+    console.log(user);
 
     const handleSelectChange = (index: number, value: string) => {
-        setSocialLinks((prevLinks) =>
-            prevLinks.map((link, i) =>
-                i === index
-                    ? {
-                          ...link,
-                          platform: value,
-                          logo: `/${value?.toLowerCase()}.svg`,
-                      }
-                    : link
-            )
+        const updated = socialLinks.map((link, i) =>
+            i === index
+                ? {
+                      ...link,
+                      platform: value,
+                      logo: `/${value?.toLowerCase()}.svg`,
+                  }
+                : link
         );
+        setAuth({ ...user, socialLinks: updated });
     };
-
-    console.log(socialLinks);
 
     const handleUpdateSocialLinks = async () => {
         setLoading(true);
@@ -161,18 +159,9 @@ const SocialInfo = ({ data }: { data: Record<string, any> }) => {
                     <Plus />
                     Add
                 </Button>
-                {socialLinks.length > 0 && (
-                    <Button
-                        disabled={loading}
-                        onClick={handleUpdateSocialLinks}
-                    >
-                        {loading ? (
-                            <Loader2 className="animate-spin" />
-                        ) : (
-                            "Save"
-                        )}
-                    </Button>
-                )}
+                <Button disabled={loading} onClick={handleUpdateSocialLinks}>
+                    {loading ? <Loader2 className="animate-spin" /> : "Save"}
+                </Button>
             </CardFooter>
         </Card>
     );

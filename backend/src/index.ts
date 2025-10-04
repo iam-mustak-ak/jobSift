@@ -13,6 +13,7 @@ import companyRouter from "./routes/compnay.routes";
 import imageRouter from "./routes/image.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
+import matchjobRoute from "./routes/matchJob.routes";
 import resumeRouter from "./routes/resume.routes";
 import analyzeRouter from "./routes/resumeAnalyze.route";
 import skillRouter from "./routes/skill.routes";
@@ -74,6 +75,7 @@ app.use("/company", companyRouter);
 app.use("/resume", resumeRouter);
 app.use("/image", imageRouter);
 app.use("/analyze", analyzeRouter);
+app.use("/match-job", matchjobRoute);
 
 app.use(globalErrorHandler);
 

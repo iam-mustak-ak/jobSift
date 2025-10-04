@@ -71,6 +71,16 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                         }
                     />
                 </div>
+                <Separator className="my-5" />
+
+                <div>
+                    <CardTitle className="mb-5">Skills</CardTitle>
+                    <ul className="list-disc pl-5">
+                        {data?.skills.map((v: string, i: number) => (
+                            <li key={i}>{v}</li>
+                        ))}
+                    </ul>
+                </div>
             </CardContent>
         </Card>
     );

@@ -15,9 +15,6 @@ const Page = async ({ params }: ProfilePrps) => {
     return (
         <div className="mt-5 columns-2 ">
             <BasicInfo data={data} />
-            <SocialInfo data={data} />
-            <ProfileCompleteIndicator />
-            <EducationInfo />
             <Card className="break-inside-avoid mb-4">
                 <CardHeader>
                     <CardTitle>About Me</CardTitle>
@@ -29,6 +26,9 @@ const Page = async ({ params }: ProfilePrps) => {
                     ></div>
                 </CardContent>
             </Card>
+            <ProfileCompleteIndicator />
+            <SocialInfo />
+            <EducationInfo />
         </div>
     );
 };

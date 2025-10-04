@@ -21,7 +21,6 @@ const EducationCard = ({ data, onRemove, onEdit }: Education) => {
                 <p className="text-sm">Started At: {data?.startDate}</p>
                 <p className="text-sm">End: {data?.endDate}</p>
             </div>
-
             <button
                 onClick={onEdit}
                 className="text-blue-500 hover:text-blue-700 absolute right-14 top-5 cursor-pointer"
