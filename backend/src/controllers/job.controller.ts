@@ -7,6 +7,8 @@ export const createJobController = async (
     res: Response,
     next: NextFunction
 ) => {
+    const authUser = req.user as { _id?: { toString: () => string } };
+
     try {
         const {
             title,
@@ -16,7 +18,6 @@ export const createJobController = async (
             location,
             salaryRange,
             experienceLevel,
-            recruiter,
             company,
             skillsRequired,
             jobCategory,
@@ -53,7 +54,7 @@ export const createJobController = async (
             location,
             salaryRange,
             experienceLevel,
-            recruiter,
+            recruiter: authUser._id,
             company,
             skillsRequired,
             jobCategory,

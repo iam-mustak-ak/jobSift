@@ -1,5 +1,9 @@
+"use client";
+
 import { formatData } from "@/utils/formateData";
-import React from "react";
+import { Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import ComboBox from "../ui/comboBox";
@@ -9,114 +13,379 @@ import CustomInput from "./customInput";
 import CustomSelect from "./customSelect";
 import EditorWrapper from "./EditorWrapper";
 
-const JobPostForm: React.FC<{
+interface JobPostFormProps {
     categories: Record<string, any>[];
     skills: Record<string, any>[];
     company: Record<string, any>[];
-}> = ({ categories, skills, company }) => {
+}
+
+const JobPostForm: React.FC<JobPostFormProps> = ({
+    categories,
+    skills,
+    company,
+}) => {
     const formattedCategories = formatData(categories);
     const formattedSkills = formatData(skills);
-    const formattedCompnay = formatData(company);
+    const formattedCompany = formatData(company);
 
-    console.log(formattedCompnay);
+    const [postLoading, setPostLoading] = useState(false);
+    const [formValue, setFormValue] = useState({
+        title: "",
+        jobType: "full-time",
+        employmentMode: "Remote",
+        location: "Sylhet",
+        company: "",
+        salaryRange: { min: 0, max: 0 },
+        experienceLevel: "lead",
+        skills: [] as Option[],
+        categories: [] as Option[],
+        description: "",
+        deadline: "",
+        tags: [] as string[],
+        tagsInput: "",
+    });
 
+    // -----------------------------
+    // -----------------------------
+    const handleChange = (key: string, value: any) => {
+        setFormValue((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const handleTagsChange = (value: string) => {
+        const tagsArray = value
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+
+        setFormValue((prev) => ({
+            ...prev,
+            tagsInput: value,
+            tags: tagsArray,
+        }));
+    };
+
+    // -----------------------------
+    // -----------------------------
+    const validateForm = () => {
+        if (!formValue.title.trim()) return "Job title is required";
+        if (!formValue.company) return "Please select a company";
+        if (!formValue.skills.length) return "Select at least one skill";
+        if (!formValue.categories.length) return "Select at least one category";
+        if (!formValue.description.trim()) return "Job description is required";
+        if (!formValue.deadline) return "Deadline is required";
+
+        const min = formValue.salaryRange.min;
+        const max = formValue.salaryRange.max;
+
+        if (
+            (formValue.salaryRange.min && isNaN(min)) ||
+            (formValue.salaryRange.max && isNaN(max))
+        ) {
+            return "Salary must be valid numbers";
+        }
+
+        if (min > max) return "Minimum salary cannot exceed maximum salary";
+
+        return null;
+    };
+
+    // -----------------------------
+    // -----------------------------
+    const createJob = async (isActive: boolean) => {
+        const formData = {
+            title: formValue.title,
+            jobType: formValue.jobType,
+            employmentMode: formValue.employmentMode,
+            location: formValue.location,
+            company: formValue.company,
+            salaryRange: formValue.salaryRange,
+            experienceLevel: formValue.experienceLevel,
+            skillsRequired: formValue.skills.map((v) => v.id),
+            jobCategory: formValue.categories.map((v) => v.id),
+            description: formValue.description,
+            deadline: formValue.deadline,
+            tags: formValue.tags,
+            isActive,
+        };
+
+        console.log(formValue);
+
+        setPostLoading(true);
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/job/create`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(formData),
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || response.statusText);
+            }
+
+            const result = await response.json();
+            toast.success(
+                isActive ? "Job posted successfully!" : "Draft saved!"
+            );
+            console.log(
+                isActive ? "✅ Job posted:" : "📝 Draft saved:",
+                result
+            );
+
+            // reset form
+            setFormValue({
+                title: "",
+                jobType: "full-time",
+                employmentMode: "Remote",
+                location: "Sylhet",
+                company: "",
+                salaryRange: { min: 0, max: 0 },
+                experienceLevel: "lead",
+                skills: [],
+                categories: [],
+                description: "",
+                deadline: "",
+                tags: [],
+                tagsInput: "",
+            });
+        } catch (err: any) {
+            console.error("❌ Job save failed:", err);
+            toast.error(
+                isActive
+                    ? "Failed to post job. Please try again."
+                    : "Failed to save draft."
+            );
+        } finally {
+            setPostLoading(false);
+        }
+    };
+
+    // -----------------------------
+    // -----------------------------
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const errorMsg = validateForm();
+        if (errorMsg) {
+            toast.error(errorMsg);
+            return;
+        }
+        await createJob(true);
+    };
+
+    const handleSaveDraft = async () => {
+        if (!formValue.title.trim()) {
+            toast.error("Job title is required to save draft");
+            return;
+        }
+        await createJob(false);
+    };
+
+    // -----------------------------
+    // -----------------------------
     return (
         <div className="max-w-5xl mx-auto py-4 mt-10">
             <Card>
                 <CardContent>
-                    <form action="" className="grid gap-5">
+                    <form onSubmit={handleSubmit} className="grid gap-5">
+                        {/* Title */}
                         <CustomInput
                             id="title"
                             label="Title"
                             type="text"
                             name="title"
                             placeholder="Job Title"
+                            value={formValue.title}
+                            onChange={(e: any) =>
+                                handleChange("title", e.target.value)
+                            }
                         />
+
+                        {/* Two-column section */}
                         <div className="grid md:grid-cols-2 gap-4">
                             <CustomSelect
                                 label="Job Type"
-                                options={["full-time"]}
-                                defaultValue="full-time"
-                                name="jobType"
+                                options={["full-time", "part-time", "contract"]}
+                                value={formValue.jobType}
+                                onChangeValue={(val: string) =>
+                                    handleChange("jobType", val)
+                                }
                             />
+
                             <CustomSelect
                                 label="Employment Type"
                                 options={["Remote", "Onsite"]}
-                                defaultValue="Remote"
-                                name="employmentMode"
+                                value={formValue.employmentMode}
+                                onChangeValue={(val: string) =>
+                                    handleChange("employmentMode", val)
+                                }
                             />
 
                             <ComboBox
                                 name="location"
-                                placeholder="Search Location"
                                 title="Location"
+                                placeholder="Search Location"
+                                value={formValue.location}
                                 values={[
+                                    { value: "Sylhet", label: "Sylhet" },
+                                    { value: "Dhaka", label: "Dhaka" },
                                     {
-                                        value: "Sylhet",
-                                        label: "sylhet",
+                                        value: "Chittagong",
+                                        label: "Chittagong",
                                     },
                                 ]}
+                                setValue={(val: string) =>
+                                    handleChange("location", val)
+                                }
                             />
+
                             <ComboBox
                                 name="company"
-                                placeholder="Search Companies"
                                 title="Company"
-                                values={formattedCompnay.map(
+                                placeholder="Search Companies"
+                                value={formValue.company}
+                                values={formattedCompany.map(
                                     (item: Option) => ({
-                                        value: String(item.value ?? ""),
+                                        value: String(item.id ?? ""),
                                         label: String(item.label ?? ""),
                                     })
                                 )}
+                                setValue={(val: string) =>
+                                    handleChange("company", val)
+                                }
                             />
+
+                            {/* Salary */}
                             <div className="w-full">
-                                <Label className="mb-3">Salary</Label>
-                                <div className="flex items-center justify-between w-full gap-4">
+                                <Label className="mb-3">Salary Range</Label>
+                                <div className="flex gap-4">
                                     <CustomInput
                                         id="min"
-                                        placeholder="Mininum Salary"
+                                        placeholder="Min"
                                         type="text"
+                                        value={String(
+                                            formValue.salaryRange.min
+                                        )}
+                                        onChange={(e: any) =>
+                                            handleChange("salaryRange", {
+                                                ...formValue.salaryRange,
+                                                min: Number(e.target.value),
+                                            })
+                                        }
                                     />
                                     <CustomInput
                                         id="max"
-                                        placeholder="Maximum Salary"
+                                        placeholder="Max"
                                         type="text"
+                                        value={String(
+                                            formValue.salaryRange.max
+                                        )}
+                                        onChange={(e: any) =>
+                                            handleChange("salaryRange", {
+                                                ...formValue.salaryRange,
+                                                max: Number(e.target.value),
+                                            })
+                                        }
                                     />
                                 </div>
                             </div>
 
-                            <CustomSelect
-                                label="Experience Level"
-                                options={["Lead", "Junior", "Senior"]}
-                                defaultValue="Lead"
-                                name="experienceLevel"
+                            {/* Deadline */}
+                            <CustomInput
+                                id="deadline"
+                                label="Deadline"
+                                type="date"
+                                value={formValue.deadline}
+                                onChange={(e: any) =>
+                                    handleChange("deadline", e.target.value)
+                                }
                             />
 
-                            <div>
-                                <Label className="mb-3">Skill Required</Label>
+                            {/* Tags */}
+                            <CustomInput
+                                id="tags"
+                                label="Tags"
+                                placeholder="Comma separated (e.g. frontend, react)"
+                                type="text"
+                                value={formValue.tagsInput}
+                                onChange={(e: any) =>
+                                    handleTagsChange(e.target.value)
+                                }
+                            />
 
+                            {/* Experience */}
+                            <CustomSelect
+                                label="Experience Level"
+                                options={["entry", "mid", "senior", "lead"]}
+                                value={formValue.experienceLevel}
+                                onChangeValue={(val: string) =>
+                                    handleChange("experienceLevel", val)
+                                }
+                            />
+
+                            {/* Skills */}
+                            <div>
+                                <Label className="mb-3">Skills Required</Label>
                                 <MultipleSelector
                                     defaultOptions={formattedSkills}
-                                    placeholder="Selecet Skills"
+                                    placeholder="Select Skills"
+                                    value={formValue.skills}
+                                    onChange={(val: Option[]) =>
+                                        handleChange("skills", val)
+                                    }
                                 />
                             </div>
+
+                            {/* Categories */}
                             <div>
-                                <Label className="mb-3">Job Category</Label>
+                                <Label className="mb-3">Job Categories</Label>
                                 <MultipleSelector
                                     defaultOptions={formattedCategories}
-                                    placeholder="Selecet Categories"
+                                    placeholder="Select Categories"
+                                    value={formValue.categories}
+                                    onChange={(val: Option[]) =>
+                                        handleChange("categories", val)
+                                    }
                                 />
                             </div>
                         </div>
 
+                        {/* Description */}
                         <div>
                             <Label className="mb-3">Job Description</Label>
-
-                            <EditorWrapper />
+                            <EditorWrapper
+                                value={formValue.description}
+                                setValue={(val: string) =>
+                                    handleChange("description", val)
+                                }
+                            />
                         </div>
 
-                        <div className="flex items-center gap-3 ">
-                            <Button variant="outline">Save Draft</Button>
-                            <Button>Save</Button>
+                        {/* Buttons */}
+                        <div className="flex items-center gap-3">
+                            <Button
+                                variant="outline"
+                                type="button"
+                                onClick={handleSaveDraft}
+                                disabled={postLoading}
+                            >
+                                {postLoading ? (
+                                    <Loader2 className="animate-spin" />
+                                ) : (
+                                    "Save Draft"
+                                )}
+                            </Button>
+
+                            <Button type="submit" disabled={postLoading}>
+                                {postLoading ? (
+                                    <Loader2 className="animate-spin" />
+                                ) : (
+                                    "Post Job"
+                                )}
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

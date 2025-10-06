@@ -21,12 +21,13 @@ type ComboProps = {
     values: Record<string, string>[];
     name: string;
     placeholder: string;
+    value: string;
+    setValue: (value: string) => void;
 };
 
 export default function ComboBox(props: ComboProps) {
-    const { title, values, name, placeholder } = props;
+    const { title, values, name, placeholder, value, setValue } = props;
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState("");
 
     return (
         <div>

@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export interface Option {
+    id?: string;
     value: string;
     label: string;
     disable?: boolean;

@@ -33,6 +33,7 @@ const jobSchema = new Schema(
             type: String,
             enum: ["entry", "mid", "senior", "lead"],
         },
+
         company: {
             type: Types.ObjectId,
             ref: "Company",
@@ -59,7 +60,9 @@ const jobSchema = new Schema(
             type: Date,
             default: Date.now(),
         },
-
+        deadline: {
+            type: Date,
+        },
         isActive: {
             type: Boolean,
             default: true,
