@@ -29,17 +29,20 @@ export default function SidebarJobNav({
                 {projects.map((item) => (
                     <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton asChild>
-                            {item.name === "Dashboard" ? (
-                                <Link href={`${item.url}/${profileId}`}>
-                                    <item.icon />
-                                    <span>{item.name}</span>
-                                </Link>
-                            ) : (
-                                <Link href={item.url}>
-                                    <item.icon />
-                                    <span>{item.name}</span>
-                                </Link>
-                            )}
+                            <Link
+                                href={
+                                    item.name === "Dashboard"
+                                        ? `${item.url}/${profileId}`
+                                        : item.name === "My Jobs"
+                                        ? `/profile/${profileId}/${item.url}`
+                                        : item.name === "Saved Jobs"
+                                        ? `/profile/${profileId}/saved-jobs`
+                                        : item.url
+                                }
+                            >
+                                <item.icon />
+                                <span>{item.name}</span>
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 ))}

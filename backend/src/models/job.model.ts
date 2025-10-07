@@ -63,9 +63,13 @@ const jobSchema = new Schema(
         deadline: {
             type: Date,
         },
+        isDraft: {
+            type: Boolean,
+            default: false,
+        },
         isActive: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         isFeatured: {
             type: Boolean,

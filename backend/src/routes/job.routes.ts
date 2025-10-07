@@ -1,9 +1,14 @@
 import { Router } from "express";
 import {
     createJobController,
+    deleteJobController,
     getAllJobsController,
+    getBookmarkedJobsController,
     getFeaturedJobs,
     getJobByIdController,
+    getRecruiterJobsController,
+    toggleBookmarkController,
+    updateJobController,
 } from "../controllers/job.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
 import setAuthorization from "../middlewares/setAuthorization.middleware";
@@ -28,5 +33,31 @@ jobRouter.get(
 );
 
 jobRouter.get("/get-featured", getFeaturedJobs);
+jobRouter.get("/recruiter/:recruiterId", getRecruiterJobsController);
+jobRouter.patch(
+    "/update/:id",
+    setAuthorization,
+    authecticationMiddleware,
+    updateJobController
+);
+jobRouter.delete(
+    "/delete/:id",
+    setAuthorization,
+    authecticationMiddleware,
+    deleteJobController
+);
+
+jobRouter.post(
+    "/bookmark/:jobId",
+    setAuthorization,
+    authecticationMiddleware,
+    toggleBookmarkController
+);
+jobRouter.get(
+    "/bookmarks",
+    setAuthorization,
+    authecticationMiddleware,
+    getBookmarkedJobsController
+);
 
 export default jobRouter;

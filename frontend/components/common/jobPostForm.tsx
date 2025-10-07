@@ -2,7 +2,7 @@
 
 import { formatData } from "@/utils/formateData";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
@@ -17,12 +17,14 @@ interface JobPostFormProps {
     categories: Record<string, any>[];
     skills: Record<string, any>[];
     company: Record<string, any>[];
+    jobData?: Record<string, any>;
 }
 
 const JobPostForm: React.FC<JobPostFormProps> = ({
     categories,
     skills,
     company,
+    jobData,
 }) => {
     const formattedCategories = formatData(categories);
     const formattedSkills = formatData(skills);
@@ -45,8 +47,35 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         tagsInput: "",
     });
 
-    // -----------------------------
-    // -----------------------------
+    // Prefill form if editing
+    useEffect(() => {
+        if (jobData) {
+            setFormValue({
+                title: jobData.title || "",
+                jobType: jobData.jobType || "full-time",
+                employmentMode: jobData.employmentMode || "Remote",
+                location: jobData.location || "Sylhet",
+                company: jobData.company?._id || "",
+                salaryRange: jobData.salaryRange || { min: 0, max: 0 },
+                experienceLevel: jobData.experienceLevel || "lead",
+                skills: (jobData.skillsRequired || []).map((s: any) => ({
+                    id: s._id,
+                    label: s.name,
+                })),
+                categories: (jobData.jobCategory || []).map((c: any) => ({
+                    id: c._id,
+                    label: c.name,
+                })),
+                description: jobData.description || "",
+                deadline: jobData.deadline
+                    ? jobData.deadline.split("T")[0]
+                    : "",
+                tags: jobData.tags || [],
+                tagsInput: jobData.tags?.join(", ") || "",
+            });
+        }
+    }, [jobData]);
+
     const handleChange = (key: string, value: any) => {
         setFormValue((prev) => ({ ...prev, [key]: value }));
     };
@@ -64,8 +93,6 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         }));
     };
 
-    // -----------------------------
-    // -----------------------------
     const validateForm = () => {
         if (!formValue.title.trim()) return "Job title is required";
         if (!formValue.company) return "Please select a company";
@@ -89,9 +116,7 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         return null;
     };
 
-    // -----------------------------
-    // -----------------------------
-    const createJob = async (isActive: boolean) => {
+    const saveJob = async (isDraft: boolean) => {
         const formData = {
             title: formValue.title,
             jobType: formValue.jobType,
@@ -105,67 +130,44 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
             description: formValue.description,
             deadline: formValue.deadline,
             tags: formValue.tags,
-            isActive,
+            isDraft,
         };
-
-        console.log(formValue);
 
         setPostLoading(true);
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/job/create`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(formData),
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+            const url = jobData
+                ? `${process.env.NEXT_PUBLIC_SERVER_URL}/job/update/${jobData._id}`
+                : `${process.env.NEXT_PUBLIC_SERVER_URL}/job/create`;
+
+            const method = jobData ? "PATCH" : "POST";
+
+            const response = await fetch(url, {
+                method,
+                body: JSON.stringify(formData),
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || response.statusText);
             }
 
-            const result = await response.json();
             toast.success(
-                isActive ? "Job posted successfully!" : "Draft saved!"
+                isDraft
+                    ? "Draft saved successfully!"
+                    : jobData
+                    ? "Job updated successfully!"
+                    : "Job posted successfully!"
             );
-            console.log(
-                isActive ? "✅ Job posted:" : "📝 Draft saved:",
-                result
-            );
-
-            // reset form
-            setFormValue({
-                title: "",
-                jobType: "full-time",
-                employmentMode: "Remote",
-                location: "Sylhet",
-                company: "",
-                salaryRange: { min: 0, max: 0 },
-                experienceLevel: "lead",
-                skills: [],
-                categories: [],
-                description: "",
-                deadline: "",
-                tags: [],
-                tagsInput: "",
-            });
         } catch (err: any) {
             console.error("❌ Job save failed:", err);
-            toast.error(
-                isActive
-                    ? "Failed to post job. Please try again."
-                    : "Failed to save draft."
-            );
+            toast.error("Failed to save job. Please try again.");
         } finally {
             setPostLoading(false);
         }
     };
 
-    // -----------------------------
-    // -----------------------------
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const errorMsg = validateForm();
@@ -173,7 +175,7 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
             toast.error(errorMsg);
             return;
         }
-        await createJob(true);
+        await saveJob(false);
     };
 
     const handleSaveDraft = async () => {
@@ -181,11 +183,9 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
             toast.error("Job title is required to save draft");
             return;
         }
-        await createJob(false);
+        await saveJob(true);
     };
 
-    // -----------------------------
-    // -----------------------------
     return (
         <div className="max-w-5xl mx-auto py-4 mt-10">
             <Card>
@@ -382,6 +382,8 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                             <Button type="submit" disabled={postLoading}>
                                 {postLoading ? (
                                     <Loader2 className="animate-spin" />
+                                ) : jobData ? (
+                                    "Update Job"
                                 ) : (
                                     "Post Job"
                                 )}

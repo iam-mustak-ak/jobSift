@@ -1,7 +1,9 @@
 import {
+    BookCheck,
     Bookmark,
     Building2,
     CircleUserRound,
+    FileChartLine,
     FileUser,
     LayoutDashboard,
     NotepadText,
@@ -19,12 +21,22 @@ export const sideabrLinksData = {
         },
         {
             name: "Build Resume",
-            url: "/",
+            url: "/build-resume",
             icon: FileUser,
         },
         {
+            name: "Analyze Resume",
+            url: "/analyze-resume",
+            icon: FileChartLine,
+        },
+        {
+            name: "My Jobs",
+            url: "/my-jobs?page=1",
+            icon: BookCheck,
+        },
+        {
             name: "Saved Jobs",
-            url: "/",
+            url: "/saved-jobs",
             icon: Bookmark,
         },
 

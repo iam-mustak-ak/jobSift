@@ -1,11 +1,11 @@
 import ContainerWrapper from "@/components/common/containerWrapper";
 import JobDescription from "@/components/common/jobDescription";
+import BookMarkButton from "@/components/ui/bookMarkButton";
 import { Button } from "@/components/ui/button";
 import { dateFormate } from "@/utils/dateFormate";
 import { fetcherSever } from "@/utils/fetcherSever";
 import { salaryFormat } from "@/utils/salaryFormat";
 import {
-    Bookmark,
     BriefcaseBusiness,
     CircleDollarSign,
     Clock3,
@@ -66,9 +66,7 @@ const Page = async ({ params }: { params: Promise<{ jobId: string }> }) => {
                                     <SquareArrowOutUpRight />
                                 </Link>
                             </Button>
-                            <Button>
-                                <Bookmark />
-                            </Button>
+                            <BookMarkButton jobId={jobId} />
                             <Button>
                                 <Copy />
                             </Button>

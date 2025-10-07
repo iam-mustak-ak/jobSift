@@ -1,15 +1,21 @@
+"use client";
+
+import { useAuthStore } from "@/state/store";
 import { dateFormate } from "@/utils/dateFormate";
 import { formateCapitalized } from "@/utils/formateCapitalized";
 import { salaryFormat } from "@/utils/salaryFormat";
 import {
-    Bookmark,
     BriefcaseBusiness,
     CircleDollarSign,
     Clock3,
     MapPin,
+    Pen,
+    Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
+import BookMarkButton from "../ui/bookMarkButton";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardTitle } from "../ui/card";
 import Tag from "./tag";
@@ -19,7 +25,29 @@ const FeaturedJobCard = ({
 }: {
     featuredJobs: Record<string, any>;
 }) => {
+    const { user } = useAuthStore((state) => state);
     const salary = salaryFormat(featuredJobs?.salaryRange);
+
+    const isOwner = user?._id === featuredJobs?.recruiter?._id; // Check ownership
+
+    const handleDelete = async () => {
+        if (!confirm("Are you sure you want to delete this job?")) return;
+
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/job/delete/${featuredJobs._id}`,
+                {
+                    method: "DELETE",
+                    credentials: "include",
+                }
+            );
+            if (!res.ok) throw new Error("Failed to delete job");
+            toast.success("Post Deleted");
+        } catch (err) {
+            console.error(err);
+            toast.success("Somthing is wrong");
+        }
+    };
 
     return (
         <Card>
@@ -36,16 +64,33 @@ const FeaturedJobCard = ({
                         </Link>
                     </div>
                     <div className="w-full flex flex-col gap-0">
-                        <div className="w-full">
+                        <div className="w-full flex justify-between items-center">
                             <Link href={`/job/${featuredJobs._id}`}>
-                                <CardTitle className="float-left">
-                                    {featuredJobs?.title}
-                                </CardTitle>
+                                <CardTitle>{featuredJobs?.title}</CardTitle>
                             </Link>
-                            <Button variant="outline" className="float-right">
-                                <Bookmark />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                <BookMarkButton jobId={featuredJobs._id} />
+                                {isOwner && (
+                                    <>
+                                        <Link
+                                            href={`/edit-job/${featuredJobs._id}`}
+                                        >
+                                            <Button size="sm" variant="outline">
+                                                <Pen />
+                                            </Button>
+                                        </Link>
+                                        <Button
+                                            size="sm"
+                                            variant="destructive"
+                                            onClick={handleDelete}
+                                        >
+                                            <Trash2 />
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
                         </div>
+
                         <ul className="flex items-center gap-5 max-md:flex-wrap">
                             <li className="flex gap-2 font-normal text-muted-foreground">
                                 <BriefcaseBusiness />{" "}

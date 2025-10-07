@@ -22,7 +22,9 @@ const Page = async ({ params }: ProfilePrps) => {
                 <CardContent>
                     <div
                         className="text-muted-foreground prose"
-                        dangerouslySetInnerHTML={{ __html: data.about }}
+                        dangerouslySetInnerHTML={{
+                            __html: data?.about.toString(),
+                        }}
                     ></div>
                 </CardContent>
             </Card>
