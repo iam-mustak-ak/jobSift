@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = ["/build-resume", "/profile", "/post-job"];
@@ -6,7 +5,6 @@ const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
-    const cookieStore = await cookies();
 
     const isProtectedRoute = protectedRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
@@ -15,32 +13,36 @@ export default async function middleware(req: NextRequest) {
         (route) => path === route || path.startsWith(route + "/")
     );
 
-    // Forward cookies & headers to your API
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-auth`,
-        {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieStore.toString(),
-            },
+    try {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/check-auth`,
+            {
+                method: "GET",
+                headers: {
+                    cookie: req.headers.get("cookie") || "",
+                },
+                cache: "no-store",
+            }
+        );
+
+        const data = await res.json();
+
+        if (isProtectedRoute && !data.success) {
+            return NextResponse.redirect(new URL("/login", req.url));
         }
-    );
 
-    const data = await res.json();
+        if (isPublicRoute && data.success) {
+            return NextResponse.redirect(new URL("/", req.url));
+        }
 
-    if (isProtectedRoute && !data?.data.success) {
-        return NextResponse.redirect(new URL("/login", req.nextUrl));
+        return NextResponse.next();
+    } catch (error) {
+        console.error("Middleware error:", error);
+        return NextResponse.next();
     }
-
-    if (isPublicRoute && data?.data.success) {
-        return NextResponse.redirect(new URL("/", req.nextUrl));
-    }
-
-    return NextResponse.next();
 }
 
 export const config = {
     matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+    runtime: "nodejs",
 };
