@@ -15,7 +15,7 @@ export default async function middleware(req: NextRequest) {
 
     try {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/check-auth`,
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-auth`,
             {
                 method: "GET",
                 headers: {
@@ -27,11 +27,13 @@ export default async function middleware(req: NextRequest) {
 
         const data = await res.json();
 
-        if (isProtectedRoute && !data.success) {
+        console.log(data);
+
+        if (isProtectedRoute && !data.data.success) {
             return NextResponse.redirect(new URL("/login", req.url));
         }
 
-        if (isPublicRoute && data.success) {
+        if (isPublicRoute && data.data.success) {
             return NextResponse.redirect(new URL("/", req.url));
         }
 
@@ -44,5 +46,4 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
-    runtime: "nodejs",
 };
