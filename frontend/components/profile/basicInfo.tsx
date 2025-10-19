@@ -36,9 +36,9 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                         </AvatarFallback>
                         <Badge
                             className={`rounded-full h-5 w-5 ${
-                                data.isOnline ? "bg-green-500" : "bg-gray-500"
+                                data?.isOnline ? "bg-green-500" : "bg-gray-500"
                             } absolute top-0 right-0`}
-                            title={data.isOnline ? "online" : "Offline"}
+                            title={data?.isOnline ? "online" : "Offline"}
                         />
                     </Avatar>
                     <div className="grid gap-2">
