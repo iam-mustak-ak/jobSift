@@ -9,7 +9,9 @@ const JobDescription: React.FC<JobDescriptionProps> = ({ html }) => {
         <div className="max-w-6xl mx-auto py-6 mt-10">
             <div
                 className="prose prose-slate dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: html }}
+                dangerouslySetInnerHTML={{
+                    __html: typeof html === "string" ? html : "",
+                }}
             />
         </div>
     );

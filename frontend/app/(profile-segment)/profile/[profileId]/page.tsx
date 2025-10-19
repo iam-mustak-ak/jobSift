@@ -23,9 +23,12 @@ const Page = async ({ params }: ProfilePrps) => {
                     <div
                         className="text-muted-foreground prose"
                         dangerouslySetInnerHTML={{
-                            __html: data?.about.toString(),
+                            __html:
+                                typeof data?.about === "string"
+                                    ? data.about
+                                    : "",
                         }}
-                    ></div>
+                    />
                 </CardContent>
             </Card>
             <ProfileCompleteIndicator />

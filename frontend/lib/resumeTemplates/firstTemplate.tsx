@@ -166,9 +166,11 @@ const FirstTemplate: React.FC = () => {
                         <Separator className="h-0.5 bg-white w-full" />
                         {/* <p className="">{about}</p> */}
                         <div
-                            className="text-sm text-white mt-3 leading-4 prose"
-                            dangerouslySetInnerHTML={{ __html: about }}
-                        ></div>
+                            className="prose prose-slate dark:prose-invert max-w-none"
+                            dangerouslySetInnerHTML={{
+                                __html: typeof about === "string" ? about : "",
+                            }}
+                        />
                     </div>
                 ) : null}
 
