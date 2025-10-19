@@ -26,7 +26,13 @@ const app = express();
 
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:3000/*", "*"],
+        origin: [
+            "http://localhost:3000",
+            "http://localhost:3000/*",
+            "https://job-sift.vercel.app/",
+            "https://job-sift.vercel.app/*",
+            "*",
+        ],
         credentials: true,
     })
 );
