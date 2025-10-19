@@ -42,10 +42,10 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                         />
                     </Avatar>
                     <div className="grid gap-2">
-                        <CardTitle>{data.name}</CardTitle>
-                        <CardDescription>{data.email}</CardDescription>
+                        <CardTitle>{data?.name}</CardTitle>
+                        <CardDescription>{data?.email}</CardDescription>
                         <Badge>
-                            {data.isAvailableForHire
+                            {data?.isAvailableForHire
                                 ? "Available for work"
                                 : "Not Available for work"}
                         </Badge>
@@ -58,22 +58,22 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                 <div className="mt-4 grid gap-2">
                     <IconInfo
                         icon={<Mail className="text-muted-foreground w-4 " />}
-                        label={data.email}
+                        label={data?.email}
                     />
                     <IconInfo
                         icon={<Phone className="text-muted-foreground w-4 " />}
-                        label={data.phone ? data.phone : "Add a phone number"}
+                        label={data?.phone ? data.phone : "Add a phone number"}
                     />
                     <IconInfo
                         icon={<MapPin className="text-muted-foreground w-4 " />}
                         label={
-                            data.location ? data.location : "Add your address"
+                            data?.location ? data.location : "Add your address"
                         }
                     />
                 </div>
                 <Separator className="my-5" />
 
-                {data.skills && data.skills.length > 0 && (
+                {data?.skills && data?.skills.length > 0 && (
                     <div>
                         <CardTitle className="mb-5">Skills</CardTitle>
                         <ul className="list-disc pl-5">
