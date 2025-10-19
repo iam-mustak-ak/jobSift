@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = ["/build-resume", "/profile", "/post-job"];
@@ -5,6 +6,7 @@ const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname;
+    const cookieStore = await cookies();
 
     const isProtectedRoute = protectedRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
@@ -17,20 +19,22 @@ export default async function middleware(req: NextRequest) {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/check-auth`,
         {
+            method: "GET",
+            credentials: "include",
             headers: {
-                cookie: req.headers.get("cookie") || "",
+                "Content-Type": "application/json",
+                Cookie: cookieStore.toString(),
             },
-            cache: "no-store",
         }
     );
 
     const data = await res.json();
 
-    if (isProtectedRoute && !data.success) {
+    if (isProtectedRoute && !data?.data.success) {
         return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
 
-    if (isPublicRoute && data.success) {
+    if (isPublicRoute && data?.data.success) {
         return NextResponse.redirect(new URL("/", req.nextUrl));
     }
 
