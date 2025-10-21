@@ -13,8 +13,6 @@ export default async function createUserAction(
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm-password") as string;
 
-    console.log(role, name, email, password, confirmPassword);
-
     if (!name || !email || !password || !confirmPassword) {
         return {
             success: false,

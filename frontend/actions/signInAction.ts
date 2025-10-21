@@ -40,7 +40,6 @@ export default async function signInAction(prevState: any, formData: FormData) {
     }
 
     const data = await res.json();
-    console.log(data);
 
     redirect(`/profile/${data.data._id}`);
 }

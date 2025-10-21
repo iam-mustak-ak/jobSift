@@ -82,8 +82,6 @@ const OtpInput = () => {
                 }
             );
 
-            console.log(res);
-
             router.push("/login");
         } catch (error) {
             toast.error("Invalid OTP");

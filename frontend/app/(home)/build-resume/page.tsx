@@ -51,7 +51,6 @@ const Page = () => {
                 toast.error("error");
             }
 
-            console.log(data);
             const newData = data?.data.filter(
                 (dataItem: ResumeDataTypes & { _id: string }) =>
                     dataItem._id !== resumeId

@@ -61,8 +61,6 @@ const SocialInfo = () => {
         setAuth({ ...user, socialLinks: updated });
     };
 
-    console.log(user);
-
     const handleSelectChange = (index: number, value: string) => {
         const updated = socialLinks.map((link, i) =>
             i === index

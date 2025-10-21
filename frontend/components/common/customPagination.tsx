@@ -42,8 +42,6 @@ const CustomPagination: React.FC<PaginationProps> = ({
             }
         }
 
-        console.log(params.toString());
-
         return `?${params.toString()}`;
     };
 

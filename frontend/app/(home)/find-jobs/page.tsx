@@ -41,8 +41,6 @@ const Page = async ({
 
     const jobs = await fetcherSever(`/job/get-all-jobs/?${queryParams}`);
 
-    console.log(jobs);
-
     const itemsPerPage = 8;
     const totalItems = jobs.pagination?.total || 0;
     const page = parseInt(currentPage) || 1;

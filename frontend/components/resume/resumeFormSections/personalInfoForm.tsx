@@ -161,7 +161,6 @@ const PersonalInfoForm = () => {
             socials: updatedSocials,
         };
 
-        console.log(updatedSocials);
         debouncedSave(updatedInfo);
     };
 

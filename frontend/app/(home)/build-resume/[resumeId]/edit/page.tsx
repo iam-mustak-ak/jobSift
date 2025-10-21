@@ -15,7 +15,6 @@ const Page = () => {
             const resume = await fetcherClient(
                 `/resume/get-resume/${resumeId}`
             );
-            console.log(resume);
             if (resume.success) {
                 setResumeData(resume.data);
             }
