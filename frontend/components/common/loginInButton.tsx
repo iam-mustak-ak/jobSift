@@ -44,9 +44,6 @@ const LoginInButton = () => {
                     <DropdownMenuItem asChild>
                         <Link href={`/profile/${user._id}`}>Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Keyboard shortcuts</DropdownMenuItem>
                     <DropdownMenuItem disabled={loading} onClick={handleLogout}>
                         {loading ? (
                             <Loader2 className="animate-spin" />

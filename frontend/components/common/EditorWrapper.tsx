@@ -8,8 +8,14 @@ const DynamicTextEditor = dynamic(() => import("./richTextEditor"), {
     ssr: false,
 });
 
-const EditorWrapper = ({ value, setValue }: RichTextEditorProps) => {
-    return <DynamicTextEditor value={value} setValue={setValue} />;
+const EditorWrapper = ({ value, setValue, className }: RichTextEditorProps) => {
+    return (
+        <DynamicTextEditor
+            value={value}
+            setValue={setValue}
+            className={className}
+        />
+    );
 };
 
 export default EditorWrapper;

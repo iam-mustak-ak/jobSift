@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    applyJobController,
     createJobController,
     deleteJobController,
     getAllJobsController,
@@ -58,6 +59,12 @@ jobRouter.get(
     setAuthorization,
     authecticationMiddleware,
     getBookmarkedJobsController
+);
+jobRouter.post(
+    "/apply/:jobId",
+    setAuthorization,
+    authecticationMiddleware,
+    applyJobController
 );
 
 export default jobRouter;

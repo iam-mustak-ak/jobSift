@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useNotification from "@/hooks/useNotification";
 import { useAuthStore } from "@/state/store";
 import { Avatar } from "@radix-ui/react-avatar";
 import { Edit, Loader2, Trash } from "lucide-react";
@@ -41,6 +42,9 @@ const Page = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [isEnabledEdit, SetIsEnableEdit] = useState<string>("");
     const [imageLoading, setImageLoading] = useState<boolean>(false);
+    const data = useNotification(user?._id);
+
+    console.log(data);
 
     const [skillInput, setSkillInput] = useState<string>("");
 

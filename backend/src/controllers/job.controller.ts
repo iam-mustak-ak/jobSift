@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Job from "../models/job.model";
+import Notification from "../models/notification.model";
 import User from "../models/user.model";
 import customError from "../utils/customError";
 
@@ -464,5 +465,90 @@ export const getBookmarkedJobsController = async (
         });
     } catch (err) {
         next(err);
+    }
+};
+
+interface CustomRequest extends Request {
+    io?: any;
+}
+
+export const applyJobController = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const authUser = req.user as { _id: string };
+        const { jobId } = req.params;
+        const { resume, coverLetter } = req.body;
+
+        if (!authUser || !authUser._id) {
+            return next(customError(401, "Unauthorized"));
+        }
+
+        if (!jobId) {
+            return next(customError(400, "Job ID is required"));
+        }
+
+        const job = await Job.findById(jobId).populate(
+            "recruiter",
+            "_id name email"
+        );
+        if (!job) {
+            return next(customError(404, "Job not found"));
+        }
+        const recruiter = job.recruiter as {
+            _id: string;
+            name?: string;
+            email?: string;
+        };
+
+        const alreadyApplied = job.applicants.some(
+            (a: any) => a.user.toString() === authUser._id.toString()
+        );
+
+        if (alreadyApplied) {
+            return next(
+                customError(400, "You have already applied for this job")
+            );
+        }
+
+        job.applicants.push({
+            user: authUser._id,
+            resume,
+            coverLetter,
+        });
+        await job.save();
+
+        await User.findByIdAndUpdate(authUser._id, {
+            $push: {
+                appliedJobs: {
+                    jobId: job._id,
+                },
+            },
+        });
+        if (!recruiter || !recruiter._id) {
+            return next(customError(400, "Job recruiter not found"));
+        }
+
+        const notification = await Notification.create({
+            sender: authUser._id,
+            recipient: recruiter._id,
+            message: `New application received for "${job.title}"`,
+            type: "application",
+            link: `/dashboard/recruiter/jobs/${job._id}/applicants`,
+        });
+        if (req.io) {
+            req.io.to(recruiter._id.toString()).emit("new_notification", {
+                notification,
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Job applied successfully",
+        });
+    } catch (error) {
+        next(error);
     }
 };

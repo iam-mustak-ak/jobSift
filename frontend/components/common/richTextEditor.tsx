@@ -1,11 +1,13 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
 export type RichTextEditorProps = {
     value: any;
     setValue: (value: any) => void;
+    className?: string;
 };
 
 const fullToolbarOptions = [
@@ -23,7 +25,11 @@ const fullToolbarOptions = [
     ["clean"],
 ];
 
-const RichTextEditor = ({ value, setValue }: RichTextEditorProps) => {
+const RichTextEditor = ({
+    value,
+    setValue,
+    className,
+}: RichTextEditorProps) => {
     return (
         <ReactQuill
             theme="snow"
@@ -32,7 +38,7 @@ const RichTextEditor = ({ value, setValue }: RichTextEditorProps) => {
             }}
             value={value}
             onChange={setValue}
-            className="bg-gray-400"
+            className={cn("bg-gray-400", className)}
         />
     );
 };

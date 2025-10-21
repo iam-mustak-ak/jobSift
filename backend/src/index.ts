@@ -18,6 +18,12 @@ import resumeRouter from "./routes/resume.routes";
 import analyzeRouter from "./routes/resumeAnalyze.route";
 import skillRouter from "./routes/skill.routes";
 import userRouter from "./routes/user.routes";
+
+import http from "http";
+import multer from "multer";
+import { Server } from "socket.io";
+import notificationRouter from "./routes/notification.routes";
+import uploadRouter from "./routes/uploadResume.routes";
 dotenv.config();
 
 // import "./cron";
@@ -72,7 +78,7 @@ app.get("/health", (req: Request, res: Response) => {
         message: "jobsift api is healthy",
     });
 });
-
+const upload = multer({ storage: multer.memoryStorage() });
 app.use("/auth", userRouter);
 app.use("/job-category", jobCategoryRouter);
 app.use("/skill", skillRouter);
@@ -82,23 +88,63 @@ app.use("/resume", resumeRouter);
 app.use("/image", imageRouter);
 app.use("/analyze", analyzeRouter);
 app.use("/match-job", matchjobRoute);
+app.use("/upload-resume", uploadRouter);
+app.use("/notification", notificationRouter);
 
 app.use(globalErrorHandler);
 
 const mongoUi = process.env.MONGO_URI!;
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: ["http://localhost:3000", "https://job-sift.vercel.app"],
+        credentials: true,
+    },
+});
+
+// --- store online users ---
+const onlineUsers = new Map<string, string>();
+
+io.on("connection", (socket) => {
+    console.log("⚡ User connected:", socket.id);
+
+    socket.on("register", (userId: string) => {
+        onlineUsers.set(userId, socket.id);
+        socket.join(userId);
+        console.log(`✅ User ${userId} joined room ${userId}`);
+    });
+
+    socket.on("disconnect", () => {
+        for (const [userId, socketId] of onlineUsers.entries()) {
+            if (socketId === socket.id) {
+                onlineUsers.delete(userId);
+                break;
+            }
+        }
+        console.log("❌ User disconnected:", socket.id);
+    });
+});
+
+// --- attach io to express ---
+app.use((req: any, res, next) => {
+    req.io = io;
+    next();
+});
+
 const startServer = async () => {
     try {
-        connnectMongo(mongoUi);
-        console.log("MongoDB connected");
+        await connnectMongo(mongoUi);
+        console.log("✅ MongoDB connected");
         await Session.syncIndexes();
-        console.log("Session indexes synced");
+        console.log("✅ Session indexes synced");
 
-        app.listen(port, () => {
-            console.log(`Server running at http://localhost:${port}`);
+        server.listen(port, () => {
+            console.log(`🚀 Server running at http://localhost:${port}`);
         });
     } catch (err) {
-        console.error("Failed to start server:", err);
+        console.error("❌ Failed to start server:", err);
         process.exit(1);
     }
 };
