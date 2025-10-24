@@ -4,7 +4,7 @@ import { fetcherSever } from "./utils/fetcherSever";
 const protectedRoutes = ["/build-resume", "/profile", "/post-job"];
 const publicRoutes = ["/login", "/signup", "/"];
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
     const path = req.nextUrl.pathname;
     const isProtectedRoute = protectedRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
@@ -31,5 +31,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|.\\.png$).)"],
+    matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
