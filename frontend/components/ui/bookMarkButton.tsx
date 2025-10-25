@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAuthStore } from "@/state/store";
@@ -26,6 +27,10 @@ const BookMarkButton = ({ jobId }: BookMarkButtonProps) => {
     const handleToggleBookmark = async () => {
         setLoading(true);
         try {
+            if (!user) {
+                return toast.error("Please login to bookmark this job");
+            }
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_SERVER_URL}/job/bookmark/${jobId}`,
                 {
@@ -35,7 +40,9 @@ const BookMarkButton = ({ jobId }: BookMarkButtonProps) => {
                 }
             );
 
-            if (!res.ok) throw new Error("Failed to toggle bookmark");
+            if (!res.ok) {
+                return toast.error("Error occurred while bookmarking");
+            }
 
             const data = await res.json();
             setIsBookmarked(data.data.isBookmarked);

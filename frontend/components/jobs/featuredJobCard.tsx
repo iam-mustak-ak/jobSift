@@ -23,12 +23,11 @@ import Tag from "./tag";
 const FeaturedJobCard = ({
     featuredJobs,
 }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     featuredJobs: Record<string, any>;
 }) => {
     const { user } = useAuthStore((state) => state);
     const salary = salaryFormat(featuredJobs?.salaryRange);
-
-    const isOwner = user?._id === featuredJobs?.recruiter?._id; // Check ownership
 
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this job?")) return;
@@ -49,6 +48,8 @@ const FeaturedJobCard = ({
         }
     };
 
+    console.log(featuredJobs?._id);
+
     return (
         <Card>
             <CardContent>
@@ -65,29 +66,38 @@ const FeaturedJobCard = ({
                     </div>
                     <div className="w-full flex flex-col gap-0">
                         <div className="w-full flex justify-between items-center">
-                            <Link href={`/job/${featuredJobs._id}`}>
-                                <CardTitle>{featuredJobs?.title}</CardTitle>
+                            <Link href={`/job/${featuredJobs?._id}` || "#"}>
+                                <CardTitle className="leading-tight mb-2">
+                                    {featuredJobs?.title}
+                                </CardTitle>
                             </Link>
                             <div className="flex items-center gap-2">
-                                <BookMarkButton jobId={featuredJobs._id} />
-                                {isOwner && (
-                                    <>
-                                        <Link
-                                            href={`/edit-job/${featuredJobs._id}`}
-                                        >
-                                            <Button size="sm" variant="outline">
-                                                <Pen />
+                                <BookMarkButton jobId={featuredJobs?._id} />
+                                {user &&
+                                    user?._id === featuredJobs?.recruiter && (
+                                        <>
+                                            <Link
+                                                href={
+                                                    `/edit-job/${featuredJobs?._id}` ||
+                                                    "#"
+                                                }
+                                            >
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                >
+                                                    <Pen />
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                onClick={handleDelete}
+                                            >
+                                                <Trash2 />
                                             </Button>
-                                        </Link>
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            onClick={handleDelete}
-                                        >
-                                            <Trash2 />
-                                        </Button>
-                                    </>
-                                )}
+                                        </>
+                                    )}
                             </div>
                         </div>
 
@@ -106,7 +116,20 @@ const FeaturedJobCard = ({
                             )}
 
                             <li className="flex gap-2 font-normal text-muted-foreground">
-                                <Clock3 /> {dateFormate(featuredJobs?.openings)}
+                                <Clock3
+                                    className={
+                                        !featuredJobs?.isActive
+                                            ? "text-destructive"
+                                            : ""
+                                    }
+                                />{" "}
+                                {featuredJobs?.isActive ? (
+                                    dateFormate(featuredJobs?.openings)
+                                ) : (
+                                    <span className="text-destructive">
+                                        Expired
+                                    </span>
+                                )}
                             </li>
                             <li className="flex gap-2 font-normal text-muted-foreground">
                                 <CircleDollarSign /> {salary.min} - {salary.max}

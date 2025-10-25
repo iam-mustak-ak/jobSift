@@ -18,6 +18,9 @@ const jobSchema = new Schema(
             type: String,
             required: true,
         },
+        url: {
+            type: String,
+        },
         employmentMode: {
             type: String,
             default: "onsite",

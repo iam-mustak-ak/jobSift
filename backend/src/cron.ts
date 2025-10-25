@@ -1,7 +1,6 @@
-import cron from "node-cron";
-
 import axios from "axios";
 import dotenv from "dotenv";
+import cron from "node-cron";
 import Company from "./models/company.model";
 import Job from "./models/job.model";
 import JobCategory from "./models/jobCategory.model";
@@ -182,6 +181,7 @@ const getAndCreateJobs = async (allJobs: any[]) => {
                 title: job.title,
                 description: job.description,
                 jobType: type,
+                url: job.url,
                 employmentMode: mode,
                 location: job?.location || "",
                 salaryRange,
@@ -210,3 +210,5 @@ const getAndCreateJobs = async (allJobs: any[]) => {
 
 // If you want to schedule it at 7 AM every day, uncomment:
 cron.schedule("0 7 * * *", fetchJobs);
+
+// fetchJobs();

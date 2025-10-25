@@ -1,28 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetcherSever } from "./utils/fetcherSever";
 
-const protectedRoutes = ["/build-resume", "/profile", "/post-job"];
+const protectedRoutes = [
+    "/build-resume",
+    "/profile",
+    "/post-job",
+    "/apply",
+    "/apply/*",
+];
+
 const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function proxy(req: NextRequest) {
     const path = req.nextUrl.pathname;
+
     const isProtectedRoute = protectedRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
     );
+
     const isPublicRoute = publicRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
     );
 
     const data = await fetcherSever("/auth/check-auth");
+    const isLoggedIn = data?.success;
 
-    if (isProtectedRoute && !data.success) {
+    if (isProtectedRoute && !isLoggedIn) {
         return NextResponse.redirect(new URL("/login", req.nextUrl));
     }
 
     if (
         isPublicRoute &&
-        data.success &&
-        !req.nextUrl.pathname.startsWith("/")
+        isLoggedIn &&
+        (path === "/login" || path === "/signup")
+    ) {
+        return NextResponse.redirect(new URL("/", req.nextUrl));
+    }
+
+    if (
+        isLoggedIn &&
+        path === "/post-job" &&
+        data?.data?.role !== "recruiter"
     ) {
         return NextResponse.redirect(new URL("/", req.nextUrl));
     }

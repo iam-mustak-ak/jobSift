@@ -115,7 +115,7 @@ export const getAllJobsController = async (
         }
 
         const [jobs, total] = await Promise.all([
-            Job.find(filter).skip(skip).limit(limit),
+            Job.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
             Job.countDocuments(filter),
         ]);
 

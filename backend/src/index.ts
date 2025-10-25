@@ -26,7 +26,7 @@ import notificationRouter from "./routes/notification.routes";
 import uploadRouter from "./routes/uploadResume.routes";
 dotenv.config();
 
-// import "./cron";
+import "./cron";
 
 const app = express();
 

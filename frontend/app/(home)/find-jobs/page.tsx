@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ContainerWrapper from "@/components/common/containerWrapper";
 import CustomPagination from "@/components/common/customPagination";
 import CustomSelect from "@/components/common/customSelect";
