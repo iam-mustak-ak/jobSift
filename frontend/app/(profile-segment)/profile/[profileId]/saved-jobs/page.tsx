@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { useAuthStore } from "@/state/store";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Page = () => {
     const { user } = useAuthStore((state) => state);
@@ -24,7 +26,9 @@ const Page = () => {
                                 credentials: "include",
                             }
                         );
-                        if (!res.ok) throw new Error("Failed to fetch job");
+                        if (!res.ok) {
+                            return toast.error("Somthing Went wrong");
+                        }
                         return res.json().then((data) => data.data);
                     })
                 );
@@ -47,7 +51,7 @@ const Page = () => {
         <div className="grid grid-cols-2 gap-5">
             {savedJobs.length > 0 ? (
                 savedJobs.map((job) => (
-                    <FeaturedJobCard featuredJobs={job} key={job._id} />
+                    <FeaturedJobCard featuredJobs={job} key={job?._id} />
                 ))
             ) : (
                 <p className="text-left text-xl">No saved jobs found!</p>

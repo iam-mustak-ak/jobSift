@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ContainerWrapper from "@/components/common/containerWrapper";
 import JobPostForm from "@/components/common/jobPostForm";
 import {

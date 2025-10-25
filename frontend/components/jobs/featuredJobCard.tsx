@@ -48,7 +48,7 @@ const FeaturedJobCard = ({
         }
     };
 
-    console.log(featuredJobs?._id);
+    console.log(featuredJobs?.recruiter);
 
     return (
         <Card>
@@ -74,7 +74,8 @@ const FeaturedJobCard = ({
                             <div className="flex items-center gap-2">
                                 <BookMarkButton jobId={featuredJobs?._id} />
                                 {user &&
-                                    user?._id === featuredJobs?.recruiter && (
+                                    user?._id ===
+                                        featuredJobs?.recruiter?._id && (
                                         <>
                                             <Link
                                                 href={

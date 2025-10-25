@@ -23,7 +23,7 @@ import userRouter from "./routes/user.routes";
 
 import http from "http";
 import { Server } from "socket.io";
-import "./cron";
+// import "./cron";
 
 dotenv.config();
 

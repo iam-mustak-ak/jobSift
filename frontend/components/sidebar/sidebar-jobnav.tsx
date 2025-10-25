@@ -9,6 +9,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/state/store";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -22,28 +23,37 @@ export default function SidebarJobNav({
     }[];
 }) {
     const { profileId } = useParams();
+
+    const { user } = useAuthStore((state) => state);
+
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Basic</SidebarGroupLabel>
             <SidebarMenu>
                 {projects.map((item) => (
                     <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild>
-                            <Link
-                                href={
-                                    item.name === "Dashboard"
-                                        ? `${item.url}/${profileId}`
-                                        : item.name === "My Jobs"
-                                        ? `/profile/${profileId}/${item.url}`
-                                        : item.name === "Saved Jobs"
-                                        ? `/profile/${profileId}/saved-jobs`
-                                        : item.url
-                                }
-                            >
-                                <item.icon />
-                                <span>{item.name}</span>
-                            </Link>
-                        </SidebarMenuButton>
+                        {user &&
+                            !(
+                                user.role === "recruiter" &&
+                                item.name === "Applied Jobs"
+                            ) && (
+                                <SidebarMenuButton asChild>
+                                    <Link
+                                        href={
+                                            item.name === "Dashboard"
+                                                ? `${item.url}/${profileId}`
+                                                : item.name === "My Jobs"
+                                                ? `/profile/${profileId}/${item.url}`
+                                                : item.name === "Saved Jobs"
+                                                ? `/profile/${profileId}/saved-jobs`
+                                                : item.url
+                                        }
+                                    >
+                                        <item.icon />
+                                        <span>{item.name}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            )}
                     </SidebarMenuItem>
                 ))}
             </SidebarMenu>

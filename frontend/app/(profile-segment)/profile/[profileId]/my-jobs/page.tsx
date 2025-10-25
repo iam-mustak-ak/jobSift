@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CustomPagination from "@/components/common/customPagination";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,10 +47,10 @@ const Page = async ({
 
     // Further categorize them
     const publishedJobs = jobs?.data.filter(
-        (job: any) => job.isActive === true && !job.isDraft
+        (job: any) => job.isPublished === true && !job.isDraft
     );
     const pendingJobs = jobs?.data.filter(
-        (job: any) => job.isActive === false && !job.isDraft
+        (job: any) => job.isPublished === false && !job.isDraft
     );
     const draftJobs = jobs?.data.filter((job: any) => job.isDraft === true);
 

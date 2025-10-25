@@ -32,6 +32,7 @@ export const createJobController = async (
             isDraft,
             tags,
             jobId,
+            isPublished,
         } = req.body;
 
         if (
@@ -67,6 +68,7 @@ export const createJobController = async (
             deadline,
             isActive,
             isFeatured,
+            isPublished,
             tags,
             isDraft,
         });
@@ -93,7 +95,7 @@ export const getAllJobsController = async (
         const limit = parseInt(req.query.limit as string) || 10;
         const skip = (page - 1) * limit;
 
-        const filter: any = {};
+        const filter: any = { isPublished: true };
 
         if (req.query.title) {
             filter.$or = [
@@ -101,15 +103,19 @@ export const getAllJobsController = async (
                 { description: { $regex: req.query.title, $options: "i" } },
             ];
         }
+
         if (req.query.location) {
             filter.location = { $regex: req.query.location, $options: "i" };
         }
+
         if (req.query.jobCategory) {
             filter.jobCategory = req.query.jobCategory;
         }
+
         if (req.query.jobType) {
             filter.jobType = req.query.jobType;
         }
+
         if (req.query.experienceLevel) {
             filter.experienceLevel = req.query.experienceLevel;
         }

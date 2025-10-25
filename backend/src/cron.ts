@@ -1,6 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import cron from "node-cron";
+import nodeCron from "node-cron";
 import Company from "./models/company.model";
 import Job from "./models/job.model";
 import JobCategory from "./models/jobCategory.model";
@@ -192,6 +192,7 @@ const getAndCreateJobs = async (allJobs: any[]) => {
                 isActive: job.dateDeleted !== null ? false : true,
                 isFeatured: false,
                 tags: skillsName,
+                isPublished: true,
             };
 
             if (skillIDS.length > 0) {
@@ -209,6 +210,6 @@ const getAndCreateJobs = async (allJobs: any[]) => {
 };
 
 // If you want to schedule it at 7 AM every day, uncomment:
-cron.schedule("0 7 * * *", fetchJobs);
+nodeCron.schedule("0 7 * * *", fetchJobs);
 
 // fetchJobs();

@@ -70,9 +70,13 @@ const jobSchema = new Schema(
             type: Boolean,
             default: false,
         },
-        isActive: {
+        isPublished: {
             type: Boolean,
             default: false,
+        },
+        isActive: {
+            type: Boolean,
+            default: true,
         },
         isFeatured: {
             type: Boolean,

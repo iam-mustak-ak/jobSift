@@ -486,7 +486,7 @@ const MultipleSelector = React.forwardRef<
                         {selected.map((option) => {
                             return (
                                 <Badge
-                                    key={option.value}
+                                    key={option.id}
                                     className={cn(
                                         "data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                                         "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
