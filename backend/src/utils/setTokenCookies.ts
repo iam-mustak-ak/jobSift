@@ -5,17 +5,18 @@ const setTokenCookies = (
     accessToken: string,
     refreshToken: string
 ) => {
+    const isProduction = process.env.NODE_ENV === "production";
     const accessTokenOptions: Record<string, string | boolean | number> = {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 5 * 60 * 1000,
     };
 
     const refreshTokenOptions: Record<string, string | boolean | number> = {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 5 * 24 * 60 * 60 * 1000,
     };
 
