@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import AtsChart from "@/components/common/atsChart";
@@ -47,7 +48,7 @@ const Page = () => {
 
     return (
         <ContainerWrapper>
-            <div className="mt-6 pt-16 pb-12 min-h-screen">
+            <div className="mt-6 pt-16 pb-12 min-h-screen flex w-full flex-col items-stretch  justify-center">
                 <div className="flex items-start justify-center gap-12">
                     {loading ? (
                         <Image
@@ -62,10 +63,10 @@ const Page = () => {
                                 <iframe
                                     title="PDF preview"
                                     src={url as string}
-                                    className="mt-4 w-full h-[80vh] border"
+                                    className="mt-4 w-full h-[80vh] border sticky top-20"
                                 />
                             ) : (
-                                <div className="max-w-1/2 w-full">
+                                <div className="max-w-1/2 w-full ">
                                     <Label
                                         htmlFor="pdf-file"
                                         className="w-full h-[400px] bg-gray-100 rounded-2xl p-5 cursor-pointer flex flex-col items-center justify-center group border border-gray-200"

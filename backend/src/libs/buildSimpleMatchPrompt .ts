@@ -2,23 +2,33 @@ export const buildSimpleMatchPrompt = (user: any, jobs: any[]) => {
     return `
 You are a job matching assistant. Compare the user's profile with each job's description and required skills.
 
-Return ONLY a JSON array, where each item has this format:
+Focus on the following user attributes for matching priority:
+1. User skills (array of skills) — heavily influence matchPercent.
+2. User "about" section — provides context about experience, interests, and preferences.
+3. Other fields (e.g., location, title, experience) can be used secondarily.
+
+Return ONLY a JSON ARRAY. Each item must follow this format:
 {
-  "jobId": string,
-  "matchPercent": number (0-100),
-  "reason": string
+  "_id": string,          // Job ID
+  "matchPercent": number,  // 0-100
+  "reason": string        // Explanation
 }
 
-User Profile:
-"""${JSON.stringify(user).slice(0, 3000)}"""
+User Profile (priority fields):
+Skills: """${JSON.stringify(user.skills)}"""
+About: """${user.about}"""
 
 Jobs:
-"""${JSON.stringify(jobs).slice(0, 5000)}"""
+"""${JSON.stringify(jobs)}"""
 
 Make sure:
 - Each job in the array has a corresponding JSON object.
 - The JSON is valid and parsable.
-- MatchPercent is based on skill overlap, experience, and relevance.
-- Reason explains briefly why the matchPercent is high or low.
-    `.trim();
+- matchPercent is heavily based on skill overlap and relevance to the "about" section.
+- Reason explains why the matchPercent is high or low, referencing skills and "about".
+- Only include jobs with matchPercent >= 10. Jobs with matchPercent < 10 should be excluded.
+- If no match, do not include the job in the array.
+
+Always return a JSON ARRAY even if there's only one job.
+`.trim();
 };

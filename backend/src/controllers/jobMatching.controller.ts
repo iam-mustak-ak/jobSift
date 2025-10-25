@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import gemini from "../config/gemini";
 import { buildSimpleMatchPrompt } from "../libs/buildSimpleMatchPrompt ";
-import redis from "../libs/redis"; // Redis client
+import redis from "../libs/redis";
 import Job from "../models/job.model";
 import User from "../models/user.model";
 import safeParseJson from "../utils/safeParseJson";
@@ -12,15 +12,10 @@ export const matchJobsController = async (
     next: NextFunction
 ) => {
     try {
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
-        const skip = (page - 1) * limit;
         const { _id } = req.user as { _id: string };
 
-        // 🔹 Redis cache key per user + page
-        const cacheKey = `matchedJobs:${_id}:page:${page}:limit:${limit}`;
+        const cacheKey = `matchedJobs:${_id}`;
         const cached = await redis.get(cacheKey);
-
         if (cached) {
             return res.status(200).json({
                 success: true,
@@ -29,30 +24,26 @@ export const matchJobsController = async (
             });
         }
 
-        // 🔹 Fetch user and jobs
         const user = await User.findById(_id);
+        const jobs = await Job.find({})
+            .populate("tags")
+            .populate("skillsRequired")
+            .populate("jobCategory")
+            .populate("company")
+            .lean();
 
-        const [jobs, total] = await Promise.all([
-            Job.find({})
-                .skip(skip)
-                .limit(limit)
-                .populate("tags")
-                .populate("skillsRequired")
-                .populate("jobCategory")
-                .populate("company")
-                .lean(),
-            Job.countDocuments({}),
-        ]);
-
-        // 🔹 Send prompt to AI
         const prompt = buildSimpleMatchPrompt(user, jobs);
         const raw = await gemini(prompt);
-        const parsed = safeParseJson(raw);
+        console.log("DEBUG: AI raw response:", raw);
 
-        const validatedArray = Array.isArray(parsed) ? parsed : [];
+        const parsed = safeParseJson(raw);
+        console.log("DEBUG: parsed response:", parsed);
+
+        const validatedArray = Array.isArray(parsed) ? parsed : [parsed];
+
         let matchedJobs = jobs.map((job) => {
             const match = validatedArray.find(
-                (m: any) => m.jobId == job._id.toString()
+                (m: any) => m._id == job._id.toString()
             );
             return {
                 ...job,
@@ -62,6 +53,7 @@ export const matchJobsController = async (
         });
 
         matchedJobs = matchedJobs.filter((job) => job.matchPercent > 0);
+        console.log("DEBUG: final matchedJobs:", matchedJobs);
 
         await redis.set(cacheKey, JSON.stringify(matchedJobs), "EX", 86400);
 
@@ -69,12 +61,6 @@ export const matchJobsController = async (
             success: true,
             message: "Job matches generated successfully",
             data: matchedJobs,
-            pagination: {
-                total: matchedJobs.length,
-                page,
-                limit,
-                totalPages: Math.ceil(matchedJobs.length / limit),
-            },
         });
     } catch (err) {
         next(err);
