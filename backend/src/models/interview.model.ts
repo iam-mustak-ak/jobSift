@@ -10,12 +10,16 @@ const interviewSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
+        jobid: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Job",
+        },
     },
     {
         timestamps: true,
     }
 );
 
-const InterViewModel = mongoose.model("Interview", interviewSchema);
+const InterViewModel = mongoose.model("InterView", interviewSchema);
 
 export default InterViewModel;

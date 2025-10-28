@@ -23,6 +23,7 @@ import userRouter from "./routes/user.routes";
 
 import http from "http";
 import { Server } from "socket.io";
+import interViewRouter from "./routes/interview.routes";
 // import "./cron";
 
 dotenv.config();
@@ -91,6 +92,7 @@ app.use("/analyze", analyzeRouter);
 app.use("/match-job", matchjobRoute);
 app.use("/upload-resume", uploadRouter);
 app.use("/notification", notificationRouter);
+app.use("/interview", interViewRouter);
 
 app.use(globalErrorHandler);
 
