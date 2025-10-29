@@ -71,6 +71,7 @@ const Page = async ({
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
+                                    isRecuiter={true}
                                 />
                             ))
                         ) : (

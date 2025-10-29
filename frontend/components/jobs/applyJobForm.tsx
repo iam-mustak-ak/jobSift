@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -51,6 +52,8 @@ const ApplyJobForm = ({ jobId }: { jobId: string }) => {
             }
 
             const resumeUrl = uploadData?.data?.resumeUrl;
+
+            console.log(resumeUrl);
             if (!resumeUrl) {
                 throw new Error("Resume URL missing in response");
             }

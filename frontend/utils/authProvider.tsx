@@ -23,7 +23,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         getAuth();
-    }, []);
+    }, [setAuth]);
 
     return children;
 };

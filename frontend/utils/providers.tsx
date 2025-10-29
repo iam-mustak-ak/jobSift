@@ -1,6 +1,7 @@
 "use client";
 
 import Loader from "@/components/common/loader";
+import { SocketProvider } from "@/context/socketContext";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import * as React from "react";
 import AuthProvider from "./authProvider";
@@ -14,7 +15,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
             disableTransitionOnChange
             enableColorScheme
         >
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+                <SocketProvider>{children}</SocketProvider>
+            </AuthProvider>
             <Loader />
         </NextThemesProvider>
     );

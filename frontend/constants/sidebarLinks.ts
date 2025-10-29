@@ -1,15 +1,12 @@
 import {
     BookCheck,
     Bookmark,
-    Building2,
     CircleUserRound,
     FileChartLine,
     FileUser,
     LayoutDashboard,
     NotepadText,
     Settings2,
-    UserRound,
-    UserRoundPlus,
 } from "lucide-react";
 
 export const sideabrLinksData = {
@@ -42,23 +39,8 @@ export const sideabrLinksData = {
 
         {
             name: "Applied Jobs",
-            url: "/",
+            url: "/applied-jobs",
             icon: NotepadText,
-        },
-        {
-            name: "Saved Candidates",
-            url: "/",
-            icon: UserRound,
-        },
-        {
-            name: "Saved Recruiters",
-            url: "/",
-            icon: UserRoundPlus,
-        },
-        {
-            name: "Saved Companies",
-            url: "/",
-            icon: Building2,
         },
     ],
     account: [

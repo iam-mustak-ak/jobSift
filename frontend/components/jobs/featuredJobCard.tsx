@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAuthStore } from "@/state/store";
@@ -17,16 +18,25 @@ import Link from "next/link";
 import { toast } from "sonner";
 import BookMarkButton from "../ui/bookMarkButton";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "../ui/dialog";
+import { Separator } from "../ui/separator";
 import Tag from "./tag";
 
 const FeaturedJobCard = ({
     featuredJobs,
     isSuggested = false,
+    isRecuiter = false,
 }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     featuredJobs: Record<string, any>;
     isSuggested?: boolean;
+    isRecuiter?: boolean;
 }) => {
     const { user } = useAuthStore((state) => state);
     const salary = salaryFormat(featuredJobs?.salaryRange);
@@ -49,8 +59,6 @@ const FeaturedJobCard = ({
             toast.success("Somthing is wrong");
         }
     };
-
-    console.log(featuredJobs?.recruiter);
 
     return (
         <Card>
@@ -148,6 +156,118 @@ const FeaturedJobCard = ({
                                 <div className="bg-green-800 text-white rounded-full py-1 px-2 text-sm flex items-center justify-center">
                                     <p>{featuredJobs?.matchPercent}% Matched</p>
                                 </div>
+                            )}
+                            {isRecuiter && (
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button>
+                                            <p>
+                                                view{" "}
+                                                {
+                                                    featuredJobs?.applicants
+                                                        .length
+                                                }{" "}
+                                                applicant
+                                            </p>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[600px]">
+                                        <DialogHeader>
+                                            <DialogTitle className="mb-2">
+                                                Applicants
+                                            </DialogTitle>
+
+                                            <div className="flex flex-col gap-2">
+                                                {featuredJobs?.applicants &&
+                                                    featuredJobs.applicants
+                                                        .length > 0 &&
+                                                    featuredJobs.applicants.map(
+                                                        (applicant: any) => (
+                                                            <Card
+                                                                key={
+                                                                    applicant._id
+                                                                }
+                                                            >
+                                                                <CardHeader>
+                                                                    <CardTitle>
+                                                                        {
+                                                                            applicant.user
+                                                                        }
+                                                                    </CardTitle>
+                                                                </CardHeader>
+                                                                <Separator />
+
+                                                                <CardContent>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <Dialog>
+                                                                            <DialogTrigger
+                                                                                asChild
+                                                                            >
+                                                                                <Button
+                                                                                    variant={
+                                                                                        "outline"
+                                                                                    }
+                                                                                >
+                                                                                    View
+                                                                                    Coverletter
+                                                                                </Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="sm:max-w-[600px]">
+                                                                                <DialogHeader>
+                                                                                    <DialogTitle>
+                                                                                        Cover
+                                                                                        Letter
+                                                                                    </DialogTitle>
+                                                                                </DialogHeader>
+                                                                                <div
+                                                                                    dangerouslySetInnerHTML={{
+                                                                                        __html:
+                                                                                            typeof applicant?.coverLetter ===
+                                                                                            "string"
+                                                                                                ? applicant.coverLetter
+                                                                                                : "",
+                                                                                    }}
+                                                                                />
+                                                                            </DialogContent>
+                                                                        </Dialog>
+
+                                                                        <Dialog>
+                                                                            <DialogTrigger
+                                                                                asChild
+                                                                            >
+                                                                                <Button>
+                                                                                    View
+                                                                                    Resume
+                                                                                </Button>
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="sm:max-w-[600px]">
+                                                                                <DialogHeader>
+                                                                                    <DialogTitle>
+                                                                                        Cover
+                                                                                        Letter
+                                                                                    </DialogTitle>
+                                                                                </DialogHeader>
+
+                                                                                {applicant?.resume && (
+                                                                                    <iframe
+                                                                                        title="PDF preview"
+                                                                                        src={
+                                                                                            applicant.resume as string
+                                                                                        }
+                                                                                        className="mt-4 w-full h-[80vh] border sticky top-20"
+                                                                                    />
+                                                                                )}
+                                                                            </DialogContent>
+                                                                        </Dialog>
+                                                                    </div>
+                                                                </CardContent>
+                                                            </Card>
+                                                        )
+                                                    )}
+                                            </div>
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
                             )}
                         </div>
                     </div>

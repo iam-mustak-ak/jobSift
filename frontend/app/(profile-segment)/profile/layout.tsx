@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import NotificationControl from "@/components/common/NotificationControl";
 import UserDropDown from "@/components/common/userDropDown";
 import AppSidebar from "@/components/sidebar/appSideBar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -38,7 +39,8 @@ export default function RootLayout({
                         <main className="w-full p-5">
                             <div className="w-full flex items-center justify-between sticky top-0 bg-white  border-b border-border mb-5">
                                 <SidebarTrigger />
-                                <div>
+                                <div className="flex items-center gap-2">
+                                    <NotificationControl />
                                     <UserDropDown />
                                 </div>
                             </div>

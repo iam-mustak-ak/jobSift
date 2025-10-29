@@ -45,7 +45,9 @@ export default function SidebarJobNav({
                                                 : item.name === "My Jobs"
                                                 ? `/profile/${profileId}/${item.url}`
                                                 : item.name === "Saved Jobs"
-                                                ? `/profile/${profileId}/saved-jobs`
+                                                ? `/profile/${profileId}${item.url}`
+                                                : item.name === "Applied Jobs"
+                                                ? `/profile/${profileId}${item.url}`
                                                 : item.url
                                         }
                                     >

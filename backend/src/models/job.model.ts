@@ -85,8 +85,7 @@ const jobSchema = new Schema(
         applicants: [
             {
                 user: {
-                    type: Types.ObjectId,
-                    ref: "User",
+                    type: String,
                 },
                 resume: {
                     type: String,

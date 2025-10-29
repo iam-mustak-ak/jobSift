@@ -484,7 +484,7 @@ export const applyJobController = async (
     next: NextFunction
 ) => {
     try {
-        const authUser = req.user as { _id: string };
+        const authUser = req.user as { _id: string; name: string };
         const { jobId } = req.params;
         const { resume, coverLetter } = req.body;
 
@@ -520,7 +520,7 @@ export const applyJobController = async (
         }
 
         job.applicants.push({
-            user: authUser._id,
+            user: authUser.name,
             resume,
             coverLetter,
         });
@@ -544,6 +544,7 @@ export const applyJobController = async (
             type: "application",
             link: `/dashboard/recruiter/jobs/${job._id}/applicants`,
         });
+
         if (req.io) {
             req.io.to(recruiter._id.toString()).emit("new_notification", {
                 notification,

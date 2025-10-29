@@ -4,13 +4,19 @@ import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import userAgent from "express-useragent";
+import http from "http";
 import morgan from "morgan";
+import { Server } from "socket.io";
+
 import connnectMongo from "./config/dbConfig";
 import "./config/googleSIgnStrategy";
 import globalErrorHandler from "./middlewares/globalError.middleware";
 import Session from "./models/session.model";
+
+// Routers
 import companyRouter from "./routes/compnay.routes";
 import imageRouter from "./routes/image.routes";
+import interViewRouter from "./routes/interview.routes";
 import jobRouter from "./routes/job.routes";
 import jobCategoryRouter from "./routes/jobCategory.routes";
 import matchjobRoute from "./routes/matchJob.routes";
@@ -20,11 +26,7 @@ import analyzeRouter from "./routes/resumeAnalyze.route";
 import skillRouter from "./routes/skill.routes";
 import uploadRouter from "./routes/uploadResume.routes";
 import userRouter from "./routes/user.routes";
-
-import http from "http";
-import { Server } from "socket.io";
-import interViewRouter from "./routes/interview.routes";
-// import "./cron";
+import socketHandler from "./utils/socketHandler";
 
 dotenv.config();
 
@@ -81,6 +83,19 @@ app.get("/health", (req: Request, res: Response) => {
     });
 });
 
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        credentials: true,
+    },
+});
+
+app.use((req: any, res, next) => {
+    req.io = io;
+    next();
+});
+
 app.use("/auth", userRouter);
 app.use("/job-category", jobCategoryRouter);
 app.use("/skill", skillRouter);
@@ -96,41 +111,7 @@ app.use("/interview", interViewRouter);
 
 app.use(globalErrorHandler);
 
-const server = http.createServer(app);
-
-const io = new Server(server, {
-    cors: {
-        origin: allowedOrigins,
-        credentials: true,
-    },
-});
-
-const onlineUsers = new Map<string, string>();
-
-io.on("connection", (socket) => {
-    console.log("⚡ User connected:", socket.id);
-
-    socket.on("register", (userId: string) => {
-        onlineUsers.set(userId, socket.id);
-        socket.join(userId);
-        console.log(`✅ User ${userId} joined room ${userId}`);
-    });
-
-    socket.on("disconnect", () => {
-        for (const [userId, socketId] of onlineUsers.entries()) {
-            if (socketId === socket.id) {
-                onlineUsers.delete(userId);
-                break;
-            }
-        }
-        console.log("❌ User disconnected:", socket.id);
-    });
-});
-
-app.use((req: any, res, next) => {
-    req.io = io;
-    next();
-});
+socketHandler(io);
 
 const port = process.env.PORT || 3001;
 const mongoUri = process.env.MONGO_URI!;
