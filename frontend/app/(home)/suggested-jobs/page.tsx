@@ -7,8 +7,6 @@ import { fetcherSever } from "@/utils/fetcherSever";
 const Page = async () => {
     const jobs = await fetcherSever(`/match-job`);
 
-    console.log(jobs?.data);
-
     return (
         <>
             <SectionBanner title="Suggested Jobs" />

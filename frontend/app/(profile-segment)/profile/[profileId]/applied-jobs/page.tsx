@@ -23,8 +23,6 @@ const Page = async ({ params }: ProfileProps) => {
 
     const jobs = (await Promise.all(jobPromises)).filter(Boolean);
 
-    console.log("User applied jobs:", jobs);
-
     return (
         <div className="p-6">
             <h1 className="text-2xl font-semibold mb-4">

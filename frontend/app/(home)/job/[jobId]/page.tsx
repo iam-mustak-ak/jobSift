@@ -21,8 +21,6 @@ const Page = async ({ params }: { params: Promise<{ jobId: string }> }) => {
 
     const compnay = await fetcherSever(`/company/get-company/${job.company}`);
 
-    console.log(compnay);
-
     const salary = salaryFormat(job?.salaryRange);
 
     return (

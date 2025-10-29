@@ -15,36 +15,32 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useNotification from "@/hooks/useNotification";
 import { useAuthStore } from "@/state/store";
 import { Avatar } from "@radix-ui/react-avatar";
 import { Edit, Loader2, Trash } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
-type ProfileInfo = {
-    name: string;
-    phone: string;
-    location: string;
-    experience: string;
-    bio: string;
-    about: string;
-    jobPreferences: {
-        jobType: "full-time" | "part-time" | "contract" | "internship";
-        preferredLocation: string;
-        expectedSalary: number;
-    };
-    skills: string[];
-};
+// type ProfileInfo = {
+//     name: string;
+//     phone: string;
+//     location: string;
+//     experience: string;
+//     bio: string;
+//     about: string;
+//     jobPreferences: {
+//         jobType: "full-time" | "part-time" | "contract" | "internship";
+//         preferredLocation: string;
+//         expectedSalary: number;
+//     };
+//     skills: string[];
+// };
 
 const Page = () => {
     const { setAuth, user } = useAuthStore((state) => state);
     const [loading, setLoading] = useState<boolean>(false);
     const [isEnabledEdit, SetIsEnableEdit] = useState<string>("");
     const [imageLoading, setImageLoading] = useState<boolean>(false);
-    const data = useNotification(user?._id);
-
-    console.log(data);
 
     const [skillInput, setSkillInput] = useState<string>("");
 

@@ -27,16 +27,6 @@ export const navbarItems = [
         ],
     },
     {
-        id: 3,
-        name: "Employers",
-        href: "/employers",
-    },
-    {
-        id: 4,
-        name: "Candidates",
-        href: "/candidates",
-    },
-    {
         id: 5,
         name: "Analyze Resume",
         href: "/analyze-resume",

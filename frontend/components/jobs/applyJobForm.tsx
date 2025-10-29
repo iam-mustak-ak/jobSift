@@ -53,7 +53,6 @@ const ApplyJobForm = ({ jobId }: { jobId: string }) => {
 
             const resumeUrl = uploadData?.data?.resumeUrl;
 
-            console.log(resumeUrl);
             if (!resumeUrl) {
                 throw new Error("Resume URL missing in response");
             }
