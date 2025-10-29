@@ -1,10 +1,13 @@
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
 import { NextFunction, Request, Response } from "express";
-import gemini from "../config/gemini";
+import { convert } from "html-to-text";
 import { buildSimpleMatchPrompt } from "../libs/buildSimpleMatchPrompt ";
+import { parseLLMJsonOutput } from "../libs/parseJsonFromMD";
 import redis from "../libs/redis";
 import Job from "../models/job.model";
 import User from "../models/user.model";
-import safeParseJson from "../utils/safeParseJson";
+import customError from "../utils/customError";
 
 export const matchJobsController = async (
     req: Request,
@@ -25,42 +28,76 @@ export const matchJobsController = async (
         }
 
         const user = await User.findById(_id);
+        if (!user) {
+            return next(customError(404, "user not found!!"));
+        }
         const jobs = await Job.find({})
             .populate("tags")
-            .populate("skillsRequired")
-            .populate("jobCategory")
-            .populate("company")
+            .populate({
+                path: "skillsRequired",
+                select: "name",
+            })
+            .populate({
+                path: "jobCategory",
+                select: "name",
+            })
             .lean();
 
-        const prompt = buildSimpleMatchPrompt(user, jobs);
-        const raw = await gemini(prompt);
-        console.log("DEBUG: AI raw response:", raw);
+        const aboutPlainText = convert(user.about || "", {
+            wordwrap: false,
+        });
+        const userData = {
+            about: aboutPlainText.replace(/\n/g, " "),
+            experience: user.experience,
+            skills: JSON.stringify(user.skills),
+            bio: user.bio,
+        };
 
-        const parsed = safeParseJson(raw);
-        console.log("DEBUG: parsed response:", parsed);
+        const formattedJobData = jobs.map((job) => ({
+            _id: job._id.toString(),
+            description: convert(String(job.description ?? "")).replace(
+                /\n/g,
+                ""
+            ),
+            jobCategory: Array.isArray(job.jobCategory)
+                ? job.jobCategory.map((jobC: any) => jobC.name)
+                : [],
+            skillsRequired: Array.isArray(job.skillsRequired)
+                ? job.skillsRequired.map((jobC: any) => jobC.name)
+                : [],
+            tags: JSON.stringify(job.tags),
+            experienceLevel: job.experienceLevel,
+            location: job.location,
+        }));
 
-        const validatedArray = Array.isArray(parsed) ? parsed : [parsed];
+        const prompt = buildSimpleMatchPrompt(userData, formattedJobData);
 
-        let matchedJobs = jobs.map((job) => {
-            const match = validatedArray.find(
-                (m: any) => m._id == job._id.toString()
-            );
-            return {
-                ...job,
-                matchPercent: match?.matchPercent ?? 0,
-                reason: match?.reason ?? "Not enough info",
-            };
+        const { text: aiTextResponse } = await generateText({
+            model: google("gemini-2.0-flash-001"),
+            prompt,
         });
 
-        matchedJobs = matchedJobs.filter((job) => job.matchPercent > 0);
-        console.log("DEBUG: final matchedJobs:", matchedJobs);
+        const mactedJobsParsed = parseLLMJsonOutput(aiTextResponse);
 
-        await redis.set(cacheKey, JSON.stringify(matchedJobs), "EX", 86400);
+        const matchedData = [];
+
+        for (let i = 0; i < jobs.length; i++) {
+            for (let j = 0; j < mactedJobsParsed.length; j++) {
+                if (jobs[i]._id.toString() === mactedJobsParsed[j].id) {
+                    matchedData.push({
+                        ...jobs[i],
+                        matchPercent: mactedJobsParsed[j].matchPercent,
+                    });
+                    continue;
+                }
+            }
+        }
+        await redis.set(cacheKey, JSON.stringify(matchedData), "EX", 86400);
 
         res.status(200).json({
             success: true,
             message: "Job matches generated successfully",
-            data: matchedJobs,
+            data: matchedData,
         });
     } catch (err) {
         next(err);

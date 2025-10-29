@@ -1,34 +1,40 @@
-export const buildSimpleMatchPrompt = (user: any, jobs: any[]) => {
+export const buildSimpleMatchPrompt = (user: any, jobs: any) => {
     return `
-You are a job matching assistant. Compare the user's profile with each job's description and required skills.
+You are an intelligent job-matching assistant. Your task is to compare the user's profile with each job posting and determine how well the user matches each role.
 
-Focus on the following user attributes for matching priority:
-1. User skills (array of skills) — heavily influence matchPercent.
-2. User "about" section — provides context about experience, interests, and preferences.
-3. Other fields (e.g., location, title, experience) can be used secondarily.
+Matching Priorities:
+1. User Skills (highest weight) — Compare overlap and relevance with job-required skills.
+2. User "About" Section — Analyze context such as experience, interests, and domain fit.
+3. Other Fields (secondary) — Use location, job title, and experience for additional accuracy.
 
-Return ONLY a JSON ARRAY. Each item must follow this format:
-{
-  "_id": string,          // Job ID
-  "matchPercent": number,  // 0-100
-  "reason": string        // Explanation
-}
+Expected Output:
+Return only a valid array in a plain text.  
+Each item in the array must strictly follow this structure:
 
-User Profile (priority fields):
-Skills: """${JSON.stringify(user.skills)}"""
-About: """${user.about}"""
+[
+  {
+    "id": "string",           // MongoDB Job ID
+    "matchPercent": number,   // integer 0–100
+  }
+]
 
-Jobs:
-"""${JSON.stringify(jobs)}"""
 
-Make sure:
-- Each job in the array has a corresponding JSON object.
-- The JSON is valid and parsable.
-- matchPercent is heavily based on skill overlap and relevance to the "about" section.
-- Reason explains why the matchPercent is high or low, referencing skills and "about".
-- Only include jobs with matchPercent >= 10. Jobs with matchPercent < 10 should be excluded.
-- If no match, do not include the job in the array.
+Rules:
+  Include only jobs with matchPercent ≥ 10.
+  If no suitable matches exist, return an empty array: [].
+  matchPercent should heavily depend on skill overlap and alignment with the About section.
+  Every job provided in the input must be evaluated, even if it’s later excluded (for having <10% match).
+  Remember Return only an array as plain text as output.
 
-Always return a JSON ARRAY even if there's only one job.
+
+
+Input Data:
+
+User Profile:
+  Skills: ${user.skills || "N/A"}
+  About: ${user.about || "N/A"}
+
+Job Listings:
+ ${JSON.stringify(jobs, null, 2)}
 `.trim();
 };

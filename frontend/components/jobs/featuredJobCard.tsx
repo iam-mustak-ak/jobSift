@@ -22,9 +22,11 @@ import Tag from "./tag";
 
 const FeaturedJobCard = ({
     featuredJobs,
+    isSuggested = false,
 }: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     featuredJobs: Record<string, any>;
+    isSuggested?: boolean;
 }) => {
     const { user } = useAuthStore((state) => state);
     const salary = salaryFormat(featuredJobs?.salaryRange);
@@ -71,6 +73,7 @@ const FeaturedJobCard = ({
                                     {featuredJobs?.title}
                                 </CardTitle>
                             </Link>
+
                             <div className="flex items-center gap-2">
                                 <BookMarkButton jobId={featuredJobs?._id} />
                                 {user &&
@@ -136,10 +139,16 @@ const FeaturedJobCard = ({
                                 <CircleDollarSign /> {salary.min} - {salary.max}
                             </li>
                         </ul>
-
-                        <div className="flex items-center gap-3 mt-5">
-                            <Tag type={featuredJobs?.jobType} />
-                            <Tag type={featuredJobs?.employmentMode} />
+                        <div className="flex items-center gap-4 justify-between">
+                            <div className="flex items-center gap-3 mt-5">
+                                <Tag type={featuredJobs?.jobType} />
+                                <Tag type={featuredJobs?.employmentMode} />
+                            </div>
+                            {isSuggested && (
+                                <div className="bg-green-800 text-white rounded-full py-1 px-2 text-sm flex items-center justify-center">
+                                    <p>{featuredJobs?.matchPercent}% Matched</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

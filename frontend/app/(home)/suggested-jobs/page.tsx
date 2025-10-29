@@ -1,27 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import ContainerWrapper from "@/components/common/containerWrapper";
 import SectionBanner from "@/components/common/sectionBanner";
+import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { fetcherSever } from "@/utils/fetcherSever";
 
 const Page = async () => {
     const jobs = await fetcherSever(`/match-job`);
 
-    console.log(jobs);
+    console.log(jobs?.data);
 
     return (
         <>
             <SectionBanner title="Suggested Jobs" />
-            {/* <ContainerWrapper>
+            <ContainerWrapper>
                 <div className="pt-12 pb-12">
-                    {jobs && jobs?.length > 0 ? (
+                    {jobs && jobs?.data?.length > 0 ? (
                         <>
                             <div className="grid grid-cols-2 gap-5">
                                 {jobs?.data.length > 0 ? (
                                     jobs?.data.map(
-                                        (item: Record<string, any>) => (
-                                            <FeaturedJobCard
-                                                featuredJobs={item}
-                                                key={item._id}
-                                            />
-                                        )
+                                        (item: Record<string, any>) =>
+                                            item.isActive && (
+                                                <FeaturedJobCard
+                                                    featuredJobs={item}
+                                                    key={item._id}
+                                                    isSuggested={true}
+                                                />
+                                            )
                                     )
                                 ) : (
                                     <p className="text-left text-2xl">
@@ -36,7 +41,7 @@ const Page = async () => {
                         </p>
                     )}
                 </div>
-            </ContainerWrapper> */}
+            </ContainerWrapper>
         </>
     );
 };
