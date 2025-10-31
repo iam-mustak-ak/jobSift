@@ -6,6 +6,8 @@ const setTokenCookies = (
     refreshToken: string
 ) => {
     const isProduction = process.env.NODE_ENV === "production";
+
+    console.log("is pro=", isProduction);
     const accessTokenOptions: Record<string, string | boolean | number> = {
         httpOnly: true,
         secure: isProduction,
