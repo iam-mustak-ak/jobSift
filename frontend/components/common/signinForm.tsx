@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from "@/state/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import SubmitButton from "./submitButton";
 const SigninForm = () => {
     const [pending, setPending] = useState(false);
     const router = useRouter();
+    const { setAuth } = useAuthStore((state) => state);
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
@@ -41,9 +43,15 @@ const SigninForm = () => {
                 }
             );
 
-            if (!response.ok) throw await response.json();
+            if (!response.ok) return toast.error("Login Error");
 
             const data = await response.json();
+
+            if (!data?.success) {
+                return toast.error("Login Error");
+            }
+
+            setAuth(data.data);
             router.push(`/profile/${data.data._id}`);
         } catch (error) {
             toast.error("Invalid credentials");

@@ -91,8 +91,6 @@ export const loginUser = async (
         // Generate tokens
         const { accessToken, refreshToken } = await generateTokens(user, req);
 
-        console.log("Access Token: from sign", accessToken);
-        console.log("Refresh Token: from sign", refreshToken);
         // Set the refresh token in a cookie
         setTokenCookies(res, accessToken, refreshToken);
 

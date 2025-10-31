@@ -42,12 +42,12 @@ userRouter.get(
     "/google/callback",
     passport.authenticate("google", {
         session: false,
-        failureRedirect: `http://localhost:3000/login?error=OAuthFailed`,
+        failureRedirect: `${process.env.FRONTEND_URL}/login?error=OAuthFailed`,
     }),
     async function (req: Request, res: Response) {
         if (!req.user) {
             return res.redirect(
-                `http://localhost:3000/login?error=OAuthFailed`
+                `${process.env.FRONTEND_URL}/login?error=OAuthFailed`
             );
         }
 

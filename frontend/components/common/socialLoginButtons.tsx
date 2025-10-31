@@ -8,7 +8,7 @@ const SocialLoginButtons = ({
     isLogIn: boolean;
     role?: string;
 }) => {
-    const hangleGooleSignUpLogin = () => {
+    const handleGooleSignUpLogin = () => {
         if (isLogIn) {
             window.open(
                 `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=login`,
@@ -26,7 +26,7 @@ const SocialLoginButtons = ({
             <Button
                 variant="outline"
                 className="flex items-center justify-center w-full cursor-pointer"
-                onClick={hangleGooleSignUpLogin}
+                onClick={handleGooleSignUpLogin}
             >
                 <Googlesvg />
                 <span>{isLogIn ? "Sign In" : "Sign Up"} With Google</span>
