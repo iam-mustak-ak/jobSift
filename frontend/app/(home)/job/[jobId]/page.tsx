@@ -52,10 +52,13 @@ const Page = async ({ params }: { params: Promise<{ jobId: string }> }) => {
 
                             <li className="flex gap-2 font-normal text-muted-foreground">
                                 <Clock3 />{" "}
-                                {job?.isActive &&
-                                job?.deadline &&
-                                new Date(job.deadline) >= new Date() ? (
-                                    dateFormate(job?.openings)
+                                {job?.isActive ? (
+                                    job?.deadline &&
+                                    new Date(job.deadline) <= new Date() ? (
+                                        dateFormate(job?.deadline)
+                                    ) : (
+                                        dateFormate(job?.openings)
+                                    )
                                 ) : (
                                     <span className="text-destructive">
                                         Expired

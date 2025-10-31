@@ -141,11 +141,14 @@ const FeaturedJobCard = ({
                                             : ""
                                     }
                                 />{" "}
-                                {featuredJobs?.isActive &&
-                                featuredJobs?.deadline &&
-                                new Date(featuredJobs.deadline) >=
-                                    new Date() ? (
-                                    dateFormate(featuredJobs?.openings)
+                                {featuredJobs?.isActive ? (
+                                    featuredJobs?.deadline &&
+                                    new Date(featuredJobs.deadline) <=
+                                        new Date() ? (
+                                        dateFormate(featuredJobs?.deadline)
+                                    ) : (
+                                        dateFormate(featuredJobs?.openings)
+                                    )
                                 ) : (
                                     <span className="text-destructive">
                                         Expired
