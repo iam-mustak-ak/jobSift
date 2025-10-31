@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import CustomPagination from "@/components/common/customPagination";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { fetcherSever } from "@/utils/fetcherSever";
+import { fetcherClient } from "@/utils/fetcherClient";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type SearchParamsProps = {
     page: string;
@@ -13,46 +18,84 @@ type SearchParamsProps = {
     experienceLevel?: string;
 };
 
-const Page = async ({
-    searchParams,
-    params,
-}: {
-    searchParams: Promise<SearchParamsProps>;
-    params: Promise<{ profileId: string }>;
-}) => {
-    const sParams = await searchParams;
-    const { profileId } = await params;
-    const {
-        page: currentPage,
+const Page = () => {
+    const params = useParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const profileId = params?.profileId || "";
+    const currentPage = searchParams.get("page") || "1";
+    const title = searchParams.get("title") || "";
+    const location = searchParams.get("location") || "";
+    const jobCategory = searchParams.get("jobCategory") || "";
+    const jobType = searchParams.get("jobType") || "";
+    const experienceLevel = searchParams.get("experienceLevel") || "";
+
+    const [jobList, setJobList] = useState<any[]>([]);
+    const [pagination, setPagination] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const fetchJobs = useCallback(async () => {
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                limit: "8",
+                page: currentPage,
+                ...(title ? { title } : {}),
+                ...(location ? { location } : {}),
+                ...(jobCategory ? { jobCategory } : {}),
+                ...(jobType ? { jobType } : {}),
+                ...(experienceLevel ? { experienceLevel } : {}),
+            }).toString();
+
+            const jobs = await fetcherClient(
+                `/job/recruiter/${profileId}?${queryParams}`
+            );
+
+            setJobList(jobs?.data || []);
+            setPagination(jobs?.pagination || null);
+        } catch (err) {
+            console.error("Failed to fetch jobs", err);
+            toast.error("Failed to fetch jobs");
+        } finally {
+            setLoading(false);
+        }
+    }, [
+        currentPage,
+        experienceLevel,
+        jobCategory,
+        jobType,
+        location,
+        profileId,
+        title,
+    ]);
+
+    useEffect(() => {
+        if (profileId) fetchJobs();
+    }, [
+        profileId,
+        currentPage,
         title,
         location,
         jobCategory,
         jobType,
         experienceLevel,
-    } = sParams;
-
-    const queryParams = new URLSearchParams({
-        limit: "8",
-        page: currentPage || "1",
-        ...(title ? { title } : {}),
-        ...(location ? { location } : {}),
-        ...(jobCategory ? { jobCategory } : {}),
-        ...(jobType ? { jobType } : {}),
-        ...(experienceLevel ? { experienceLevel } : {}),
-    }).toString();
-
-    const [jobs] = await Promise.all([
-        fetcherSever(`/job/recruiter/${profileId}?${queryParams}`),
+        fetchJobs,
     ]);
 
-    // Further categorize them
-    const publishedJobs = jobs?.data.filter(
+    const handleDeleteJob = async (id: string) => {
+        setJobList((prev) => prev.filter((job) => job._id !== id));
+        toast.success("Job deleted successfully");
+    };
+
+    // Categorize jobs
+    const publishedJobs = jobList?.filter(
         (job: any) => job.isPublished === true && !job.isDraft
     );
-    const pendingJobs = jobs?.data.filter(
+    const pendingJobs = jobList?.filter(
         (job: any) => job.isPublished === false && !job.isDraft
     );
-    const draftJobs = jobs?.data.filter((job: any) => job.isDraft === true);
+    const draftJobs = jobList?.filter((job: any) => job.isDraft === true);
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -72,6 +115,7 @@ const Page = async ({
                                     featuredJobs={item}
                                     key={item._id}
                                     isRecuiter={true}
+                                    onDelete={handleDeleteJob}
                                 />
                             ))
                         ) : (
@@ -81,10 +125,10 @@ const Page = async ({
                         )}
                     </div>
 
-                    {publishedJobs?.length > 0 && (
+                    {publishedJobs?.length > 0 && pagination && (
                         <CustomPagination
                             currentPage={parseInt(currentPage)}
-                            totalPages={jobs.pagination.totalPages}
+                            totalPages={pagination.totalPages}
                             uri={`/profile/${profileId}/my-jobs`}
                         />
                     )}
@@ -98,6 +142,7 @@ const Page = async ({
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
+                                    onDelete={handleDeleteJob}
                                 />
                             ))
                         ) : (
@@ -116,6 +161,7 @@ const Page = async ({
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
+                                    onDelete={handleDeleteJob}
                                 />
                             ))
                         ) : (

@@ -33,10 +33,12 @@ const FeaturedJobCard = ({
     featuredJobs,
     isSuggested = false,
     isRecuiter = false,
+    onDelete,
 }: {
     featuredJobs: Record<string, any>;
     isSuggested?: boolean;
     isRecuiter?: boolean;
+    onDelete?: (id: string) => void;
 }) => {
     const { user } = useAuthStore((state) => state);
     const salary = salaryFormat(featuredJobs?.salaryRange);
@@ -52,11 +54,15 @@ const FeaturedJobCard = ({
                     credentials: "include",
                 }
             );
+
             if (!res.ok) throw new Error("Failed to delete job");
-            toast.success("Post Deleted");
+
+            toast.success("Job deleted successfully");
+
+            onDelete?.(featuredJobs._id);
         } catch (err) {
             console.error(err);
-            toast.success("Somthing is wrong");
+            toast.error("Something went wrong");
         }
     };
 

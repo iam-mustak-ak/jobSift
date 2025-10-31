@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useAuthStore } from "@/state/store";
 import { formatData } from "@/utils/formateData";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -30,6 +32,8 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
     const formattedCategories = formatData(categories);
     const formattedSkills = formatData(skills);
     const formattedCompany = formatData(company);
+    const router = useRouter();
+    const { user } = useAuthStore((state) => state);
 
     const [postLoading, setPostLoading] = useState(false);
     const [formValue, setFormValue] = useState({
@@ -171,6 +175,23 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
             toast.error("Failed to save job. Please try again.");
         } finally {
             setPostLoading(false);
+            setFormValue({
+                title: "",
+                jobType: "full-time",
+                employmentMode: "Remote",
+                location: "Sylhet",
+                company: "",
+                salaryRange: { min: 0, max: 0 },
+                experienceLevel: "lead",
+                skills: [],
+                categories: [],
+                description: "",
+                deadline: "",
+                tags: [],
+                tagsInput: "",
+            });
+
+            router.push(`/profile/${user?._id}/my-jobs?page=1`);
         }
     };
 
