@@ -87,7 +87,7 @@ const Page = () => {
                         ) : (
                             <div className="flex items-stretch gap-5 flex-wrap">
                                 {data?.data && data.data.length > 0
-                                    ? data.data.map(
+                                    ? data.data?.map(
                                           (item: Record<string, any>) => (
                                               <div
                                                   key={item._id}

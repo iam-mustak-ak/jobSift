@@ -83,7 +83,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
                     </>
                 )}
 
-                {pageNumbers.map((num) => (
+                {pageNumbers?.map((num) => (
                     <PaginationItem key={num}>
                         <PaginationLink
                             href={`${uri}/${getQueryString(num)}`}

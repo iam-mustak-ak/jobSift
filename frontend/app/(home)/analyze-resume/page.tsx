@@ -207,7 +207,7 @@ const Page = () => {
                                             <ul className="list-disc pl-5 columns-2 gap-5 max-h-[500px] overflow-x-hidden overflow-y-auto">
                                                 {Object?.entries(
                                                     data?.sectionQuality || {}
-                                                ).map(
+                                                )?.map(
                                                     ([section, quality], i) => (
                                                         <li key={i}>
                                                             <span className="font-semibold">
@@ -230,7 +230,7 @@ const Page = () => {
                                         </h2>
 
                                         <div className="flex flex-col gap-1 max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                            {data?.issues.map(
+                                            {data?.issues?.map(
                                                 (
                                                     item: Record<
                                                         string,
@@ -273,7 +273,7 @@ const Page = () => {
                                         </h2>
 
                                         <div className="flex flex-col gap-1 max-h-[500px] overflow-x-hidden overflow-y-auto">
-                                            {data?.suggestions.map(
+                                            {data?.suggestions?.map(
                                                 (
                                                     item: Record<
                                                         string,

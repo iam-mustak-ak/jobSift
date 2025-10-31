@@ -27,7 +27,7 @@ const MobileNav = () => {
             <div className=" p-4 w-full ">
                 <NavigationMenu orientation="vertical" className="w-full">
                     <NavigationMenuList className="flex-col items-start ">
-                        {navbarItems.map((item) => (
+                        {navbarItems?.map((item) => (
                             <NavigationMenuItem key={item.id}>
                                 <NavigationMenuLink asChild>
                                     <Link href={item.href}>{item.name}</Link>
@@ -35,7 +35,7 @@ const MobileNav = () => {
 
                                 {item.dropdownItems && (
                                     <ul className=" p-2 pl-4">
-                                        {item.dropdownItems.map(
+                                        {item.dropdownItems?.map(
                                             (dropdownItem) => (
                                                 <NavigationMenuLink
                                                     key={dropdownItem.id}

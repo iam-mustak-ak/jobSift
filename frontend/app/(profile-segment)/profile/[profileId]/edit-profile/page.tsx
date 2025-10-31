@@ -438,7 +438,7 @@ const Page = () => {
 
                             {user?.skills?.length > 0 && (
                                 <div className="flex flex-wrap items-center gap-1 mt-2">
-                                    {user?.skills.map(
+                                    {user?.skills?.map(
                                         (v: string, i: number) => (
                                             <div
                                                 key={i}

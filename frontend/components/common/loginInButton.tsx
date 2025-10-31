@@ -31,9 +31,9 @@ const LoginInButton = () => {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.profilePicture} alt={user.name} />
+                    <AvatarImage src={user?.profilePicture} alt={user?.name} />
                     <AvatarFallback className="rounded-lg">
-                        {user.name.slice(0, 2)}
+                        {user?.name?.slice(0, 2)}
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>

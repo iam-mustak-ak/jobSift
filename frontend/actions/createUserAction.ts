@@ -27,6 +27,16 @@ export default async function createUserAction(
         };
     }
 
+    const strongPasswordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
+        return {
+            success: false,
+            message:
+                "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+        };
+    }
+
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/create-user`,
         {

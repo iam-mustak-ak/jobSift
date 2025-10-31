@@ -25,10 +25,21 @@ const resetPasswordAction = async (
             message: "Password and Confirm password is required",
         };
     }
+
     if (password !== confirmPassword) {
         return {
             success: false,
             message: "Password do not match",
+        };
+    }
+
+    const strongPasswordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
+        return {
+            success: false,
+            message:
+                "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
         };
     }
 

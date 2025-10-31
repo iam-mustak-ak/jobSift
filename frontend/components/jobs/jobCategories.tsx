@@ -6,7 +6,7 @@ import JobCategoryCard from "./jobCategoryCard";
 
 const JobCategories = async () => {
     const categoryData = await fetcherSever(`/job-category/get-all-categories`);
-    const categories = categoryData?.data;
+    const categories = categoryData?.data || [];
 
     return (
         <ContainerWrapper>
@@ -17,7 +17,7 @@ const JobCategories = async () => {
                 />
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categories.map((item: Record<string, any>) => (
+                    {categories?.map((item: Record<string, any>) => (
                         <JobCategoryCard
                             key={item._id}
                             href={`/category/${item.name}/?page=1&id=${item._id}`}

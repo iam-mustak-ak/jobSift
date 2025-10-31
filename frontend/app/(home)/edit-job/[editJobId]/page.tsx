@@ -42,11 +42,11 @@ const Page = async ({ params }: PageProps) => {
     if (jobData) {
         jobData.company =
             company.find((c: any) => c._id === jobData.company) || null;
-        jobData.jobCategory = jobData.jobCategory.map((catId: string) =>
+        jobData.jobCategory = jobData.jobCategory?.map((catId: string) =>
             categories.find((c: any) => c._id === catId)
         );
-        jobData.skillsRequired = jobData.skillsRequired.map((skillId: string) =>
-            skills.find((s: any) => s._id === skillId)
+        jobData.skillsRequired = jobData.skillsRequired?.map(
+            (skillId: string) => skills.find((s: any) => s._id === skillId)
         );
     }
 

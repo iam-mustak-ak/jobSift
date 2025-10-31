@@ -190,7 +190,7 @@ const FeaturedJobCard = ({
                                                 {featuredJobs?.applicants &&
                                                     featuredJobs.applicants
                                                         .length > 0 &&
-                                                    featuredJobs.applicants.map(
+                                                    featuredJobs.applicants?.map(
                                                         (applicant: any) => (
                                                             <Card
                                                                 key={

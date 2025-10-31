@@ -25,6 +25,16 @@ const chnagePasswordAction = async (prevState: any, formData: FormData) => {
         };
     }
 
+    const strongPasswordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!strongPasswordRegex.test(newPassword)) {
+        return {
+            success: false,
+            message:
+                "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+        };
+    }
+
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/change-password`,
         {

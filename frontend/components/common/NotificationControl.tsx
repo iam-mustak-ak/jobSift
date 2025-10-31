@@ -53,7 +53,7 @@ const NotificationControl = () => {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                         {notifications && notifications.length > 0 ? (
-                            notifications.map((notification) => (
+                            notifications?.map((notification) => (
                                 <DropdownMenuItem
                                     asChild
                                     key={notification._id}

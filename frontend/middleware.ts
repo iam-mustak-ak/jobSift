@@ -7,6 +7,7 @@ const protectedRoutes = [
     "/post-job",
     "/apply",
     "/apply/*",
+    "/forgot-password",
 ];
 
 const publicRoutes = ["/login", "/signup", "/"];
@@ -49,5 +50,14 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+    matcher: [
+        "/",
+        "/login",
+        "/signup",
+        "/build-resume",
+        "/profile",
+        "/post-job",
+        "/apply/:path*",
+        "/forgot-password",
+    ],
 };

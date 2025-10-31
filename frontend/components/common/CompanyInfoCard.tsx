@@ -88,7 +88,7 @@ const CompanyInfoCard: React.FC<companyType> = ({ company }) => {
                         )}
                         {company?.socialLinks &&
                             Array.isArray(company?.socialLinks) &&
-                            company.socialLinks.map(
+                            company.socialLinks?.map(
                                 (links: {
                                     platform: string;
                                     url: string;

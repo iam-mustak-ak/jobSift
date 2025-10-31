@@ -35,7 +35,7 @@ export const Navbar = () => {
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
-                    {navbarItems.map((item) => (
+                    {navbarItems?.map((item) => (
                         <NavigationMenuItem
                             className="max-lg:hidden"
                             key={item.id}

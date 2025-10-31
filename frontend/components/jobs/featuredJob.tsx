@@ -66,7 +66,7 @@ const FeaturedJob = () => {
 
                     <div className="grid md:grid-cols-2 gap-5">
                         {featuredJobs &&
-                            featuredJobs.map((item: Record<string, any>) => (
+                            featuredJobs?.map((item: Record<string, any>) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}

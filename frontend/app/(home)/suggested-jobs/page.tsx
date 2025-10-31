@@ -16,7 +16,7 @@ const Page = async () => {
                         <>
                             <div className="grid grid-cols-2 gap-5">
                                 {jobs?.data.length > 0 ? (
-                                    jobs?.data.map(
+                                    jobs?.data?.map(
                                         (item: Record<string, any>) =>
                                             item.isActive && (
                                                 <FeaturedJobCard

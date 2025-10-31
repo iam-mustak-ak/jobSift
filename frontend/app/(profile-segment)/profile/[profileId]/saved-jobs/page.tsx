@@ -19,7 +19,7 @@ const Page = () => {
             try {
                 // Fetch all jobs in parallel
                 const jobs = await Promise.all(
-                    user.savedJobs.map(async (item: any) => {
+                    user.savedJobs?.map(async (item: any) => {
                         const res = await fetch(
                             `${process.env.NEXT_PUBLIC_SERVER_URL}/job/get-job/${item.jobId}`,
                             {
@@ -50,7 +50,7 @@ const Page = () => {
     return (
         <div className="grid grid-cols-2 gap-5">
             {savedJobs.length > 0 ? (
-                savedJobs.map((job) => (
+                savedJobs?.map((job) => (
                     <FeaturedJobCard featuredJobs={job} key={job?._id} />
                 ))
             ) : (

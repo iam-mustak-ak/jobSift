@@ -89,13 +89,15 @@ const Page = () => {
     };
 
     // Categorize jobs
-    const publishedJobs = jobList?.filter(
-        (job: any) => job.isPublished === true && !job.isDraft
-    );
-    const pendingJobs = jobList?.filter(
-        (job: any) => job.isPublished === false && !job.isDraft
-    );
-    const draftJobs = jobList?.filter((job: any) => job.isDraft === true);
+    const publishedJobs =
+        jobList?.filter(
+            (job: any) => job.isPublished === true && !job.isDraft
+        ) || [];
+    const pendingJobs =
+        jobList?.filter(
+            (job: any) => job.isPublished === false && !job.isDraft
+        ) || [];
+    const draftJobs = jobList?.filter((job: any) => job.isDraft === true) || [];
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -110,7 +112,7 @@ const Page = () => {
                 <TabsContent value="published">
                     <div className="grid grid-cols-2 gap-5">
                         {publishedJobs?.length > 0 ? (
-                            publishedJobs.map((item: any) => (
+                            publishedJobs?.map((item: any) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
@@ -138,7 +140,7 @@ const Page = () => {
                 <TabsContent value="draft">
                     <div className="grid grid-cols-2 gap-5">
                         {draftJobs?.length > 0 ? (
-                            draftJobs.map((item: any) => (
+                            draftJobs?.map((item: any) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
@@ -157,7 +159,7 @@ const Page = () => {
                 <TabsContent value="pending">
                     <div className="grid grid-cols-2 gap-5">
                         {pendingJobs?.length > 0 ? (
-                            pendingJobs.map((item: any) => (
+                            pendingJobs?.map((item: any) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}

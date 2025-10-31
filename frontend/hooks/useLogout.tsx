@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/state/store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -10,7 +9,6 @@ const useLogout = ({ redirect = "login" }: LogoutType) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const router = useRouter();
-    const { setAuth } = useAuthStore((state) => state);
 
     const handleLogout = async () => {
         setLoading(true);
@@ -31,7 +29,6 @@ const useLogout = ({ redirect = "login" }: LogoutType) => {
             if (!res.ok) {
                 setError("logout failed");
             }
-            setAuth({});
 
             router.push(`/${redirect}`);
         } catch (err) {

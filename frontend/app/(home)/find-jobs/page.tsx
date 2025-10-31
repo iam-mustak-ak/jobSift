@@ -62,7 +62,7 @@ const Page = async ({
                     </div>
                     <div className="grid grid-cols-2 gap-5">
                         {jobs?.data.length > 0 ? (
-                            jobs?.data.map((item: Record<string, any>) => (
+                            jobs?.data?.map((item: Record<string, any>) => (
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}

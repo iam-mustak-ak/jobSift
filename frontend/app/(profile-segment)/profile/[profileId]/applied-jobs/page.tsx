@@ -12,7 +12,7 @@ const Page = async ({ params }: ProfileProps) => {
     const { data } = await fetcherSever(`/auth/me/${profileId}`);
     const appliedJobs = data?.appliedJobs || [];
 
-    const jobPromises = appliedJobs.map((item: any) =>
+    const jobPromises = appliedJobs?.map((item: any) =>
         fetcherSever(`/job/get-job/${item.jobId}`)
             .then((res) => ({
                 ...res.data,
@@ -29,7 +29,7 @@ const Page = async ({ params }: ProfileProps) => {
                 Applied Jobs ({jobs.length})
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {jobs.map((job: any) => (
+                {jobs?.map((job: any) => (
                     <FeaturedJobCard featuredJobs={job} key={job._id} />
                 ))}
             </div>
