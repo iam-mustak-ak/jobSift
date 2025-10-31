@@ -27,15 +27,14 @@ const setAuthorization: RequestHandler = async (req, res, next) => {
             }
         }
 
-        // If no accessToken or expired, use refreshToken
         if (refreshToken) {
             try {
                 const decoded: any = jwt.verify(
                     refreshToken,
                     process.env.JWT_SECRET
                 );
-                const user = await User.findById(decoded.id); // 👈 fetch fresh user
-                if (!user) throw new Error("User not found");
+                const user = await User.findById(decoded.id);
+                if (!user) return next(customError(404, "User not found!!"));
 
                 const {
                     accessToken: newAccessToken,
@@ -50,9 +49,9 @@ const setAuthorization: RequestHandler = async (req, res, next) => {
             }
         }
 
-        throw new Error("Authentication required");
+        return next(customError(500, "Authentication required"));
     } catch (error) {
-        return next(error);
+        next(error);
     }
 };
 
