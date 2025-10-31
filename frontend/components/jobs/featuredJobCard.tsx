@@ -252,8 +252,7 @@ const FeaturedJobCard = ({
                                                                             <DialogContent className="sm:max-w-[600px]">
                                                                                 <DialogHeader>
                                                                                     <DialogTitle>
-                                                                                        Cover
-                                                                                        Letter
+                                                                                        Resume
                                                                                     </DialogTitle>
                                                                                 </DialogHeader>
 
