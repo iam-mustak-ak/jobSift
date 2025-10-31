@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetcherSever } from "@/utils/fetcherSever";
 import ContainerWrapper from "../common/containerWrapper";
 import SectionHeading from "../common/sectionHeading";
@@ -5,7 +6,7 @@ import JobCategoryCard from "./jobCategoryCard";
 
 const JobCategories = async () => {
     const categoryData = await fetcherSever(`/job-category/get-all-categories`);
-    const categories = categoryData.data;
+    const categories = categoryData?.data;
 
     return (
         <ContainerWrapper>

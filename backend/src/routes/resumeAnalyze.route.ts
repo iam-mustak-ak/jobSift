@@ -6,7 +6,7 @@ const analyzeRouter = Router();
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 },
-}); // 10MB
+});
 
 analyzeRouter.post("/", upload.single("file"), analyzeReumeController);
 

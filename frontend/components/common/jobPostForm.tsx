@@ -48,7 +48,6 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         tagsInput: "",
     });
 
-    // Prefill form if editing
     useEffect(() => {
         if (jobData) {
             setFormValue({
@@ -101,6 +100,12 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         if (!formValue.categories.length) return "Select at least one category";
         if (!formValue.description.trim()) return "Job description is required";
         if (!formValue.deadline) return "Deadline is required";
+
+        const selectedDate = new Date(formValue.deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate < today)
+            return "Deadline cannot be earlier than today";
 
         const min = formValue.salaryRange.min;
         const max = formValue.salaryRange.max;

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ContainerWrapper from "@/components/common/containerWrapper";
 import CustomPagination from "@/components/common/customPagination";
-import CustomSelect from "@/components/common/customSelect";
 import SectionBanner from "@/components/common/sectionBanner";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import { fetcherSever } from "@/utils/fetcherSever";
@@ -60,13 +59,6 @@ const Page = async ({
                                 {showingText}
                             </span>{" "}
                         </p>
-
-                        <form action="">
-                            <CustomSelect
-                                name="Sortby"
-                                placeholder="Sort by (default)"
-                            />
-                        </form>
                     </div>
                     <div className="grid grid-cols-2 gap-5">
                         {jobs?.data.length > 0 ? (
@@ -77,9 +69,7 @@ const Page = async ({
                                 />
                             ))
                         ) : (
-                            <p className="text-left text-2xl">
-                                No jobs Found !
-                            </p>
+                            <p className="text-left text-2xl">No job Found !</p>
                         )}
                     </div>
 

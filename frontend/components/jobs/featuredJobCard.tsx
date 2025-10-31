@@ -135,7 +135,10 @@ const FeaturedJobCard = ({
                                             : ""
                                     }
                                 />{" "}
-                                {featuredJobs?.isActive ? (
+                                {featuredJobs?.isActive &&
+                                featuredJobs?.deadline &&
+                                new Date(featuredJobs.deadline) >=
+                                    new Date() ? (
                                     dateFormate(featuredJobs?.openings)
                                 ) : (
                                     <span className="text-destructive">

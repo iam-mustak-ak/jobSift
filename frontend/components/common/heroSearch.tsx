@@ -12,7 +12,7 @@ type searchFormProps = {
 
 const HeroSearch = async ({ showCategory }: searchFormProps) => {
     const categoryData = await fetcherSever("/job-category/get-all-categories");
-    const categories = categoryData.data;
+    const categories = categoryData?.data;
     const formattedCategries = formateSelectValues(categories);
 
     return (
