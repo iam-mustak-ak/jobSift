@@ -151,7 +151,7 @@ const Page = async ({
                     )}
 
                     {jobList.length > 0 && totalPages > 1 && (
-                        <div className="mt-10 rounded-2xl border border-slate-200 bg-white px-4 py-1 shadow-sm">
+                        <div className="mt-10">
                             <CustomPagination
                                 currentPage={page}
                                 totalPages={totalPages}
