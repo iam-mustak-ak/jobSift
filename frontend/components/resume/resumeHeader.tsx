@@ -10,8 +10,8 @@ import { saveResume } from "@/utils/saveResume";
 import {
     CloudUploadIcon,
     Download,
-    LayoutPanelLeft,
     Loader2,
+    Palette,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ChangeEvent, useCallback } from "react";
@@ -46,6 +46,8 @@ const ResumeHeader: React.FC = () => {
         researches,
         projects,
         cp,
+        themeColor,
+        fontFamily,
     } = useResumeData((state) => state);
     const reactToPrintFn = useReactToPrint({
         contentRef: printRef,
@@ -67,6 +69,8 @@ const ResumeHeader: React.FC = () => {
         researches,
         projects,
         cp,
+        themeColor,
+        fontFamily,
     };
 
     const debouncedSave = useCallback(
@@ -74,7 +78,6 @@ const ResumeHeader: React.FC = () => {
             setIsloading(true);
             try {
                 await saveResume(resumeId ?? "", data);
-                toast.success("Resume Updated");
             } catch (error) {
                 toast.error("Error while saving");
             } finally {
@@ -97,6 +100,12 @@ const ResumeHeader: React.FC = () => {
         debouncedSave(updatedData);
     };
 
+    const handleDesignChange = (field: "themeColor" | "fontFamily", value: string) => {
+        const updatedData = { ...resumeData, [field]: value };
+        setResumeName(updatedData);
+        debouncedSave(updatedData);
+    };
+
     const handleSaveResume = async () => {
         setIsloading(true);
         try {
@@ -110,48 +119,49 @@ const ResumeHeader: React.FC = () => {
     };
 
     return (
-        <div className="backdrop-blur-2xl bg-neutral-50 shadow-md py-5 px-10 z-10 sticky top-16">
-            <div className="flex items-center justify-between">
-                <div className="max-w-[20rem]">
+        <div className="sticky top-16 z-30 border-b border-slate-200/80 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-xl sm:px-6 lg:px-8">
+            <div className="mx-auto flex max-w-[1600px] flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0 xl:max-w-[22rem]">
                     <Input
-                        className={`outline-0 border-0 shadow-none focus-visible:outline-0 focus-visible:border-0 focus-visible:ring-0 text-primary font-bold text-4xl w-fit`}
+                        aria-label="Resume name"
+                        className="h-11 w-full border-transparent bg-transparent px-2 text-xl font-bold text-slate-900 shadow-none focus-visible:border-violet-200 focus-visible:bg-white focus-visible:ring-violet-100 sm:text-2xl"
                         value={resumeName ?? ""}
                         onChange={handleResumeName}
                     />
+                    <p className="px-2 text-xs text-slate-500">Your changes save automatically</p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Button onClick={handleSaveResume}>
+                <div className="flex flex-wrap items-center gap-2 xl:justify-end">
+                    <label className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm" title="Choose resume accent color">
+                        <Palette className="h-4 w-4 text-violet-600" />
+                        <span className="hidden sm:inline">Accent</span>
+                        <input
+                            aria-label="Resume accent color"
+                            type="color"
+                            value={themeColor || "#6d28d9"}
+                            onChange={(event) => handleDesignChange("themeColor", event.target.value)}
+                            className="h-6 w-7 cursor-pointer rounded border-0 bg-transparent p-0"
+                        />
+                    </label>
+                    <CustomSelect
+                        name="resume-font"
+                        placeholder="Font"
+                        options={["Arial", "Georgia", "Times New Roman", "Verdana"]}
+                        value={fontFamily || "Arial"}
+                        onChangeValue={(value) => handleDesignChange("fontFamily", value)}
+                        className="h-10 w-[150px] rounded-xl border-slate-200 bg-white text-slate-700 shadow-sm"
+                    />
+                    <Button className="h-10 rounded-xl" variant="outline" onClick={handleSaveResume}>
                         {isLoading ? (
-                            <Loader2 className="animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                            <CloudUploadIcon />
+                            <CloudUploadIcon className="h-4 w-4" />
                         )}
+                        <span className="hidden sm:inline">Save now</span>
                     </Button>
 
-                    <CustomSelect
-                        name="templates"
-                        placeholder="select a template"
-                        options={["temp1", "temp-2"]}
-                        icon={<LayoutPanelLeft />}
-                        title="Templates"
-                    />
-                    {/* <CustomSelect
-                        name="font"
-                        placeholder="Font"
-                        options={["Arial", "Times new Roman"]}
-                        icon={<CaseSensitive />}
-                        title="Font Family"
-                    />
-                    <CustomSelect
-                        name="font-size"
-                        placeholder="Font Size"
-                        options={["XS", "M"]}
-                        icon={<Type />}
-                        title="Font Size"
-                    /> */}
-                    <Button onClick={reactToPrintFn}>
-                        <Download />
+                    <Button className="h-10 rounded-xl bg-violet-700 hover:bg-violet-800" onClick={reactToPrintFn}>
+                        <Download className="h-4 w-4" />
                         Download
                     </Button>
                 </div>

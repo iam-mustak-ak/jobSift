@@ -4,6 +4,8 @@ import { IResumeDocument, ResumeModel } from "./model-types/resumeTypes";
 const resumeSchema = new Schema<IResumeDocument, ResumeModel>(
     {
         resumeName: { type: String },
+        themeColor: { type: String, default: "#6d28d9" },
+        fontFamily: { type: String, default: "Arial" },
         image: { type: String },
         name: { type: String },
         tagline: { type: String },

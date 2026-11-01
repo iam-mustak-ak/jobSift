@@ -41,6 +41,8 @@ export type LanguagesTypes = {
 
 export type ResumeDataTypes = {
     resumeName: string | null;
+    themeColor?: string;
+    fontFamily?: string;
     image: string | null;
     name: string | null;
     tagline: string | null;
@@ -125,6 +127,8 @@ type ResumeDataActions = {
 export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
     (set) => ({
         resumeName: "Untitled",
+        themeColor: "#6d28d9",
+        fontFamily: "Arial",
         image: null,
         name: null,
         tagline: null,

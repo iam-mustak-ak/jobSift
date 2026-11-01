@@ -3,7 +3,7 @@ import FirstTemplate from "@/lib/resumeTemplates/firstTemplate";
 
 const ResumePreview = () => {
     return (
-        <div className="w-full bg-white rounded-md shadow border sticky top-36">
+        <div className="min-h-[800px] w-full bg-white">
             <FirstTemplate />
         </div>
     );

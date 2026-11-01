@@ -9,7 +9,7 @@ import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 
 const expLevel = {
     Noob: 30,
@@ -36,6 +36,8 @@ const FirstTemplate: React.FC = () => {
         researches,
         references,
         cp,
+        themeColor,
+        fontFamily,
     } = useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
@@ -43,7 +45,14 @@ const FirstTemplate: React.FC = () => {
     }, []);
 
     return (
-        <div ref={printRef} className="flex items-start gap-5 h-auto py-5">
+        <div
+            ref={printRef}
+            style={{
+                "--primary": themeColor || "#6d28d9",
+                fontFamily: fontFamily || "Arial",
+            } as CSSProperties}
+            className="mx-auto flex h-auto w-full min-w-[640px] max-w-[794px] items-start gap-5 bg-white px-2 py-5"
+        >
             <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
                 {image && (
                     <Image
@@ -122,7 +131,7 @@ const FirstTemplate: React.FC = () => {
                     </div>
                 )}
 
-                {educations.items.length > 0 && (
+                {cp.items.length > 0 && (
                     <div className="mt-4">
                         <div className="w-full mt-4">
                             <TemplatesTile

@@ -2,6 +2,8 @@ import { Document, Model, Schema } from "mongoose";
 
 interface IResume {
     resumeName?: string | null;
+    themeColor?: string;
+    fontFamily?: string;
     image?: string | null;
     name?: string | null;
     tagline?: string | null;
