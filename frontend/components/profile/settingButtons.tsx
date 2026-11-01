@@ -36,10 +36,10 @@ const SettingButtons = ({
     };
 
     return (
-        <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+        <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div className="grid gap-2">
-                <Label>{label}</Label>
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <Label className="text-sm font-semibold text-slate-900">{label}</Label>
+                <p className="max-w-xl text-sm leading-5 text-slate-500">{description}</p>
             </div>
             <Switch
                 checked={user?.isAvailableForHire}

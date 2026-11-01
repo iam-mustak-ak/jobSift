@@ -27,35 +27,41 @@ const ChangePasswordForm = () => {
     }, [state]);
 
     return (
-        <form action={formAction} className="grid gap-2">
+        <form action={formAction} className="grid gap-4">
             <IconInput
                 Icon={Lock}
                 name="oldPassword"
-                placeholder="Old password"
+                placeholder="Current password"
                 type="password"
-                className="w-full"
+                autoComplete="current-password"
+                className="h-11 w-full rounded-xl border-slate-200 bg-white pl-10 shadow-sm focus-visible:border-violet-400 focus-visible:ring-violet-100"
             />
             <IconInput
                 Icon={Lock}
                 name="password"
-                placeholder="New Password"
+                placeholder="New password"
                 type="password"
-                className="w-full"
+                autoComplete="new-password"
+                className="h-11 w-full rounded-xl border-slate-200 bg-white pl-10 shadow-sm focus-visible:border-violet-400 focus-visible:ring-violet-100"
             />
             <IconInput
                 Icon={Lock}
                 name="newPassword"
-                placeholder="New Password"
+                placeholder="Confirm new password"
                 type="password"
-                className="w-full"
+                autoComplete="new-password"
+                className="h-11 w-full rounded-xl border-slate-200 bg-white pl-10 shadow-sm focus-visible:border-violet-400 focus-visible:ring-violet-100"
             />
 
-            <Button type="submit" disabled={pending}>
+            <p className="text-xs leading-5 text-slate-500">Use at least 8 characters with uppercase and lowercase letters, a number, and a symbol.</p>
+
+            <Button type="submit" disabled={pending} className="mt-1 h-11 rounded-xl bg-violet-700 font-semibold shadow-sm shadow-violet-700/15 hover:bg-violet-800">
                 {pending ? (
-                    <Loader2 className="animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                    "Change Password"
+                    <Lock className="mr-2 h-4 w-4" />
                 )}
+                {pending ? "Updating password…" : "Update password"}
             </Button>
         </form>
     );

@@ -79,7 +79,7 @@ export const sideabrLinksData = {
                 },
                 {
                     title: "Suggested Job",
-                    url: "#",
+                    url: "/suggested-jobs",
                 },
             ],
         },

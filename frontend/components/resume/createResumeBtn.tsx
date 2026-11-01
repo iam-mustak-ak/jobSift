@@ -82,11 +82,15 @@ const CreateResumeBtn: React.FC = () => {
 
     return (
         <Button
-            className="w-[200px] h-[300px] border border-dashed cursor-pointer"
+            className="flex h-full min-h-[300px] w-full flex-col gap-3 rounded-2xl border border-dashed border-violet-200 bg-violet-50/30 p-6 text-center text-slate-700 transition hover:border-violet-400 hover:bg-violet-50 hover:text-violet-800"
             variant={"ghost"}
             onClick={handleCreate}
         >
-            {loading ? <Loader2 className="animate-spin" /> : <Plus />}
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-violet-700 shadow-sm ring-1 ring-violet-100">
+                {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : <Plus className="h-6 w-6" />}
+            </span>
+            <span className="text-base font-semibold">Create a resume</span>
+            <span className="max-w-[190px] text-sm font-normal leading-5 text-slate-500">Start with a fresh, professional template.</span>
         </Button>
     );
 };

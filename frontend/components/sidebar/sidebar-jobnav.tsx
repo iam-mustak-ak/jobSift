@@ -30,13 +30,16 @@ export default function SidebarJobNav({
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Basic</SidebarGroupLabel>
             <SidebarMenu>
-                {projects.map((item) => (
-                    <SidebarMenuItem key={item.name}>
-                        {user &&
-                            !(
-                                user.role === "recruiter" &&
-                                item.name === "Applied Jobs"
-                            ) && (
+                {projects.map((item) => {
+                    const hiddenForRole =
+                        (user?.role === "candidate" &&
+                            item.name === "My Jobs") ||
+                        (user?.role === "recruiter" &&
+                            item.name === "Applied Jobs");
+
+                    return (
+                        <SidebarMenuItem key={item.name}>
+                            {user && !hiddenForRole && (
                                 <SidebarMenuButton asChild>
                                     <Link
                                         href={
@@ -56,8 +59,9 @@ export default function SidebarJobNav({
                                     </Link>
                                 </SidebarMenuButton>
                             )}
-                    </SidebarMenuItem>
-                ))}
+                        </SidebarMenuItem>
+                    );
+                })}
             </SidebarMenu>
         </SidebarGroup>
     );
