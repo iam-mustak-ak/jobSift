@@ -5,12 +5,14 @@ import { Button } from "../ui/button";
 const SubmitButton = ({
     label,
     pending,
+    className,
 }: {
     label: string;
     pending: boolean;
+    className?: string;
 }) => {
     return (
-        <Button disabled={pending} type="submit">
+        <Button disabled={pending} type="submit" className={className}>
             {pending ? <Loader2 className="animate-spin" /> : label}
         </Button>
     );

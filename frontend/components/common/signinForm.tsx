@@ -62,48 +62,66 @@ const SigninForm = () => {
     }
 
     return (
-        <div className="w-full md:w-[425px] mx-4 md:mx-auto border p-4 rounded-md shadow-md ">
-            <h4 className="font-bold text-lg">Login </h4>
-            <p className="text-base">Welcome Back</p>
-            <form className="w-full" onSubmit={handleSubmit}>
-                <div className="grid gap-4 py-4">
+        <div className="w-full max-w-md">
+            <div>
+                <p className="text-sm font-semibold text-violet-700">Welcome back</p>
+                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                    Sign in to JobSift
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Pick up where you left off and keep your next move on track.
+                </p>
+            </div>
+            <form className="mt-7 w-full" onSubmit={handleSubmit}>
+                <div className="grid gap-5">
                     <CustomInput
                         type="email"
                         id="email"
                         label="Email"
                         name="email"
+                        placeholder="you@example.com"
+                        className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                     />
                     <CustomInput
                         type="password"
                         id="password"
                         label="Password"
                         name="password"
+                        placeholder="Enter your password"
+                        className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                     />
 
-                    <Link
-                        href="/forgot-password"
-                        className="justify-end cursor-pointer text-primary text-right hover:underline"
-                    >
-                        Forgot Password?
-                    </Link>
-
-                    <SubmitButton label="Sign In" pending={pending} />
-
-                    <div className="flex items-center justify-center gap-2 text-sm">
-                        <span>Don&apos;t Have an Account?</span>
-                        <Link href="/signup" className="hover:underline">
-                            Sign Up
+                    <div className="-mt-1 flex justify-end">
+                        <Link
+                            href="/forgot-password"
+                            className="text-sm font-semibold text-violet-700 transition-colors hover:text-violet-900 hover:underline"
+                        >
+                            Forgot password?
                         </Link>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="w-full h-[1px] bg-black/10" />
-                        <p>OR</p>
-                        <div className="w-full h-[1px] bg-black/10" />
-                    </div>
+                    <SubmitButton
+                        label="Sign in"
+                        pending={pending}
+                        className="h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-violet-700/15"
+                    />
                 </div>
             </form>
+            <div className="my-6 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+                <span className="h-px flex-1 bg-slate-200" />
+                or continue with
+                <span className="h-px flex-1 bg-slate-200" />
+            </div>
             <SocialLoginButtons isLogIn={true} />
+            <p className="mt-7 text-center text-sm text-slate-600">
+                New to JobSift?{" "}
+                <Link
+                    href="/signup"
+                    className="font-semibold text-violet-700 hover:text-violet-900 hover:underline"
+                >
+                    Create an account
+                </Link>
+            </p>
         </div>
     );
 };

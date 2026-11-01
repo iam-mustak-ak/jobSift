@@ -25,11 +25,11 @@ const SocialLoginButtons = ({
         <div className="grid gap-2">
             <Button
                 variant="outline"
-                className="flex items-center justify-center w-full cursor-pointer"
+                className="h-11 w-full cursor-pointer rounded-xl border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
                 onClick={handleGooleSignUpLogin}
             >
                 <Googlesvg />
-                <span>{isLogIn ? "Sign In" : "Sign Up"} With Google</span>
+                <span>Continue with Google</span>
             </Button>
         </div>
     );

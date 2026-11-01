@@ -1,10 +1,11 @@
 import SigninForm from "@/components/common/signinForm";
+import AuthShell from "@/components/common/authShell";
 
 const Page = () => {
     return (
-        <div className="flex items-center justify-center h-[100dvh]">
+        <AuthShell>
             <SigninForm />
-        </div>
+        </AuthShell>
     );
 };
 

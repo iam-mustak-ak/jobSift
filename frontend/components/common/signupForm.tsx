@@ -31,75 +31,139 @@ const SignupForm = () => {
     }, [state]);
 
     return (
-        <div className="w-full md:w-[425px] mx-4 md:mx-auto border p-4 rounded-md shadow-md">
-            <h4 className="font-bold text-lg">Sign Up </h4>
-            <p className="text-base">Fill The Details</p>
-            <form className="w-full" action={formAction}>
-                <div className="grid gap-4 py-4">
-                    <p className=" text-md font-medium text-secondary-foreground">
-                        Sign up as
-                    </p>
-                    <RadioGroup
-                        defaultValue="candidate"
-                        name="role"
-                        className="flex items-center gap-4"
-                        onValueChange={(value) => setRole(value)}
-                        required
-                    >
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="candidate" id="candidate" />
-                            <Label htmlFor="candidate">Candidate</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="recruiter" id="recruiter" />
-                            <Label htmlFor="recruiter">Recruiter</Label>
-                        </div>
-                    </RadioGroup>
+        <div className="w-full max-w-md">
+            <div>
+                <p className="text-sm font-semibold text-violet-700">
+                    Get started
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                    Create your account
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Join JobSift and take the next step in your career.
+                </p>
+            </div>
+            <form className="mt-6 w-full" action={formAction}>
+                <div className="grid gap-4">
+                    <div className="grid gap-2">
+                        <p className="text-sm font-semibold text-slate-800">
+                            I&apos;m joining as a
+                        </p>
+                        <RadioGroup
+                            defaultValue="candidate"
+                            name="role"
+                            className="grid grid-cols-2 gap-3"
+                            onValueChange={(value) => setRole(value)}
+                            required
+                        >
+                            <div
+                                className={`flex min-w-0 items-start gap-2.5 rounded-xl border p-3 transition-colors ${
+                                    role === "candidate"
+                                        ? "border-violet-300 bg-violet-50"
+                                        : "border-slate-200 bg-white"
+                                }`}
+                            >
+                                <RadioGroupItem
+                                    value="candidate"
+                                    id="candidate"
+                                    className="mt-0.5"
+                                />
+                                <div className="min-w-0">
+                                    <Label
+                                        htmlFor="candidate"
+                                        className="cursor-pointer text-sm font-semibold text-slate-800"
+                                    >
+                                        Candidate
+                                    </Label>
+                                    <p className="mt-1 text-xs leading-4 text-slate-500">
+                                        Find your next role
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                className={`flex min-w-0 items-start gap-2.5 rounded-xl border p-3 transition-colors ${
+                                    role === "recruiter"
+                                        ? "border-violet-300 bg-violet-50"
+                                        : "border-slate-200 bg-white"
+                                }`}
+                            >
+                                <RadioGroupItem
+                                    value="recruiter"
+                                    id="recruiter"
+                                    className="mt-0.5"
+                                />
+                                <div className="min-w-0">
+                                    <Label
+                                        htmlFor="recruiter"
+                                        className="cursor-pointer text-sm font-semibold text-slate-800"
+                                    >
+                                        Recruiter
+                                    </Label>
+                                    <p className="mt-1 text-xs leading-4 text-slate-500">
+                                        Find great candidates
+                                    </p>
+                                </div>
+                            </div>
+                        </RadioGroup>
+                    </div>
 
-                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <CustomInput
                             type="text"
                             id="full-name"
                             label="Full Name"
                             name="name"
+                            placeholder="Your name"
+                            className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                         />
                         <CustomInput
                             type="email"
                             id="email"
                             label="Email"
                             name="email"
+                            placeholder="you@example.com"
+                            className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                         />
                         <CustomInput
                             type="password"
                             id="password"
                             label="Password"
                             name="password"
+                            placeholder="Create a password"
+                            className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                         />
                         <CustomInput
                             type="password"
                             id="confirm-pasword"
                             label="Confirm Password"
                             name="confirm-password"
+                            placeholder="Re-enter your password"
+                            className="h-11 rounded-xl border-slate-200 bg-slate-50 px-3.5 text-sm focus-visible:bg-white"
                         />
                     </div>
 
-                    <SubmitButton label="Sign Up" pending={pending} />
-
-                    <div className="flex items-center justify-center gap-2 text-sm">
-                        <span>Have an Account?</span>{" "}
-                        <Link href="/login" className="hover:underline">
-                            Sign In
-                        </Link>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="w-full h-[1px] bg-black/10" />
-                        <p>OR</p>
-                        <div className="w-full h-[1px] bg-black/10" />
-                    </div>
+                    <SubmitButton
+                        label="Create account"
+                        pending={pending}
+                        className="mt-1 h-11 w-full rounded-xl text-sm font-semibold shadow-md shadow-violet-700/15"
+                    />
                 </div>
             </form>
+            <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+                <span className="h-px flex-1 bg-slate-200" />
+                or sign up with
+                <span className="h-px flex-1 bg-slate-200" />
+            </div>
             <SocialLoginButtons isLogIn={false} role={role} />
+            <p className="mt-6 text-center text-sm text-slate-600">
+                Already have an account?{" "}
+                <Link
+                    href="/login"
+                    className="font-semibold text-violet-700 hover:text-violet-900 hover:underline"
+                >
+                    Sign in
+                </Link>
+            </p>
         </div>
     );
 };
