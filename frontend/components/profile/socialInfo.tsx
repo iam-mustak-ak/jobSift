@@ -1,9 +1,8 @@
 "use client";
 
 import { useAuthStore } from "@/state/store";
-import { Loader2, Plus, Trash } from "lucide-react";
+import { Check, Link2, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import CustomInput from "../common/customInput";
@@ -103,62 +102,88 @@ const SocialInfo = () => {
     };
 
     return (
-        <Card className="break-inside-avoid mb-4">
-            <CardHeader>
-                <CardTitle>Social Information</CardTitle>
+        <Card className="rounded-2xl border-slate-200 bg-white shadow-sm shadow-slate-900/[0.03]">
+            <CardHeader className="px-5 pb-2">
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                        <Link2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <CardTitle className="text-base">Social links</CardTitle>
+                        <p className="mt-1 text-sm text-slate-500">Connect your professional profiles</p>
+                    </div>
+                </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-5 pt-3">
                 {socialLinks.length > 0 &&
                     socialLinks.map((item, i) => (
-                        <div key={i} className="mb-4 relative">
+                        <div key={i} className="relative mb-3 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50/70 p-4 transition hover:border-violet-200">
                             <Button
-                                variant="destructive"
-                                className="absolute top-0 right-0 cursor-pointer"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-3 top-3 h-8 w-8 cursor-pointer rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600"
                                 onClick={() => handleRemoveSocial(i)}
+                                aria-label="Remove social link"
                             >
-                                <Trash />
+                                <Trash2 className="h-4 w-4" />
                             </Button>
-                            <div className="flex items-center justify-start gap-4 flex-wrap">
-                                <Link href="/" className="w-12 h-12">
+                            <div className="mb-4 flex items-center gap-3 pr-10">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-2 shadow-sm">
                                     <Image
                                         src={item?.logo || "/other.svg"}
-                                        width={100}
-                                        height={100}
-                                        alt="logo"
+                                        width={32}
+                                        height={32}
+                                        alt={`${item.platform || "Social"} logo`}
                                     />
-                                </Link>
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="truncate text-sm font-semibold text-slate-900">{item.platform || "Social profile"}</p>
+                                    <p className="mt-0.5 text-xs text-slate-500">Professional profile link</p>
+                                </div>
+                                {item.platform && item.url && (
+                                    <span className="ml-auto hidden items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 sm:inline-flex">
+                                        <Check className="h-3 w-3" /> Added
+                                    </span>
+                                )}
                             </div>
-                            <div className="flex gap-2 mt-4">
+                            <div className="grid gap-3 sm:grid-cols-2">
                                 <CustomSelect
                                     name="platform"
                                     options={socialOptions}
                                     placeholder="Select Platform"
                                     label="Platform"
                                     defaultValue={item.platform}
+                                    className="h-10 rounded-xl border-slate-200 bg-white text-sm text-slate-700 shadow-sm focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-100"
                                     onChangeValue={(value) =>
                                         handleSelectChange(i, value)
                                     }
                                 />
                                 <CustomInput
-                                    label="Url"
+                                    label="Profile URL"
                                     name="url"
-                                    placeholder="Enter Social Link"
+                                    placeholder="https://instagram.com/username"
                                     type="url"
                                     id={`socialLink-${i}`}
                                     onChange={(e) => handleChangeSocial(i, e)}
                                     value={item.url}
+                                    className="h-10 rounded-xl border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus-visible:border-violet-400 focus-visible:ring-2 focus-visible:ring-violet-100 autofill:[box-shadow:inset_0_0_0_1000px_white]"
                                 />
                             </div>
                         </div>
                     ))}
+                {socialLinks.length === 0 && (
+                    <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-4 py-5 text-sm leading-6 text-slate-500">
+                        Add a LinkedIn or other professional link so people can learn more about you.
+                    </div>
+                )}
             </CardContent>
-            <CardFooter className="gap-2">
-                <Button variant="outline" onClick={handleAddSocial}>
-                    <Plus />
-                    Add
+            <CardFooter className="flex-col-reverse gap-2 px-5 pb-5 pt-4 sm:flex-row">
+                <Button variant="outline" className="w-full rounded-xl border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:flex-1" onClick={handleAddSocial}>
+                    <Plus className="h-4 w-4" /> Add link
                 </Button>
-                <Button disabled={loading} onClick={handleUpdateSocialLinks}>
-                    {loading ? <Loader2 className="animate-spin" /> : "Save"}
+                <Button disabled={loading} className="w-full rounded-xl bg-violet-700 font-semibold shadow-sm shadow-violet-700/15 hover:bg-violet-800 sm:flex-1" onClick={handleUpdateSocialLinks}>
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                    {loading ? "Saving…" : "Save changes"}
                 </Button>
             </CardFooter>
         </Card>

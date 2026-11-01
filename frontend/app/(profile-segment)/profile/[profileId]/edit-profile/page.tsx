@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -17,7 +16,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/state/store";
 import { Avatar } from "@radix-ui/react-avatar";
-import { Edit, Loader2, Trash } from "lucide-react";
+import Link from "next/link";
+import {
+    BriefcaseBusiness,
+    Camera,
+    Edit,
+    Eye,
+    FileText,
+    Loader2,
+    Trash,
+    UserRound,
+} from "lucide-react";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
@@ -154,31 +163,50 @@ const Page = () => {
     };
 
     return (
-        <div>
-            <h2 className="text-xl font-semibold mb-5">Edit Profile</h2>
+        <div className="mx-auto w-full max-w-6xl space-y-6 pb-10">
+            <div className="flex flex-col gap-4 rounded-3xl border border-violet-100 bg-gradient-to-r from-violet-50 via-white to-indigo-50 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+                <div>
+                    <p className="text-sm font-semibold text-violet-700">Your professional presence</p>
+                    <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">Edit your profile</h1>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">Keep your details, experience, and preferences up to date so your profile makes a strong first impression.</p>
+                </div>
+                {user?._id && (
+                    <Link
+                        href={`/profile/${user._id}`}
+                        className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-violet-200 hover:text-violet-700"
+                    >
+                        <Eye className="h-4 w-4" /> View profile
+                    </Link>
+                )}
+            </div>
 
-            <div className="grid grid-cols-3 items-start gap-5 w-full">
-                <div className="col-span-2 grid gap-5">
+            <div className="grid w-full grid-cols-1 items-start gap-5 lg:grid-cols-3">
+                <div className="grid gap-5 lg:col-span-2">
                     {/* avatar upload */}
-                    <Card>
-                        <CardContent>
-                            <div className="flex items-center gap-5">
-                                <Avatar className="h-24 w-24 rounded-lg flex items-center justify-center">
+                    <Card className="overflow-hidden rounded-2xl border-slate-200 shadow-sm shadow-slate-900/[0.03]">
+                        <div className="h-2 bg-gradient-to-r from-violet-600 to-indigo-500" />
+                        <CardContent className="px-5 py-5 sm:px-6">
+                            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                                <Avatar className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-violet-50 bg-violet-100 text-2xl font-semibold text-violet-700 shadow-sm">
                                     {imageLoading ? (
                                         <Loader2 className="animate-spin" />
                                     ) : (
                                         <>
                                             <AvatarImage
                                                 src={user?.profilePicture}
-                                                alt="somthing"
-                                                className="rounded-lg"
+                                                alt={user?.name || "Profile photo"}
+                                                className="rounded-xl object-cover"
                                             />
-                                            <AvatarFallback>LG</AvatarFallback>
+                                            <AvatarFallback>{user?.name?.slice(0, 2)?.toUpperCase() || "JS"}</AvatarFallback>
                                         </>
                                     )}
                                 </Avatar>
-                                <div className="grid gap-4 justify-start w-fit">
-                                    <Label className="w-fit border py-3 px-5 rounded-md cursor-pointer">
+                                <div className="min-w-0 flex-1">
+                                    <h2 className="text-base font-semibold text-slate-900">Profile photo</h2>
+                                    <p className="mt-1 text-sm leading-5 text-slate-500">Use a clear, professional photo so people can recognize you.</p>
+                                    <Label className="mt-4 inline-flex h-10 w-fit cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700">
+                                        {imageLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                                        {imageLoading ? "Uploading…" : "Change photo"}
                                         <Input
                                             name="image"
                                             id="picture"
@@ -187,41 +215,41 @@ const Page = () => {
                                             className="hidden"
                                             onChange={handleImageUpload}
                                         />
-                                        Upload New Photo
                                     </Label>
-                                    <CardDescription>
-                                        Upload New photo from here, Support any
-                                        type of images
-                                    </CardDescription>
+                                    <p className="mt-2 text-xs text-slate-400">JPG, PNG, or WEBP supported</p>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* personal info */}
-                    <Card>
-                        <CardHeader>
+                    <Card className="rounded-2xl border-slate-200 shadow-sm shadow-slate-900/[0.03]">
+                        <CardHeader className="px-5 pb-3 sm:px-6">
                             <div className="flex items-center justify-between">
-                                <CardTitle>Personal Information</CardTitle>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-700"><UserRound className="h-5 w-5" /></div>
+                                    <div><CardTitle className="text-base">Personal information</CardTitle><p className="mt-1 text-sm text-slate-500">How people can reach and recognize you</p></div>
+                                </div>
                                 <Button
                                     variant="outline"
+                                    className="rounded-xl"
                                     onClick={() =>
                                         SetIsEnableEdit("personal-info")
                                     }
                                 >
-                                    <Edit />
+                                    <Edit className="h-4 w-4" />
                                     Edit
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="px-5 sm:px-6">
                             <CustomInput
                                 type="text"
                                 id="bio"
                                 label="Tagline"
                                 name="bio"
                                 placeholder="Full-stack Dev"
-                                className="w-1/2 mb-5"
+                                className="mb-5 w-full sm:max-w-md"
                                 defaultValue={user?.bio}
                                 onChange={(e) =>
                                     setAuth({
@@ -230,7 +258,7 @@ const Page = () => {
                                     })
                                 }
                             />
-                            <div className="grid grid-cols-2 gap-5">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <CustomInput
                                     type="text"
                                     id="edit-name"
@@ -309,23 +337,27 @@ const Page = () => {
                     </Card>
 
                     {/* job preferences */}
-                    <Card>
-                        <CardHeader>
+                    <Card className="rounded-2xl border-slate-200 shadow-sm shadow-slate-900/[0.03]">
+                        <CardHeader className="px-5 pb-3 sm:px-6">
                             <div className="flex items-center justify-between">
-                                <CardTitle>Job Preferences</CardTitle>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><BriefcaseBusiness className="h-5 w-5" /></div>
+                                    <div><CardTitle className="text-base">Job preferences</CardTitle><p className="mt-1 text-sm text-slate-500">The opportunities you’re looking for</p></div>
+                                </div>
                                 <Button
                                     variant="outline"
+                                    className="rounded-xl"
                                     onClick={() =>
                                         SetIsEnableEdit("job-preferences")
                                     }
                                 >
-                                    <Edit />
+                                    <Edit className="h-4 w-4" />
                                     Edit
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-2 gap-5 ">
+                        <CardContent className="px-5 sm:px-6">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <CustomSelect
                                     label="Job type"
                                     name="jobType"
@@ -411,46 +443,54 @@ const Page = () => {
                     </Card>
 
                     {/* about + skills */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>About</CardTitle>
+                    <Card className="rounded-2xl border-slate-200 shadow-sm shadow-slate-900/[0.03]">
+                        <CardHeader className="px-5 pb-3 sm:px-6">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-700"><FileText className="h-5 w-5" /></div>
+                                <div><CardTitle className="text-base">About & skills</CardTitle><p className="mt-1 text-sm text-slate-500">Tell your story and highlight what you do best</p></div>
+                            </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="px-5 sm:px-6">
                             <EditorWrapper
                                 setValue={(v) => setAuth({ ...user, about: v })}
                                 value={user?.about}
                             />
 
-                            <form onSubmit={handleAddSkill} className="mt-5">
-                                <CustomInput
-                                    type="text"
-                                    id="skill"
-                                    name="skill"
-                                    placeholder="Enter your skills"
-                                    label="Skill"
-                                    className="w-full"
-                                    value={skillInput}
-                                    onChange={(e) =>
-                                        setSkillInput(e.target.value)
-                                    }
-                                />
+                            <form onSubmit={handleAddSkill} className="mt-6 rounded-2xl bg-slate-50 p-4">
+                                <div className="mb-3">
+                                    <h3 className="text-sm font-semibold text-slate-900">Skills</h3>
+                                    <p className="mt-1 text-xs text-slate-500">Add keywords that describe your strengths. Press Enter to add each one.</p>
+                                </div>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                                    <CustomInput
+                                        type="text"
+                                        id="skill"
+                                        name="skill"
+                                        placeholder="e.g. Product design"
+                                        label="Add a skill"
+                                        className="w-full"
+                                        value={skillInput}
+                                        onChange={(e) => setSkillInput(e.target.value)}
+                                    />
+                                    <Button type="submit" className="h-11 shrink-0 rounded-xl px-5">Add skill</Button>
+                                </div>
                             </form>
 
                             {user?.skills?.length > 0 && (
-                                <div className="flex flex-wrap items-center gap-1 mt-2">
+                                <div className="mt-4 flex flex-wrap items-center gap-2">
                                     {user?.skills?.map(
                                         (v: string, i: number) => (
                                             <div
                                                 key={i}
-                                                className="flex items-center bg-primary rounded-full"
+                                                className="flex items-center gap-1 rounded-full border border-violet-100 bg-violet-50 pl-3 text-sm font-medium text-violet-800"
                                             >
-                                                <p className="py-1 px-4 pr-2 rounded-full inline text-sm bg-primary font-semibold text-white">
+                                                <p className="py-2">
                                                     {v}
                                                 </p>
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
-                                                    className="rounded-full cursor-pointer"
+                                                    className="h-8 w-8 rounded-full p-0 text-violet-700 hover:bg-violet-100 hover:text-red-600"
                                                     onClick={() =>
                                                         handleDelete(i)
                                                     }
@@ -463,7 +503,7 @@ const Page = () => {
                                 </div>
                             )}
                         </CardContent>
-                        <CardFooter>
+                        <CardFooter className="gap-3 px-5 pb-5 pt-4 sm:px-6">
                             <div className="flex gap-4">
                                 <Button variant="outline">Cancel</Button>
                                 <Button
@@ -480,9 +520,16 @@ const Page = () => {
                         </CardFooter>
                     </Card>
                 </div>
-                <div>
+                <aside className="space-y-5 lg:sticky lg:top-20">
                     <ProfileCompleteIndicator />
-                </div>
+                    <Card className="rounded-2xl border-violet-100 bg-gradient-to-br from-white to-violet-50/70 shadow-sm shadow-slate-900/[0.03]">
+                        <CardContent className="px-5 py-5">
+                            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-violet-700 shadow-sm"><Eye className="h-5 w-5" /></div>
+                            <h3 className="text-sm font-semibold text-slate-900">Make your profile count</h3>
+                            <p className="mt-1 text-sm leading-6 text-slate-500">A complete profile helps employers understand your experience and what you’re looking for.</p>
+                        </CardContent>
+                    </Card>
+                </aside>
             </div>
         </div>
     );

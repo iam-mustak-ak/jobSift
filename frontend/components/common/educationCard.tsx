@@ -13,13 +13,14 @@ type Education = {
 
 const EducationCard = ({ data, onRemove, onEdit }: Education) => {
     return (
-        <div className="flex items-start gap-3 rounded-lg border p-3 shadow-sm relative">
-            <GraduationCapIcon />
-            <div>
-                <p className="text-md font-medium ">{data?.institution}</p>
-                <p className="text-sm">{data?.degree}</p>
-                <p className="text-sm">Started At: {data?.startDate}</p>
-                <p className="text-sm">End: {data?.endDate}</p>
+        <div className="relative flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-violet-200 hover:shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+                <GraduationCapIcon className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 pr-16">
+                <p className="truncate text-sm font-semibold text-slate-900">{data?.institution}</p>
+                <p className="mt-1 text-sm text-slate-600">{data?.degree}</p>
+                <p className="mt-2 text-xs text-slate-400">{data?.startDate} – {data?.endDate}</p>
             </div>
             <button
                 onClick={onEdit}
