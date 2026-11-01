@@ -9,9 +9,10 @@ import { Button } from "./button";
 
 type BookMarkButtonProps = {
     jobId: string;
+    className?: string;
 };
 
-const BookMarkButton = ({ jobId }: BookMarkButtonProps) => {
+const BookMarkButton = ({ jobId, className = "float-right" }: BookMarkButtonProps) => {
     const { user, setAuth } = useAuthStore((state) => state);
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -74,9 +75,11 @@ const BookMarkButton = ({ jobId }: BookMarkButtonProps) => {
     return (
         <Button
             variant={"outline"}
-            className="float-right"
+            className={className}
             onClick={handleToggleBookmark}
             disabled={loading}
+            aria-label={isBookmarked ? "Remove saved job" : "Save job"}
+            aria-pressed={isBookmarked}
         >
             {loading ? (
                 <Bookmark className="animate-spin" />

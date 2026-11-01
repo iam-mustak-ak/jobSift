@@ -17,48 +17,50 @@ const HeroSearch = async ({ showCategory }: searchFormProps) => {
 
     return (
         <form action={jobSearchAction}>
-            <div className="bg-white shadow-md py-5 px-4 rounded-md flex gap-2 items-stretch border border-border max-md:flex-col">
+            <div className="flex items-stretch gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-xl shadow-violet-950/5 max-md:flex-col sm:px-5">
                 <IconInput
                     Icon={SearchIcon}
                     type="search"
                     name="title"
                     placeholder="Job title, keywords, or company"
-                    className="border-none shadow-none py-5"
+                    className="border-none bg-white py-5 text-slate-900 shadow-none placeholder:text-slate-400"
                 />
-                <div className="h-auto w-px bg-border" />
+                <div className="hidden h-auto w-px bg-slate-200 md:block" />
                 <IconInput
                     Icon={MapPin}
                     type="text"
                     name="location"
-                    placeholder="location"
-                    className="border-none shadow-none py-5 "
+                    placeholder="Location"
+                    className="border-none bg-white py-5 text-slate-900 shadow-none placeholder:text-slate-400"
                 />
                 {showCategory && (
                     <>
-                        <div className="h-auto w-px bg-border" />
+                        <div className="hidden h-auto w-px bg-slate-200 md:block" />
                         <IconInput
                             Icon={BriefcaseBusiness}
                             isSelect={true}
-                            className="border-none shadow-none py-5 "
+                            className="border-none bg-white py-5 text-slate-900 shadow-none"
                             selectValues={formattedCategries}
                         />
                     </>
                 )}
-                <div className="h-auto w-px bg-border" />
+                <div className="hidden h-auto w-px bg-slate-200 md:block" />
 
                 <Button className="py-5">Find Jobs</Button>
             </div>
-            <div className="flex items-center gap-2 md:gap-5 mt-5 justify-center max-w-[600px] mx-auto max-md:flex-col">
+            <div className="mx-auto mt-4 flex max-w-[600px] items-center justify-center gap-2 max-md:flex-col md:gap-3">
                 <CustomSelect
                     name="jobType"
                     placeholder="Job Type"
                     options={["Fulltime", "Contract"]}
+                    className="border-slate-200 bg-white text-slate-600"
                 />
 
                 <CustomSelect
                     name="experienceLevel"
                     placeholder="Experience Level"
                     options={["Entry", "Lead", "Mid", "Senior"]}
+                    className="border-slate-200 bg-white text-slate-600"
                 />
             </div>
         </form>

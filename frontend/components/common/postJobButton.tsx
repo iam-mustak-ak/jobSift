@@ -11,7 +11,11 @@ const PostJobButton: React.FC = () => {
         return null;
     }
     return (
-        <Button className="max-lg:hidden" asChild variant="outline">
+        <Button
+            className="max-lg:hidden border-slate-300 bg-white text-slate-700 shadow-none hover:border-violet-200 hover:bg-violet-50 hover:text-violet-800"
+            asChild
+            variant="outline"
+        >
             <Link href="/post-job">Post A Job</Link>
         </Button>
     );

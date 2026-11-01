@@ -2,8 +2,9 @@
 "use client";
 
 import { fetcherClient } from "@/utils/fetcherClient";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import ContainerWrapper from "../common/containerWrapper";
 import SectionHeading from "../common/sectionHeading";
 import { Button } from "../ui/button";
@@ -56,12 +57,13 @@ const FeaturedJob = () => {
     };
 
     return (
-        <div className="bg-primary/5">
+        <section className="border-y border-slate-200/70 bg-[#f7f8fc]">
             <ContainerWrapper>
-                <div className="py-24">
+                <div className="py-20 md:py-24">
                     <SectionHeading
-                        title="Featured Jobs"
-                        subHeading="Know your worth and find the job that qualify your life"
+                        title="Featured opportunities"
+                        subHeading="A handpicked look at roles worth your next move."
+                        tone="light"
                     />
 
                     <div className="grid md:grid-cols-2 gap-5">
@@ -70,6 +72,7 @@ const FeaturedJob = () => {
                                 <FeaturedJobCard
                                     featuredJobs={item}
                                     key={item._id}
+                                    cardClassName="border-slate-200 bg-white text-slate-900 shadow-sm transition-shadow hover:shadow-lg hover:shadow-slate-900/5"
                                 />
                             ))}
                     </div>
@@ -85,9 +88,17 @@ const FeaturedJob = () => {
                             </Button>
                         </div>
                     )}
+                    <div className="mt-8 text-center">
+                        <Link
+                            href="/find-jobs/?page=1"
+                            className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-800"
+                        >
+                            Browse all jobs <ArrowRight className="h-4 w-4" />
+                        </Link>
+                    </div>
                 </div>
             </ContainerWrapper>
-        </div>
+        </section>
     );
 };
 

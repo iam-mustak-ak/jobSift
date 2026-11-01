@@ -4,10 +4,10 @@ import JobCategories from "@/components/jobs/jobCategories";
 
 export default function Home() {
     return (
-        <>
+        <main className="bg-white text-slate-900">
             <Hero />
             <JobCategories />
             <FeaturedJob />
-        </>
+        </main>
     );
 }

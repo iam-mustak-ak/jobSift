@@ -113,7 +113,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
 
                 <PaginationItem>
                     <PaginationNext
-                        href={`${uri}/?page=${currentPage + 1}`}
+                        href={`${uri}/${getQueryString(currentPage + 1)}`}
                         className={
                             currentPage === totalPages
                                 ? "pointer-events-none opacity-50"
