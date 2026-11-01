@@ -65,7 +65,7 @@ const Page = () => {
 
     return (
         <ContainerWrapper>
-            <div className="mx-auto min-h-[calc(100vh-8rem)] max-w-6xl space-y-7 py-8 sm:py-12">
+            <div className="mx-auto min-h-[calc(100vh-8rem)] max-w-6xl space-y-7 pb-12 pt-16 sm:pt-20">
                 <WorkspacePageHeading
                     title={result?.success ? "Resume insights" : "Analyze your resume"}
                     description="Compare your resume with a job description and find practical ways to improve your match."

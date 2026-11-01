@@ -7,6 +7,7 @@ import { formateCapitalized } from "@/utils/formateCapitalized";
 import { salaryFormat } from "@/utils/salaryFormat";
 import {
     BriefcaseBusiness,
+    CheckCircle2,
     CircleDollarSign,
     Clock3,
     MapPin,
@@ -310,6 +311,30 @@ const FeaturedJobCard = ({
                                 </Dialog>
                             )}
                         </div>
+                        {isSuggested && featuredJobs?.matchReasons?.length > 0 && (
+                            <ul className="mt-3 flex flex-wrap gap-2">
+                                {featuredJobs.matchReasons.map((reason: string, index: number) => (
+                                    <li
+                                        key={`${reason}-${index}`}
+                                        className="inline-flex items-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50/60 px-2.5 py-1 text-[11px] font-medium text-emerald-800"
+                                    >
+                                        <CheckCircle2 className="h-3 w-3 shrink-0" />
+                                        {reason}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        {isSuggested && featuredJobs?.matchedSkills?.length > 0 && (
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
+                                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Shared skills</span>
+                                {featuredJobs.matchedSkills.slice(0, 4).map((skill: string, index: number) => (
+                                    <span key={`${skill}-${index}`} className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-800">{skill}</span>
+                                ))}
+                                {featuredJobs.matchedSkills.length > 4 && (
+                                    <span className="text-[11px] text-slate-500">+{featuredJobs.matchedSkills.length - 4} more</span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </CardContent>
