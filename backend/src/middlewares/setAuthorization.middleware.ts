@@ -49,7 +49,7 @@ const setAuthorization: RequestHandler = async (req, res, next) => {
             }
         }
 
-        return next(customError(500, "Authentication required"));
+        return next(customError(401, "Authentication required"));
     } catch (error) {
         next(error);
     }

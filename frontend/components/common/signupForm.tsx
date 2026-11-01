@@ -142,6 +142,15 @@ const SignupForm = () => {
                         />
                     </div>
 
+                    <div className="-mt-2 flex justify-end">
+                        <Link
+                            href="/forgot-password"
+                            className="text-sm font-semibold text-violet-700 transition-colors hover:text-violet-900 hover:underline"
+                        >
+                            Forgot password?
+                        </Link>
+                    </div>
+
                     {role === "recruiter" && (
                         <div className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4 sm:p-5">
                             <div className="mb-4">

@@ -27,14 +27,27 @@ const ForgotPasswordForm = () => {
     }, [state]);
 
     return (
-        <form action={formAction}>
-            <IconInput Icon={Mail} type="email" name="email" id="forgotEmail" />
-            <Button disabled={pending} className="w-full mt-5">
+        <form action={formAction} className="grid gap-4">
+            <div>
+                <label htmlFor="forgotEmail" className="mb-2 block text-sm font-medium text-slate-800">Email address</label>
+                <IconInput
+                    Icon={Mail}
+                    type="email"
+                    name="email"
+                    id="forgotEmail"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    required
+                    className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-10 text-sm focus-visible:bg-white focus-visible:border-violet-400 focus-visible:ring-violet-100"
+                />
+            </div>
+            <Button disabled={pending} className="mt-1 h-11 w-full rounded-xl bg-violet-700 font-semibold shadow-md shadow-violet-700/15 hover:bg-violet-800">
                 {pending ? (
-                    <Loader2 className="animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                    "Send Reset Link"
+                    <Mail className="mr-2 h-4 w-4" />
                 )}
+                {pending ? "Sending reset link…" : "Send reset link"}
             </Button>
         </form>
     );

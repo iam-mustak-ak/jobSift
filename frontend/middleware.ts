@@ -7,7 +7,6 @@ const protectedRoutes = [
     "/post-job",
     "/apply",
     "/apply/*",
-    "/forgot-password",
 ];
 
 const publicRoutes = ["/login", "/signup", "/"];
@@ -22,6 +21,13 @@ export default async function middleware(req: NextRequest) {
     const isPublicRoute = publicRoutes.some(
         (route) => path === route || path.startsWith(route + "/")
     );
+
+    const needsAuthCheck =
+        isProtectedRoute || path === "/login" || path === "/signup";
+
+    if (!needsAuthCheck) {
+        return NextResponse.next();
+    }
 
     const data = await fetcherSever("/auth/check-auth");
     const isLoggedIn = data?.success;

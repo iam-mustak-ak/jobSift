@@ -1,6 +1,6 @@
 "use client";
 import resetPasswordAction from "@/actions/resetPasswordAction";
-import { Lock } from "lucide-react";
+import { KeyRound, Loader2, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
@@ -41,23 +41,37 @@ const ResetPasswordForm = ({
     }, [state, router]);
 
     return (
-        <form action={formAction} className="grid gap-2">
+        <form action={formAction} className="grid gap-4">
             <IconInput
                 Icon={Lock}
                 type="password"
                 name="password"
                 id="resetPassword"
-                placeholder="New Password"
+                placeholder="New password"
+                autoComplete="new-password"
+                required
+                className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-10 text-sm focus-visible:border-violet-400 focus-visible:bg-white focus-visible:ring-violet-100"
             />
             <IconInput
                 Icon={Lock}
                 type="password"
                 name="confirmPassword"
                 id="resetConfirmPassword"
-                placeholder="Confirm Passowrd"
+                placeholder="Confirm new password"
+                autoComplete="new-password"
+                required
+                className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-10 text-sm focus-visible:border-violet-400 focus-visible:bg-white focus-visible:ring-violet-100"
             />
-            <Button disabled={pending} className="w-full mt-5">
-                Reset{" "}
+            <p className="text-xs leading-5 text-slate-500">
+                Use at least 8 characters with uppercase and lowercase letters, a number, and a symbol.
+            </p>
+            <Button disabled={pending} className="mt-1 h-11 w-full rounded-xl bg-violet-700 font-semibold shadow-md shadow-violet-700/15 hover:bg-violet-800">
+                {pending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <KeyRound className="mr-2 h-4 w-4" />
+                )}
+                {pending ? "Updating password…" : "Set new password"}
             </Button>
         </form>
     );
