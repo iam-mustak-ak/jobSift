@@ -9,7 +9,7 @@ import customError from "../utils/customError";
 export const interViewHealth = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) => {
     res.status(200).json({
         success: true,
@@ -21,7 +21,7 @@ export const interViewHealth = async (
 export const generateInterview = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) => {
     const { role, type, level, userid, jobid, jobdescription, amount } =
         req.body;
@@ -39,8 +39,20 @@ export const generateInterview = async (
             return next(customError(404, "User Not found!!!"));
         }
 
+        const geminiApiKey =
+            process.env.GEMINI_API_KEY ||
+            process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        if (!geminiApiKey) {
+            return next(
+                customError(
+                    503,
+                    "Interview generation is not configured. Set GEMINI_API_KEY on the backend.",
+                ),
+            );
+        }
+
         const { text: generatedQuestions } = await generateText({
-            model: google("gemini-2.0-flash-001"),
+            model: google("gemini-3.8-flash"),
             prompt: `prepare questions for a job interview.
         The job description is: ${jobdescription}.
         The job role is: ${role}.

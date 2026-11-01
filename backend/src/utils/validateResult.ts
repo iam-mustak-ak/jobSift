@@ -4,7 +4,7 @@ interface ValidateResultInput {
         status: string;
         reasons?: any[];
     };
-    keywordCoverage: {
+    keywordCoverage?: {
         coveragePct: number;
         matchedKeywords?: any[];
         missingKeywords?: any[];
@@ -13,6 +13,9 @@ interface ValidateResultInput {
     issues?: any[];
     suggestions?: any[];
     sectionQuality?: object | null;
+    summary?: string;
+    strengths?: any[];
+    skillsIdentified?: any[];
 }
 
 function validateResult(obj: ValidateResultInput) {
@@ -22,10 +25,7 @@ function validateResult(obj: ValidateResultInput) {
         throw new Error("atsScore missing/invalid");
     if (!obj.parseability || typeof obj.parseability.status !== "string")
         throw new Error("parseability invalid");
-    if (
-        !obj.keywordCoverage ||
-        typeof obj.keywordCoverage.coveragePct !== "number"
-    )
+    if (obj.keywordCoverage && typeof obj.keywordCoverage.coveragePct !== "number")
         throw new Error("keywordCoverage invalid");
     if (!Array.isArray(obj.missingSkills)) obj.missingSkills = [];
     if (!Array.isArray(obj.issues)) obj.issues = [];
@@ -34,10 +34,12 @@ function validateResult(obj: ValidateResultInput) {
         obj.sectionQuality = {};
     // Clamp numeric fields
     obj.atsScore = Math.max(0, Math.min(100, obj.atsScore));
-    obj.keywordCoverage.coveragePct = Math.max(
-        0,
-        Math.min(100, obj.keywordCoverage.coveragePct)
-    );
+    if (obj.keywordCoverage) {
+        obj.keywordCoverage.coveragePct = Math.max(
+            0,
+            Math.min(100, obj.keywordCoverage.coveragePct)
+        );
+    }
     // Normalize parseability.status
     const okVals = ["good", "ok", "poor"];
     if (!okVals.includes(obj.parseability.status))
@@ -46,16 +48,18 @@ function validateResult(obj: ValidateResultInput) {
     obj.parseability.reasons = Array.isArray(obj.parseability.reasons)
         ? obj.parseability.reasons.map(String)
         : [];
-    obj.keywordCoverage.matchedKeywords = Array.isArray(
-        obj.keywordCoverage.matchedKeywords
-    )
-        ? obj.keywordCoverage.matchedKeywords.map(String)
-        : [];
-    obj.keywordCoverage.missingKeywords = Array.isArray(
-        obj.keywordCoverage.missingKeywords
-    )
-        ? obj.keywordCoverage.missingKeywords.map(String)
-        : [];
+    if (obj.keywordCoverage) {
+        obj.keywordCoverage.matchedKeywords = Array.isArray(
+            obj.keywordCoverage.matchedKeywords
+        )
+            ? obj.keywordCoverage.matchedKeywords.map(String)
+            : [];
+        obj.keywordCoverage.missingKeywords = Array.isArray(
+            obj.keywordCoverage.missingKeywords
+        )
+            ? obj.keywordCoverage.missingKeywords.map(String)
+            : [];
+    }
     obj.missingSkills = obj.missingSkills.map(String);
     obj.issues = obj.issues.map((i) => ({
         severity: ["low", "medium", "high"].includes(i?.severity)
@@ -69,6 +73,13 @@ function validateResult(obj: ValidateResultInput) {
         rewriteExample: String(s?.rewriteExample || ""),
         rationale: String(s?.rationale || ""),
     }));
+    obj.summary = typeof obj.summary === "string" ? obj.summary : "";
+    obj.strengths = Array.isArray(obj.strengths)
+        ? obj.strengths.map(String)
+        : [];
+    obj.skillsIdentified = Array.isArray(obj.skillsIdentified)
+        ? obj.skillsIdentified.map(String)
+        : [];
     return obj;
 }
 

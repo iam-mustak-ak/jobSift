@@ -70,7 +70,7 @@ const Page = () => {
     return (
         <>
             <ContainerWrapper>
-                <div className="mx-auto min-h-[calc(100vh-8rem)] max-w-6xl space-y-7 py-8 sm:py-12">
+                <div className="mx-auto min-h-[calc(100vh-8rem)] max-w-6xl space-y-7 pb-12 pt-16 sm:pt-20">
                     <WorkspacePageHeading
                         title="Resume builder"
                         description="Create a polished resume and tailor it to the roles you want."
