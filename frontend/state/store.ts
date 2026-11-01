@@ -43,6 +43,7 @@ export type ResumeDataTypes = {
     resumeName: string | null;
     themeColor?: string;
     fontFamily?: string;
+    templateId?: "classic" | "modern" | "minimal";
     image: string | null;
     name: string | null;
     tagline: string | null;
@@ -129,6 +130,7 @@ export const useResumeData = create<ResumeDataTypes & ResumeDataActions>(
         resumeName: "Untitled",
         themeColor: "#6d28d9",
         fontFamily: "Arial",
+        templateId: "classic",
         image: null,
         name: null,
         tagline: null,

@@ -1,443 +1,107 @@
 "use client";
-import StarRating from "@/components/common/ratingStars";
-import LanguageCard from "@/components/resume/languageCard";
-import ResumeSocial from "@/components/resume/resumeSocial";
-import TemplatesTile from "@/components/resume/templatesTile";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
-import { ExternalLink } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 
-const expLevel = {
-    Noob: 30,
-    Medium: 45,
-    Professional: 75,
-    Expert: 100,
+import { ResumeDataTypes, usePrintRef, useResumeData } from "@/state/store";
+import Image from "next/image";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+
+const getYear = (value: Date | string | undefined) => {
+    if (!value) return "";
+    if (value === "Present") return value;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : String(date.getFullYear());
 };
+
+const splitList = (value?: string) =>
+    (value || "").split(",").map((item) => item.trim()).filter(Boolean);
+
+const Section = ({ title, children }: { title: string; children: ReactNode }) => (
+    <section className="mt-6 break-inside-avoid">
+        <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-primary">{title}</h2>
+        <div className="mb-3 h-px bg-primary/30" />
+        {children}
+    </section>
+);
 
 const FirstTemplate: React.FC = () => {
     const printRef = useRef<HTMLDivElement | null>(null);
-    const { setPrintRef } = usePrintRef((state) => state);
-    const {
-        image,
-        about,
-        tagline,
-        name,
-        socials,
-        languages,
-        interests,
-        educations,
-        experience,
-        skills,
-        projects,
-        researches,
-        references,
-        cp,
-        themeColor,
-        fontFamily,
-    } = useResumeData<ResumeDataTypes>((state) => state);
+    const setPrintRef = usePrintRef((state) => state.setPrintRef);
+    const resume = useResumeData<ResumeDataTypes>((state) => state);
 
     useEffect(() => {
         setPrintRef(printRef);
-    }, []);
+    }, [setPrintRef]);
+
+    const name = resume.name || "Your name";
+    const socialLinks = (resume.socials || []).filter((social) => social.link);
 
     return (
-        <div
+        <article
             ref={printRef}
             style={{
-                "--primary": themeColor || "#6d28d9",
-                fontFamily: fontFamily || "Arial",
+                "--primary": resume.themeColor || "#6d28d9",
+                fontFamily: resume.fontFamily || "Arial",
             } as CSSProperties}
-            className="mx-auto flex h-auto w-full min-w-[640px] max-w-[794px] items-start gap-5 bg-white px-2 py-5"
+            className="mx-auto flex min-h-[1123px] w-[794px] max-w-none bg-white text-slate-800"
         >
-            <div className="max-w-[250px] flex flex-col items-stretch w-full  p-5">
-                {image && (
-                    <Image
-                        src={image ? image : `/avatar-pl.jpg`}
-                        width={200}
-                        height={200}
-                        alt="profile"
-                        className="w-full max-w-[1050px] h-full max-h-[200px] rounded-full aspect-square object-cover"
-                    />
+            <aside className="w-[252px] shrink-0 bg-slate-50 px-7 py-9">
+                {resume.image && (
+                    <Image src={resume.image} width={112} height={112} alt={`${name} profile`} className="mb-6 h-24 w-24 rounded-2xl object-cover" />
                 )}
-
-                {Array.isArray(socials) && socials.length > 0 && (
-                    <div className="mt-4">
-                        <TemplatesTile title="Socials" />
-                        <div className="flex flex-col gap-2 mt-4">
-                            {socials.map((socialItem, i) => (
-                                <ResumeSocial
-                                    key={i}
-                                    link="#"
-                                    text={socialItem?.link}
-                                    type={
-                                        socialItem?.socialType as
-                                            | "email"
-                                            | "linkedin"
-                                            | "github"
-                                    }
-                                />
-                            ))}
+                {socialLinks.length > 0 && (
+                    <Section title="Contact">
+                        <div className="space-y-2 break-words text-[11px] leading-5 text-slate-600">
+                            {socialLinks.map((social, index) => <p key={`${social.socialType}-${index}`}><span className="font-semibold capitalize text-slate-800">{social.socialType}: </span>{social.link}</p>)}
                         </div>
-                    </div>
+                    </Section>
                 )}
-
-                {languages?.langs && languages.langs.length > 0 && (
-                    <div className="mt-4">
-                        <div className="w-full mt-4">
-                            <TemplatesTile
-                                title={languages?.title ?? "Languages"}
-                            />
-
-                            <div className="mt-4">
-                                {languages.langs.map((v, i) => (
-                                    <LanguageCard
-                                        key={i}
-                                        language={v.title}
-                                        status={
-                                            v.experience as
-                                                | "Professional"
-                                                | "Working Proficiency"
-                                                | "Native or Bilingual"
-                                        }
-                                    />
-                                ))}
-                            </div>
+                {!!resume.skills?.items?.length && (
+                    <Section title={resume.skills.title || "Skills"}>
+                        <div className="flex flex-wrap gap-1.5">
+                            {resume.skills.items.map((item, index) => <span key={`${item.skill}-${index}`} className="rounded-md border border-primary/20 bg-white px-2 py-1 text-[10px] font-medium text-slate-700">{item.skill}</span>)}
                         </div>
-                    </div>
+                    </Section>
                 )}
-
-                {interests.items && (
-                    <div className="mt-4">
-                        <div className="w-full mt-4">
-                            <TemplatesTile
-                                title={interests?.title ?? "Interests"}
-                            />
-
-                            <div className="mt-4 flex flex-col gap-2">
-                                {interests.items.split(",").map((v, i) => (
-                                    <div
-                                        key={i}
-                                        className="rounded-md border border-primary p-2"
-                                    >
-                                        <p className="text-xs">{v}</p>
-                                    </div>
-                                ))}
-                            </div>
+                {!!resume.languages?.langs?.length && (
+                    <Section title={resume.languages.title || "Languages"}>
+                        <div className="space-y-2 text-[11px]">
+                            {resume.languages.langs.map((item, index) => <div key={`${item.title}-${index}`}><p className="font-semibold text-slate-800">{item.title}</p><p className="text-slate-500">{item.experience}</p></div>)}
                         </div>
-                    </div>
+                    </Section>
                 )}
-
-                {cp.items.length > 0 && (
-                    <div className="mt-4">
-                        <div className="w-full mt-4">
-                            <TemplatesTile
-                                title={cp?.title ?? "Competitive Programming"}
-                            />
-
-                            <div className="mt-4 flex flex-col gap-2">
-                                {cp.items.map((v, i) => (
-                                    <div
-                                        key={i}
-                                        className="rounded-md border border-primary p-2 "
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-base">
-                                                {v.platform}
-                                            </p>
-                                            <StarRating rating={v.rating} />
-                                        </div>
-
-                                        <Link
-                                            href="#"
-                                            className="text-sm text-primary"
-                                        >
-                                            {v.username}
-                                        </Link>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                {!!resume.interests?.items && (
+                    <Section title={resume.interests.title || "Interests"}>
+                        <div className="flex flex-wrap gap-1.5">{splitList(resume.interests.items).map((item) => <span key={item} className="text-[11px] text-slate-600">{item}</span>)}</div>
+                    </Section>
                 )}
+                {!!resume.cp?.items?.length && (
+                    <Section title={resume.cp.title || "Competitive programming"}>
+                        <div className="space-y-2 text-[11px]">{resume.cp.items.map((item, index) => <div key={`${item.platform}-${index}`}><p className="font-semibold text-slate-800">{item.platform}</p><p className="text-slate-500">{item.username} · rating {item.rating}</p></div>)}</div>
+                    </Section>
+                )}
+            </aside>
+
+            <div className="min-w-0 flex-1 px-9 py-10">
+                <header className="border-b-2 border-primary pb-5">
+                    <p className="text-3xl font-bold tracking-tight text-slate-950">{name}</p>
+                    {resume.tagline && <p className="mt-1 text-sm font-medium tracking-wide text-primary">{resume.tagline}</p>}
+                    {typeof resume.about === "string" && !!resume.about && <div className="prose prose-sm mt-4 max-w-none text-slate-600" dangerouslySetInnerHTML={{ __html: resume.about }} />}
+                </header>
+
+                {!!resume.experience?.items?.length && (
+                    <Section title={resume.experience.title || "Experience"}>
+                        <div className="space-y-4">{resume.experience.items.map((item, index) => <div key={`${item.position}-${index}`} className="break-inside-avoid"><div className="flex items-start justify-between gap-3"><h3 className="text-sm font-bold text-slate-900">{item.position}</h3><span className="shrink-0 text-[10px] font-medium text-slate-500">{getYear(item.startingDate)}{item.endingDate ? ` – ${getYear(item.endingDate)}` : ""}</span></div><p className="mt-0.5 text-xs font-medium text-primary">{[item.institute, item.location].filter(Boolean).join(" · ")}</p><ul className="mt-2 list-disc space-y-1 pl-4 text-[11px] leading-5 text-slate-600">{splitList(item.achivments).map((achievement, itemIndex) => <li key={itemIndex}>{achievement}</li>)}</ul></div>)}</div>
+                    </Section>
+                )}
+                {!!resume.educations?.items?.length && (
+                    <Section title={resume.educations.title || "Education"}>
+                        <div className="space-y-3">{resume.educations.items.map((item, index) => <div key={`${item.degree}-${index}`} className="break-inside-avoid"><div className="flex items-start justify-between gap-3"><h3 className="text-sm font-bold text-slate-900">{item.degree}</h3><span className="shrink-0 text-[10px] text-slate-500">{getYear(item.startingDate)}{item.endingDate ? ` – ${getYear(item.endingDate)}` : ""}</span></div><p className="mt-0.5 text-xs text-primary">{[item.university, item.location].filter(Boolean).join(" · ")}</p>{item.courses && <p className="mt-1 text-[11px] leading-5 text-slate-600">Relevant coursework: {item.courses}</p>}</div>)}</div>
+                    </Section>
+                )}
+                {!!resume.projects?.items?.length && <Section title={resume.projects.title || "Projects"}><div className="space-y-3">{resume.projects.items.map((item, index) => <div key={`${item.title}-${index}`} className="break-inside-avoid"><h3 className="text-sm font-bold text-slate-900">{item.title}</h3>{item.description && <p className="mt-1 text-[11px] leading-5 text-slate-600">{item.description}</p>}<p className="mt-1 break-all text-[10px] text-primary">{[item.livelink, item.codelink].filter(Boolean).join(" · ")}</p></div>)}</div></Section>}
+                {!!resume.researches?.items?.length && <Section title={resume.researches.title || "Research & publications"}><div className="space-y-3">{resume.researches.items.map((item, index) => <div key={`${item.title}-${index}`} className="break-inside-avoid"><h3 className="text-sm font-bold text-slate-900">{item.title}</h3><p className="text-[11px] text-slate-600">{[item.publisher, getYear(item.yearofpublish)].filter(Boolean).join(" · ")}</p>{item.link && <p className="break-all text-[10px] text-primary">{item.link}</p>}</div>)}</div></Section>}
+                {!!resume.references?.items?.length && <Section title={resume.references.title || "References"}><div className="grid grid-cols-2 gap-3">{resume.references.items.map((item, index) => <div key={`${item.name}-${index}`} className="text-[11px] leading-5"><p className="font-semibold text-slate-900">{item.name}</p><p className="text-slate-600">{[item.position, item.institute].filter(Boolean).join(" · ")}</p><p className="text-slate-500">{[item.email, item.phone].filter(Boolean).join(" · ")}</p></div>)}</div></Section>}
             </div>
-
-            <div className="w-full">
-                {name || tagline ? (
-                    <div className="w-full bg-primary p-5 mt-5">
-                        <h2 className="text-2xl text-white font-bold">
-                            {name}
-                        </h2>
-                        <h6 className="text-base text-white">{tagline}</h6>
-                        <Separator className="h-0.5 bg-white w-full" />
-                        {/* <p className="">{about}</p> */}
-                        <div
-                            className="prose prose-slate dark:prose-invert max-w-none"
-                            dangerouslySetInnerHTML={{
-                                __html: typeof about === "string" ? about : "",
-                            }}
-                        />
-                    </div>
-                ) : null}
-
-                {educations.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile
-                            title={educations?.title ?? "Educations"}
-                        />
-
-                        <div className="flex flex-col gap-3">
-                            {educations.items.map((v, i) => (
-                                <div key={i} className="mt-2">
-                                    <h6 className="text-sm font-semibold text-primary">
-                                        {v.degree}
-                                    </h6>
-                                    <p className="text-xs">
-                                        {v.university} - {v.location}
-                                    </p>
-                                    <p className="text-xs text-primary">
-                                        <span>
-                                            {new Date(
-                                                v.startingDate
-                                            ).getFullYear()}
-                                        </span>{" "}
-                                        -{" "}
-                                        {v.endingDate &&
-                                        v.endingDate !== "Present"
-                                            ? new Date(
-                                                  v.endingDate
-                                              ).getFullYear()
-                                            : v.endingDate}
-                                    </p>
-                                    <p className="text-xs text-primary mt-1 underline mb-1">
-                                        Major Courses
-                                    </p>
-                                    <ul className="text-xs list-disc pl-4">
-                                        {v.courses.split(",").map((v, i) => (
-                                            <li key={i}>{v}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {experience.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile
-                            title={experience?.title ?? "Experiences"}
-                        />
-
-                        <div className="flex flex-col gap-3">
-                            {experience.items.map((v, i) => (
-                                <div key={i} className="mt-2">
-                                    <h6 className="text-sm font-semibold text-primary">
-                                        {v.position}
-                                    </h6>
-                                    <p className="text-xs">
-                                        {v.institute} - {v.location}
-                                    </p>
-                                    <p className="text-xs text-primary">
-                                        <span>
-                                            {new Date(
-                                                v.startingDate
-                                            ).getFullYear()}
-                                        </span>{" "}
-                                        -{" "}
-                                        {v.endingDate &&
-                                        v.endingDate !== "Present"
-                                            ? new Date(
-                                                  v.endingDate
-                                              ).getFullYear()
-                                            : v.endingDate}
-                                    </p>
-                                    <p className="text-xs text-primary mt-1 underline mb-1">
-                                        Achivments
-                                    </p>
-                                    <ul className="text-xs list-disc pl-4">
-                                        {v.achivments.split(",").map((v, i) => (
-                                            <li key={i}>{v}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {skills.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile title={skills?.title ?? "Skills"} />
-
-                        <div className="mt-2">
-                            {skills.items.map((v, i) => (
-                                <div
-                                    key={i}
-                                    className=" grid grid-cols-3 items-center gap-4"
-                                >
-                                    <h6 className="text-sm font-semibold text-primary">
-                                        {v.skill}
-                                    </h6>
-                                    <Progress
-                                        value={expLevel[v.experience!]}
-                                        className="w-full"
-                                    />
-                                    <p className="text-sm">{v.experience}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {projects.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile title={projects?.title ?? "Projects"} />
-
-                        <div className="flex flex-col gap-3">
-                            {projects.items.map((v, i) => (
-                                <div key={i} className="mt-2">
-                                    <h6 className="text-base font-semibold text-primary">
-                                        {v.title}
-                                    </h6>
-                                    <p className="text-sm">{v.description}</p>
-                                    <div className="flex items-center gap-4 mt-3">
-                                        {v.livelink && (
-                                            <Link
-                                                href={v.livelink ?? "#"}
-                                                className="flex items-center gap-2 text-sm"
-                                            >
-                                                <span>{v.livelink}</span>
-                                                <ExternalLink className="w-3 " />
-                                            </Link>
-                                        )}
-                                        {v.codelink && (
-                                            <Link
-                                                href={v.codelink ?? "#"}
-                                                className="flex items-center gap-2 text-sm"
-                                            >
-                                                <span>{v.codelink}</span>
-                                                <ExternalLink className="w-3 " />
-                                            </Link>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {researches.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile
-                            title={researches?.title ?? "Researches"}
-                        />
-
-                        <div className="flex flex-col gap-3">
-                            {researches.items.map((v, i) => (
-                                <div key={i} className="mt-2">
-                                    <h6 className="text-sm font-semibold ">
-                                        <span>Title: </span>
-                                        <span className="text-primary">
-                                            {v.title}
-                                        </span>
-                                    </h6>
-
-                                    <p className="text-sm ">
-                                        <span>Year Of Publish: </span>
-                                        <span className="text-primary">
-                                            {" "}
-                                            {new Date(
-                                                v.yearofpublish
-                                            ).getFullYear()}
-                                        </span>
-                                    </p>
-                                    <p className="text-sm">
-                                        <span>Publisher: </span>{" "}
-                                        <span className="text-primary">
-                                            {" "}
-                                            {v.publisher}
-                                        </span>
-                                    </p>
-
-                                    <Link
-                                        href={v.link ?? "#"}
-                                        className="flex items-center gap-2 text-sm mt-3"
-                                    >
-                                        <span>{v.link}</span>
-                                        <ExternalLink className="w-3 " />
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                {references.items.length > 0 && (
-                    <div className="mt-5 pr-5">
-                        <TemplatesTile
-                            title={references?.title ?? "References"}
-                        />
-
-                        <div className="flex flex-col gap-3">
-                            <table>
-                                <tbody>
-                                    {references.items.map((v, i) => (
-                                        <Fragment key={i}>
-                                            <tr>
-                                                <td>{i + 1}</td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border text-xs">
-                                                    Name
-                                                </td>
-                                                <td className="border text-xs">
-                                                    {v.name}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border text-xs">
-                                                    Institute/Compnay
-                                                </td>
-                                                <td className="border text-xs">
-                                                    {v.institute}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border text-xs">
-                                                    Position
-                                                </td>
-                                                <td className="border text-xs">
-                                                    {v.position}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border text-xs">
-                                                    Phone
-                                                </td>
-                                                <td className="border text-xs">
-                                                    {v.phone}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border text-xs">
-                                                    Email
-                                                </td>
-                                                <td className="border text-xs">
-                                                    {v.email}
-                                                </td>
-                                            </tr>
-                                        </Fragment>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+        </article>
     );
 };
 

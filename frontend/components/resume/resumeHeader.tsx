@@ -11,6 +11,7 @@ import {
     CloudUploadIcon,
     Download,
     Loader2,
+    LayoutTemplate,
     Palette,
 } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -48,6 +49,7 @@ const ResumeHeader: React.FC = () => {
         cp,
         themeColor,
         fontFamily,
+        templateId,
     } = useResumeData((state) => state);
     const reactToPrintFn = useReactToPrint({
         contentRef: printRef,
@@ -71,6 +73,7 @@ const ResumeHeader: React.FC = () => {
         cp,
         themeColor,
         fontFamily,
+        templateId,
     };
 
     const debouncedSave = useCallback(
@@ -100,8 +103,8 @@ const ResumeHeader: React.FC = () => {
         debouncedSave(updatedData);
     };
 
-    const handleDesignChange = (field: "themeColor" | "fontFamily", value: string) => {
-        const updatedData = { ...resumeData, [field]: value };
+    const handleDesignChange = (field: "themeColor" | "fontFamily" | "templateId", value: string) => {
+        const updatedData = { ...resumeData, [field]: value } as ResumeDataTypes;
         setResumeName(updatedData);
         debouncedSave(updatedData);
     };
@@ -132,6 +135,19 @@ const ResumeHeader: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 xl:justify-end">
+                    <label className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm">
+                        <LayoutTemplate className="h-4 w-4 text-violet-600" />
+                        <select
+                            aria-label="Resume template"
+                            value={templateId || "classic"}
+                            onChange={(event) => handleDesignChange("templateId", event.target.value)}
+                            className="max-w-28 cursor-pointer bg-transparent text-sm outline-none"
+                        >
+                            <option value="classic">Classic</option>
+                            <option value="modern">Modern</option>
+                            <option value="minimal">Minimal</option>
+                        </select>
+                    </label>
                     <label className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm" title="Choose resume accent color">
                         <Palette className="h-4 w-4 text-violet-600" />
                         <span className="hidden sm:inline">Accent</span>

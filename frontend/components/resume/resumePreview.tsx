@@ -1,10 +1,20 @@
 import FirstTemplate from "@/lib/resumeTemplates/firstTemplate";
-// Removed render import
+import MinimalTemplate from "@/lib/resumeTemplates/minimalTemplate";
+import ModernTemplate from "@/lib/resumeTemplates/modernTemplate";
+import { useResumeData } from "@/state/store";
 
 const ResumePreview = () => {
+    const templateId = useResumeData((state) => state.templateId);
+
     return (
         <div className="min-h-[800px] w-full bg-white">
-            <FirstTemplate />
+            {templateId === "modern" ? (
+                <ModernTemplate />
+            ) : templateId === "minimal" ? (
+                <MinimalTemplate />
+            ) : (
+                <FirstTemplate />
+            )}
         </div>
     );
 };

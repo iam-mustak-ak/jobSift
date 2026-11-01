@@ -4,6 +4,7 @@ interface IResume {
     resumeName?: string | null;
     themeColor?: string;
     fontFamily?: string;
+    templateId?: "classic" | "modern" | "minimal";
     image?: string | null;
     name?: string | null;
     tagline?: string | null;
