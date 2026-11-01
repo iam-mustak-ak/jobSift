@@ -6,6 +6,7 @@ interface IUser {
     email: string;
     password: string;
     role?: "candidate" | "recruiter";
+    company?: Schema.Types.ObjectId;
     phone?: string;
     location?: string;
     experience?: string;

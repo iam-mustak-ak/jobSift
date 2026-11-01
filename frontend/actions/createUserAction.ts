@@ -12,12 +12,31 @@ export default async function createUserAction(
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm-password") as string;
+    const companyName = (formData.get("companyName") as string | null)?.trim() ?? "";
+    const companyWebsite = (formData.get("companyWebsite") as string | null)?.trim() ?? "";
+    const companyIndustry = (formData.get("companyIndustry") as string | null)?.trim() ?? "";
+    const companyLocation = (formData.get("companyLocation") as string | null)?.trim() ?? "";
 
     if (!name || !email || !password || !confirmPassword) {
         return {
             success: false,
             message: "Please fill all the fields",
         };
+    }
+
+    if (role !== "candidate" && role !== "recruiter") {
+        return { success: false, message: "Please select a valid account type" };
+    }
+    if (role === "recruiter" && !companyName) {
+        return { success: false, message: "Company name is required for recruiter accounts" };
+    }
+    if (companyWebsite) {
+        try {
+            const website = new URL(companyWebsite);
+            if (!["http:", "https:"].includes(website.protocol)) throw new Error();
+        } catch {
+            return { success: false, message: "Please enter a valid company website URL" };
+        }
     }
 
     if (password !== confirmPassword) {
@@ -37,29 +56,47 @@ export default async function createUserAction(
         };
     }
 
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/create-user`,
-        {
+    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+    if (!serverUrl) {
+        return { success: false, message: "Account service is not configured. Please contact support." };
+    }
+
+    let res: Response;
+    try {
+        res = await fetch(`${serverUrl}/auth/create-user`, {
             method: "POST",
             body: JSON.stringify({
                 role,
                 name,
                 email,
                 password,
+                ...(role === "recruiter" && {
+                    company: {
+                        name: companyName,
+                        website: companyWebsite,
+                        industry: companyIndustry,
+                        location: companyLocation,
+                    },
+                }),
             }),
             credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }
-    );
-    if (!res.ok) {
-        const error = await res.json();
+            headers: { "Content-Type": "application/json" },
+            signal: AbortSignal.timeout(15000),
+        });
+    } catch {
         return {
             success: false,
-            message: error.message,
+            message: "We couldn’t reach the account service. Please try again in a moment.",
         };
     }
 
-    redirect(`/verify-otp?email=${email}`);
+    if (!res.ok) {
+        const error = await res.json().catch(() => null);
+        return {
+            success: false,
+            message: error?.message || "We couldn’t create your account. Please try again.",
+        };
+    }
+
+    redirect(`/verify-otp?email=${encodeURIComponent(email)}`);
 }

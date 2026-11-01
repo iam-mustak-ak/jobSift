@@ -17,6 +17,7 @@ const userSchema = new Schema<IUserDocument, UserModel>(
             enum: ["candidate", "recruiter"],
             default: "candidate",
         },
+        company: { type: Schema.Types.ObjectId, ref: "Company" },
         isOAuthUser: {
             type: Boolean,
             default: false,

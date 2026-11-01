@@ -1,6 +1,6 @@
 "use client";
 import useCountdown from "@/hooks/userCountDown";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,13 +42,18 @@ const OtpInput = () => {
                 }
             );
 
-            const data = await res.json();
-            toast.success(data.message);
+            const data = await res.json().catch(() => null);
+            if (!res.ok) {
+                toast.error(
+                    data?.message || "We couldn’t send a new code. Please try again."
+                );
+                return;
+            }
+            toast.success(data?.message || "A new verification code has been sent.");
 
             startTimer();
-        } catch (err) {
-            toast.error("Otp send Faild");
-            console.log(err);
+        } catch {
+            toast.error("We couldn’t reach the email service. Please try again.");
         } finally {
             setIsPending(false);
         }
@@ -68,7 +73,7 @@ const OtpInput = () => {
             }
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-otp`,
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-user`,
                 {
                     method: "POST",
                     body: JSON.stringify({
@@ -82,10 +87,18 @@ const OtpInput = () => {
                 }
             );
 
+            const data = await res.json().catch(() => null);
+            if (!res.ok) {
+                toast.error(
+                    data?.message || "That code couldn’t be verified. Please try again."
+                );
+                return;
+            }
+
+            toast.success("Your email is verified. You can now sign in.");
             router.push("/login");
-        } catch (error) {
-            toast.error("Invalid OTP");
-            console.log(error);
+        } catch {
+            toast.error("We couldn’t reach the verification service. Please try again.");
         } finally {
             setIsPending(false);
         }
@@ -93,7 +106,13 @@ const OtpInput = () => {
 
     return (
         <>
-            <InputOTP maxLength={6} value={otp} onChange={(otp) => setOtp(otp)}>
+            <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={(otp) => setOtp(otp)}
+                disabled={isPending}
+                containerClassName="w-full justify-center gap-3"
+            >
                 <InputOTPGroup>
                     <InputOTPSlot index={0} />
                     <InputOTPSlot index={1} />
@@ -106,14 +125,27 @@ const OtpInput = () => {
                     <InputOTPSlot index={5} />
                 </InputOTPGroup>
             </InputOTP>
-            <Button onClick={handleOtp} className="w-full mt-4">
-                {isPending ? <Loader2 className="animate-spin" /> : "Verify"}
+            {email && (
+                <p className="mt-4 text-center text-sm text-slate-500">
+                    Code sent to{" "}
+                    <span className="font-semibold text-slate-800">{email}</span>
+                </p>
+            )}
+            <Button
+                onClick={handleOtp}
+                disabled={isPending || otp.length !== 6}
+                className="mt-6 h-12 w-full rounded-xl bg-violet-700 text-sm font-semibold shadow-md shadow-violet-700/15 transition hover:bg-violet-800 disabled:opacity-60"
+            >
+                {isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                )}
+                {isPending ? "Verifying…" : "Verify email"}
             </Button>
-            <div className="flex items-center justify-center text-sm mt-4">
-                <span>
-                    {canResend
-                        ? "Didn't Get The code? :"
-                        : `Please Try again after :${timer}`}
+            <div className="mt-5 flex flex-col items-center justify-center gap-1 text-sm sm:flex-row sm:gap-2">
+                <span className="text-slate-500">
+                    {canResend ? "Didn’t receive the code?" : `You can request another in ${timer}s`}
                 </span>
 
                 {canResend && (
@@ -121,11 +153,12 @@ const OtpInput = () => {
                         disabled={isPending}
                         onClick={handleResendOtp}
                         variant="link"
+                        className="h-auto p-1 font-semibold text-violet-700"
                     >
                         {isPending ? (
                             <Loader2 className="animate-spin" />
                         ) : (
-                            " Resend Code"
+                            "Resend code"
                         )}
                     </Button>
                 )}

@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
 import { error } from "console";
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import { Types } from "mongoose";
 import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import redis from "../libs/redis";
+import Company from "../models/company.model";
 import User from "../models/user.model";
 import EmailTemplates from "../services/email-template";
 import customError from "../utils/customError";
@@ -22,19 +24,61 @@ export const createUser = async (
     next: NextFunction
 ) => {
     try {
-        const { role, name, email, password } = req.body;
+        const { role, name, email, password, company: companyDetails } = req.body;
 
         // Validate the input
         if (!role || !name || !email || !password) {
             next(customError(400, "All fields are required"));
             return;
         }
+        if (role !== "candidate" && role !== "recruiter") {
+            next(customError(400, "Please select a valid account type"));
+            return;
+        }
 
-        // Check if the user already exists
+        // Check if the user already exists before creating or reusing a company.
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             next(customError(400, "User already exists"));
             return;
+        }
+
+        let companyId: Types.ObjectId | undefined;
+        if (role === "recruiter") {
+            const companyName = typeof companyDetails?.name === "string"
+                ? companyDetails.name.trim()
+                : "";
+            if (!companyName) {
+                next(customError(400, "Company name is required for recruiter accounts"));
+                return;
+            }
+
+            const website = typeof companyDetails.website === "string"
+                ? companyDetails.website.trim()
+                : "";
+            if (website) {
+                try {
+                    const parsedWebsite = new URL(website);
+                    if (!["http:", "https:"].includes(parsedWebsite.protocol)) throw new Error();
+                } catch {
+                    next(customError(400, "Please provide a valid company website URL"));
+                    return;
+                }
+            }
+
+            const escapedCompanyName = companyName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            let company = await Company.findOne({
+                name: { $regex: `^${escapedCompanyName}$`, $options: "i" },
+            });
+            if (!company) {
+                company = await Company.create({
+                    name: companyName,
+                    website: website || undefined,
+                    industry: typeof companyDetails.industry === "string" ? companyDetails.industry.trim() : undefined,
+                    location: typeof companyDetails.location === "string" ? companyDetails.location.trim() : undefined,
+                });
+            }
+            companyId = company._id;
         }
 
         // await checkOtpRestrictions(email, res, next);
@@ -46,6 +90,7 @@ export const createUser = async (
             email,
             password,
             role,
+            ...(companyId ? { company: companyId } : {}),
             isAvailableForHire: role === "candidate" ? true : false,
         });
         await newUser.save();

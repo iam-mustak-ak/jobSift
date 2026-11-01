@@ -33,6 +33,13 @@ passport.use(
                         return done(null, existingUser);
                     }
 
+                    if (role === "recruiter") {
+                        return done(
+                            new Error("Recruiter sign-up requires company details. Please use the registration form."),
+                            false
+                        );
+                    }
+
                     const newUser = await User.create({
                         name: profile.displayName,
                         email,
