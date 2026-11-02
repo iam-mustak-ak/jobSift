@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
-import { ArrowUpRight, BriefcaseBusiness, Building2, Check, Globe2, MapPin, Pencil, Plus, Users, X } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, Building2, Check, Globe2, ImagePlus, LoaderCircle, MapPin, Pencil, Plus, Users, X } from "lucide-react";
 import { useAuthStore } from "@/state/store";
 
 type CompanyProfile = {
@@ -45,6 +45,7 @@ export default function RecruiterProfile({
     const [company, setCompany] = useState<CompanyProfile | null>(initialCompany);
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState<"logo" | "banner" | null>(null);
     const [error, setError] = useState("");
     const [notice, setNotice] = useState("");
     const setAuth = useAuthStore((state) => state.setAuth);
@@ -71,6 +72,44 @@ export default function RecruiterProfile({
     }, [company]);
 
     const setField = (key: keyof CompanyProfile, value: string) => setForm((current) => ({ ...current, [key]: value }));
+    const uploadCompanyImage = async (field: "logo" | "banner", file?: File) => {
+        if (!file) return;
+        if (!file.type.startsWith("image/")) { setError("Choose an image file to upload."); return; }
+        if (file.size > 5 * 1024 * 1024) { setError("Images must be 5 MB or smaller."); return; }
+
+        setUploadingImage(field);
+        setError("");
+        try {
+            const body = new FormData();
+            body.append("image", file);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/image/?type=company`, {
+                method: "POST",
+                credentials: "include",
+                body,
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success || typeof result.data !== "string") {
+                throw new Error(result.message || "Image upload failed");
+            }
+            setField(field, result.data);
+        } catch (uploadError) {
+            setError(uploadError instanceof Error ? uploadError.message : "Image upload failed");
+        } finally {
+            setUploadingImage(null);
+        }
+    };
+    const imageUploadField = (field: "logo" | "banner", label: string) => (
+        <div>
+            <p className={labelClass}>{label}</p>
+            <label className="mt-1.5 flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition hover:border-violet-300 hover:bg-violet-50/60">
+                {uploadingImage === field ? <LoaderCircle className="h-4 w-4 animate-spin text-violet-700" /> : <ImagePlus className="h-4 w-4 text-violet-700" />}
+                {uploadingImage === field ? "Uploading to Cloudinary…" : `Upload ${field === "logo" ? "logo" : "cover image"}`}
+                <input type="file" accept="image/*" className="sr-only" disabled={uploadingImage !== null} onChange={(event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ""; void uploadCompanyImage(field, file); }} />
+            </label>
+            <p className="mt-1.5 text-xs text-slate-500">PNG, JPG or WebP · up to 5 MB</p>
+            {form[field] && <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-2"><img src={form[field]} alt={`${label} preview`} className={`rounded-lg object-cover ${field === "logo" ? "h-14 w-14" : "h-14 w-24"}`} /><span className="min-w-0 flex-1 truncate text-xs text-slate-500">Image uploaded</span><button type="button" onClick={() => setField(field, "")} className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50">Remove</button></div>}
+        </div>
+    );
     const openEditor = () => {
         setForm({
             name: company?.name ?? "", website: company?.website ?? "", industry: company?.industry ?? "",
@@ -103,7 +142,14 @@ export default function RecruiterProfile({
 
     return (
         <main className="mx-auto w-full max-w-6xl space-y-7 pb-10">
-            <section className="relative overflow-hidden rounded-[28px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-6 sm:p-9">
+            <section
+                className="relative overflow-hidden rounded-[28px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-6 sm:p-9"
+                style={company?.banner ? {
+                    backgroundImage: `linear-gradient(100deg, rgba(255,255,255,.97), rgba(248,247,255,.88)), url("${company.banner}")`,
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                } : undefined}
+            >
                 <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-violet-200/40 blur-3xl" />
                 <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
@@ -149,7 +195,7 @@ export default function RecruiterProfile({
             </div>
 
             {editing && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setEditing(false); }}><section role="dialog" aria-modal="true" aria-labelledby="company-editor-title" className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-7"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-700">Employer profile</p><h2 id="company-editor-title" className="mt-1 text-xl font-bold text-slate-950">{company ? "Edit company details" : "Create your company profile"}</h2><p className="mt-1 text-sm text-slate-500">Give job seekers a clear, trustworthy picture of your organization.</p></div><button disabled={saving} onClick={() => setEditing(false)} aria-label="Close" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"><X className="h-5 w-5" /></button></div>
-                    <form onSubmit={saveCompany} className="mt-6 space-y-5"><div className="grid gap-4 sm:grid-cols-2"><label className={labelClass}>Company name<input required maxLength={120} className={inputClass} value={form.name ?? ""} onChange={(event) => setField("name", event.target.value)} placeholder="Northstar Studio" /></label><label className={labelClass}>Company website<input type="url" className={inputClass} value={form.website ?? ""} onChange={(event) => setField("website", event.target.value)} placeholder="https://company.com" /></label><label className={labelClass}>Industry<input maxLength={100} className={inputClass} value={form.industry ?? ""} onChange={(event) => setField("industry", event.target.value)} placeholder="Technology, healthcare…" /></label><label className={labelClass}>Company size<select className={inputClass} value={form.size ?? ""} onChange={(event) => setField("size", event.target.value)}><option value="">Select team size</option>{["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001+"].map((size) => <option key={size} value={size}>{size} employees</option>)}</select></label><label className={labelClass}>Headquarters<input maxLength={160} className={inputClass} value={form.location ?? ""} onChange={(event) => setField("location", event.target.value)} placeholder="City, country" /></label><label className={labelClass}>Year founded<input type="number" min="1800" max={new Date().getFullYear()} className={inputClass} value={form.foundedYear ?? ""} onChange={(event) => setField("foundedYear", event.target.value)} placeholder="2018" /></label><label className={labelClass}>Logo image URL<input type="url" className={inputClass} value={form.logo ?? ""} onChange={(event) => setField("logo", event.target.value)} placeholder="https://…" /></label><label className={labelClass}>Cover image URL<input type="url" className={inputClass} value={form.banner ?? ""} onChange={(event) => setField("banner", event.target.value)} placeholder="https://…" /></label></div><label className={`${labelClass} block`}>About the company<textarea maxLength={5000} rows={5} className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100" value={form.description ?? ""} onChange={(event) => setField("description", event.target.value)} placeholder="Share your mission, team culture, products, and what makes your company a great place to work." /><span className="mt-1 block text-right text-xs font-normal text-slate-400">{form.description?.length ?? 0}/5000</span></label><div><p className={labelClass}>Company social links</p>{form.socialLinks?.map((item, index) => <div key={index} className="mt-2 grid gap-2 sm:grid-cols-[0.7fr_1.3fr_auto]"><input aria-label="Social platform" className={inputClass.replace("mt-1.5", "mt-0")} value={item.platform} onChange={(event) => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.map((link, linkIndex) => linkIndex === index ? { ...link, platform: event.target.value } : link) }))} placeholder="Platform" /><input type="url" aria-label="Social link URL" className={inputClass.replace("mt-1.5", "mt-0")} value={item.url} onChange={(event) => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.map((link, linkIndex) => linkIndex === index ? { ...link, url: event.target.value } : link) }))} placeholder="https://linkedin.com/company/…" /><button type="button" aria-label="Remove social link" onClick={() => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.filter((_, linkIndex) => linkIndex !== index) }))} className="flex h-11 items-center justify-center rounded-xl border border-slate-200 px-3 text-slate-500 hover:bg-slate-50"><X className="h-4 w-4" /></button></div>)}<button type="button" onClick={() => setForm((current) => ({ ...current, socialLinks: [...(current.socialLinks ?? []), { platform: "", url: "" }] }))} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"><Plus className="h-4 w-4" />Add social link</button></div>{error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}<div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end"><button type="button" disabled={saving} onClick={() => setEditing(false)} className="h-11 rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button><button disabled={saving} type="submit" className="h-11 rounded-xl bg-violet-700 px-5 text-sm font-semibold text-white hover:bg-violet-800 disabled:opacity-60">{saving ? "Saving…" : "Save company profile"}</button></div></form>
+                    <form onSubmit={saveCompany} className="mt-6 space-y-5"><div className="grid gap-4 sm:grid-cols-2"><label className={labelClass}>Company name<input required maxLength={120} className={inputClass} value={form.name ?? ""} onChange={(event) => setField("name", event.target.value)} placeholder="Northstar Studio" /></label><label className={labelClass}>Company website<input type="url" className={inputClass} value={form.website ?? ""} onChange={(event) => setField("website", event.target.value)} placeholder="https://company.com" /></label><label className={labelClass}>Industry<input maxLength={100} className={inputClass} value={form.industry ?? ""} onChange={(event) => setField("industry", event.target.value)} placeholder="Technology, healthcare…" /></label><label className={labelClass}>Company size<select className={inputClass} value={form.size ?? ""} onChange={(event) => setField("size", event.target.value)}><option value="">Select team size</option>{["1-10", "11-50", "51-200", "201-500", "501-1000", "1001-5000", "5001+"].map((size) => <option key={size} value={size}>{size} employees</option>)}</select></label><label className={labelClass}>Headquarters<input maxLength={160} className={inputClass} value={form.location ?? ""} onChange={(event) => setField("location", event.target.value)} placeholder="City, country" /></label><label className={labelClass}>Year founded<input type="number" min="1800" max={new Date().getFullYear()} className={inputClass} value={form.foundedYear ?? ""} onChange={(event) => setField("foundedYear", event.target.value)} placeholder="2018" /></label>{imageUploadField("logo", "Company logo")}{imageUploadField("banner", "Cover image")}</div><label className={`${labelClass} block`}>About the company<textarea maxLength={5000} rows={5} className="mt-1.5 w-full resize-y rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-100" value={form.description ?? ""} onChange={(event) => setField("description", event.target.value)} placeholder="Share your mission, team culture, products, and what makes your company a great place to work." /><span className="mt-1 block text-right text-xs font-normal text-slate-400">{form.description?.length ?? 0}/5000</span></label><div><p className={labelClass}>Company social links</p>{form.socialLinks?.map((item, index) => <div key={index} className="mt-2 grid gap-2 sm:grid-cols-[0.7fr_1.3fr_auto]"><input aria-label="Social platform" className={inputClass.replace("mt-1.5", "mt-0")} value={item.platform} onChange={(event) => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.map((link, linkIndex) => linkIndex === index ? { ...link, platform: event.target.value } : link) }))} placeholder="Platform" /><input type="url" aria-label="Social link URL" className={inputClass.replace("mt-1.5", "mt-0")} value={item.url} onChange={(event) => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.map((link, linkIndex) => linkIndex === index ? { ...link, url: event.target.value } : link) }))} placeholder="https://linkedin.com/company/…" /><button type="button" aria-label="Remove social link" onClick={() => setForm((current) => ({ ...current, socialLinks: current.socialLinks?.filter((_, linkIndex) => linkIndex !== index) }))} className="flex h-11 items-center justify-center rounded-xl border border-slate-200 px-3 text-slate-500 hover:bg-slate-50"><X className="h-4 w-4" /></button></div>)}<button type="button" onClick={() => setForm((current) => ({ ...current, socialLinks: [...(current.socialLinks ?? []), { platform: "", url: "" }] }))} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"><Plus className="h-4 w-4" />Add social link</button></div>{error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}<div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end"><button type="button" disabled={saving} onClick={() => setEditing(false)} className="h-11 rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</button><button disabled={saving} type="submit" className="h-11 rounded-xl bg-violet-700 px-5 text-sm font-semibold text-white hover:bg-violet-800 disabled:opacity-60">{saving ? "Saving…" : "Save company profile"}</button></div></form>
                 </section></div>}
         </main>
     );

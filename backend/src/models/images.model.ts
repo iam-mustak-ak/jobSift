@@ -8,7 +8,7 @@ const imageSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            enum: ["resume", "jobs", "profile"],
+            enum: ["resume", "jobs", "profile", "company"],
             required: true,
         },
         jobId: {
