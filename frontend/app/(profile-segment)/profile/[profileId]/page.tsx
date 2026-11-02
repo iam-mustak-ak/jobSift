@@ -5,6 +5,7 @@ import SocialInfo from "@/components/profile/socialInfo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { fetcherSever } from "@/utils/fetcherSever";
+import RecruiterProfile from "@/components/profile/recruiterProfile";
 
 type ProfilePrps = {
     params: Promise<{ profileId: string }>;
@@ -12,6 +13,21 @@ type ProfilePrps = {
 const Page = async ({ params }: ProfilePrps) => {
     const { profileId } = await params;
     const { data } = await fetcherSever(`/auth/me/${profileId}`);
+
+    if (data?.role === "recruiter") {
+        const companyId = typeof data.company === "string" ? data.company : data.company?._id;
+        const [companyResult, jobsResult] = await Promise.all([
+            companyId ? fetcherSever(`/company/get-company/${companyId}`) : Promise.resolve(undefined),
+            fetcherSever(`/job/recruiter/${profileId}?page=1&limit=100`),
+        ]);
+        return (
+            <RecruiterProfile
+                user={data}
+                initialCompany={companyResult?.data ?? (typeof data.company === "object" ? data.company : null)}
+                jobs={Array.isArray(jobsResult?.data) ? jobsResult.data : []}
+            />
+        );
+    }
 
     return (
         <div className="mx-auto w-full max-w-6xl space-y-6 pb-10">

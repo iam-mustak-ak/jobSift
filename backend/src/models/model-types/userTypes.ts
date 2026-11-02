@@ -1,4 +1,4 @@
-import { Document, Model, Schema } from "mongoose";
+import { Document, Model, Schema, Types } from "mongoose";
 
 // Main user schema fields
 interface IUser {
@@ -6,7 +6,7 @@ interface IUser {
     email: string;
     password: string;
     role?: "candidate" | "recruiter";
-    company?: Schema.Types.ObjectId;
+    company?: Types.ObjectId;
     phone?: string;
     location?: string;
     experience?: string;

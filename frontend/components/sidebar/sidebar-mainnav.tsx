@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useAuthStore } from "@/state/store";
 
 export default function NavMain({
     items,
@@ -37,12 +38,14 @@ export default function NavMain({
     label: string;
 }) {
     const { profileId } = useParams();
+    const user = useAuthStore((state) => state.user);
+    const visibleItems = user?.role === "recruiter" ? items.filter((item) => item.title !== "Job") : items;
 
     return (
         <SidebarGroup>
             <SidebarGroupLabel>{label}</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => (
+                {visibleItems.map((item) => (
                     <Collapsible
                         key={item.title}
                         asChild

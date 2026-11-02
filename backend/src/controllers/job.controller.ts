@@ -239,6 +239,13 @@ export const getRecruiterJobsController = async (
         if (!recruiterId) {
             return next(customError(400, "Recruiter ID is required"));
         }
+        const authUser = req.user as unknown as AuthenticatedRecruiter | undefined;
+        if (!authUser?._id || String(authUser._id) !== recruiterId) {
+            return next(customError(403, "You can only view your own hiring activity"));
+        }
+        if (authUser.role !== "recruiter") {
+            return next(customError(403, "Recruiter account required"));
+        }
 
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;

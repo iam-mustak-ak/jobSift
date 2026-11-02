@@ -34,7 +34,7 @@ jobRouter.get(
 );
 
 jobRouter.get("/get-featured", getFeaturedJobs);
-jobRouter.get("/recruiter/:recruiterId", getRecruiterJobsController);
+jobRouter.get("/recruiter/:recruiterId", setAuthorization, authecticationMiddleware, getRecruiterJobsController);
 jobRouter.patch(
     "/update/:id",
     setAuthorization,
