@@ -22,7 +22,7 @@ const navLinkClass =
 export const Navbar = () => {
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/70 bg-white/95 shadow-[0_4px_20px_rgba(31,28,61,0.05)] backdrop-blur-xl">
-            <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-4 px-5 sm:px-8">
+            <div className="container mx-auto flex h-[76px] items-center justify-between gap-4 px-5">
                 <Link
                     href="/"
                     aria-label="JobSift home"
