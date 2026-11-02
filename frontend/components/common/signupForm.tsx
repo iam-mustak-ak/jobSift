@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import CustomInput from "./customInput";
-import SocialLoginButtons from "./socialLoginButtons";
 import SubmitButton from "./submitButton";
 
 const initialState = {
@@ -202,14 +201,15 @@ const SignupForm = () => {
                     />
                 </div>
             </form>
+            {/* Google signup is temporarily disabled.
             <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-slate-400">
                 <span className="h-px flex-1 bg-slate-200" />
                 or sign up with
                 <span className="h-px flex-1 bg-slate-200" />
             </div>
-            {role === "candidate" ? (
-                <SocialLoginButtons isLogIn={false} role={role} />
-            ) : (
+            {role === "candidate" && <SocialLoginButtons isLogIn={false} role={role} />}
+            */}
+            {role === "recruiter" && (
                 <p className="text-center text-xs leading-5 text-slate-500">
                     Recruiter accounts need company details, so please use the form above to sign up.
                 </p>

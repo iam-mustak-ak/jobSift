@@ -14,6 +14,7 @@ import {
 
 const OtpInput = () => {
     const [otp, setOtp] = useState<string>("");
+    const [attemptsLeft, setAttemptsLeft] = useState(3);
     const router = useRouter();
     const email = useSearchParams().get("email");
     const [isPending, setIsPending] = useState<boolean>(false);
@@ -51,6 +52,8 @@ const OtpInput = () => {
             }
             toast.success(data?.message || "A new verification code has been sent.");
 
+            setAttemptsLeft(3);
+            setOtp("");
             startTimer();
         } catch {
             toast.error("We couldn’t reach the email service. Please try again.");
@@ -89,6 +92,9 @@ const OtpInput = () => {
 
             const data = await res.json().catch(() => null);
             if (!res.ok) {
+                if (typeof data?.attemptsLeft === "number") {
+                    setAttemptsLeft(Math.max(0, data.attemptsLeft));
+                }
                 toast.error(
                     data?.message || "That code couldn’t be verified. Please try again."
                 );
@@ -110,7 +116,7 @@ const OtpInput = () => {
                 maxLength={6}
                 value={otp}
                 onChange={(otp) => setOtp(otp)}
-                disabled={isPending}
+                disabled={isPending || attemptsLeft === 0}
                 containerClassName="w-full justify-center gap-3"
             >
                 <InputOTPGroup>
@@ -125,6 +131,14 @@ const OtpInput = () => {
                     <InputOTPSlot index={5} />
                 </InputOTPGroup>
             </InputOTP>
+            <p
+                aria-live="polite"
+                className={`mt-3 text-center text-xs font-medium ${attemptsLeft === 0 ? "text-red-600" : "text-slate-500"}`}
+            >
+                {attemptsLeft > 0
+                    ? `${attemptsLeft} verification ${attemptsLeft === 1 ? "attempt" : "attempts"} remaining for this code.`
+                    : "No attempts remain. Request a new code when available."}
+            </p>
             {email && (
                 <p className="mt-4 text-center text-sm text-slate-500">
                     Code sent to{" "}
@@ -133,7 +147,7 @@ const OtpInput = () => {
             )}
             <Button
                 onClick={handleOtp}
-                disabled={isPending || otp.length !== 6}
+                disabled={isPending || otp.length !== 6 || attemptsLeft === 0}
                 className="mt-6 h-12 w-full rounded-xl bg-violet-700 text-sm font-semibold shadow-md shadow-violet-700/15 transition hover:bg-violet-800 disabled:opacity-60"
             >
                 {isPending ? (

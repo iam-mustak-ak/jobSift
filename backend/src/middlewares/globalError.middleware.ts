@@ -46,6 +46,9 @@ const globalErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
         res.status(statusCode).json({
             success: false,
             message,
+            ...(Number.isInteger(err.attemptsLeft)
+                ? { attemptsLeft: err.attemptsLeft }
+                : {}),
         });
     } catch (error) {
         next(error);

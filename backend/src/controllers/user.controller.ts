@@ -171,7 +171,7 @@ export const verifyUser = async (
         }
 
         // Verify the OTP
-        await verifyOtp(email, otp, next);
+        await verifyOtp(email, otp);
         user.isVerified = true;
         await user.save();
 

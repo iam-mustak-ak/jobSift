@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import CustomInput from "./customInput";
-import SocialLoginButtons from "./socialLoginButtons";
 import SubmitButton from "./submitButton";
 
 const SigninForm = () => {
@@ -107,12 +106,14 @@ const SigninForm = () => {
                     />
                 </div>
             </form>
+            {/* Google login is temporarily disabled.
             <div className="my-6 flex items-center gap-3 text-xs font-medium uppercase tracking-wider text-slate-400">
                 <span className="h-px flex-1 bg-slate-200" />
                 or continue with
                 <span className="h-px flex-1 bg-slate-200" />
             </div>
             <SocialLoginButtons isLogIn={true} />
+            */}
             <p className="mt-7 text-center text-sm text-slate-600">
                 New to JobSift?{" "}
                 <Link

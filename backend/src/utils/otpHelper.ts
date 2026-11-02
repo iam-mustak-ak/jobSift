@@ -58,34 +58,38 @@ export const trackOtpRequest = async (email: string, next: NextFunction) => {
 
 export const verifyOtp = async (
     email: string,
-    otp: string,
-    next: NextFunction
+    otp: string
 ) => {
     const storedOtp = await redis.get(`otp:${email}`);
 
     if (!storedOtp) {
-        next(customError(400, "OTP expired or not found"));
-        return;
+        throw customError(400, "OTP expired or not found");
     }
 
-    const attempts = parseInt(
-        (await redis.get(`otp_attempts:${email}`)) || "0"
+    const attempts = Number.parseInt(
+        (await redis.get(`otp_attempts:${email}`)) || "0",
+        10,
     );
     if (storedOtp !== otp) {
-        if (attempts >= 2) {
+        const attemptsUsed = attempts + 1;
+        const attemptsLeft = Math.max(0, 3 - attemptsUsed);
+        if (attemptsLeft === 0) {
             await redis.set(`otp_lock:${email}`, "true", "EX", 1800);
-
-            next(
-                customError(
-                    429,
-                    "You have reached the maximum number of OTP attempts. Please try after 30 minutes."
-                )
-            );
-            return;
+            await redis.set(`otp_attempts:${email}`, attemptsUsed, "EX", 1800);
+            const error = customError(
+                429,
+                "You have used all verification attempts. Please try again after 30 minutes.",
+            ) as Error & { attemptsLeft?: number };
+            error.attemptsLeft = attemptsLeft;
+            throw error;
         }
-        await redis.set(`otp_attempts:${email}`, attempts + 1, "EX", 1800);
-        next(customError(400, `Invalid OTP. ${2 - attempts} attempts left`));
-        return;
+        await redis.set(`otp_attempts:${email}`, attemptsUsed, "EX", 1800);
+        const error = customError(
+            400,
+            `Invalid OTP. ${attemptsLeft} attempts left`,
+        ) as Error & { attemptsLeft?: number };
+        error.attemptsLeft = attemptsLeft;
+        throw error;
     }
 
     await redis.del(`otp:${email}`, `otp_attempts:${email}`);
@@ -97,6 +101,7 @@ export const sendOtp = async (email: string) => {
     const emailTemplate = new EmailTemplates("otp-verification");
     await emailTemplate.setOtp(otp).sendEmail(email);
 
+    await redis.del(`otp_attempts:${email}`);
     await redis.set(`otp:${email}`, otp, "EX", 300);
     await redis.set(`otp_cooldown:${email}`, "true", "EX", 60);
 };
