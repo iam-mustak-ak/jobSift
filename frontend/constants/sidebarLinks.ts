@@ -6,6 +6,7 @@ import {
     FileUser,
     LayoutDashboard,
     NotepadText,
+    MessagesSquare,
     Settings2,
 } from "lucide-react";
 
@@ -41,6 +42,11 @@ export const sideabrLinksData = {
             name: "Applied Jobs",
             url: "/applied-jobs",
             icon: NotepadText,
+        },
+        {
+            name: "Messages",
+            url: "/messages",
+            icon: MessagesSquare,
         },
     ],
     account: [

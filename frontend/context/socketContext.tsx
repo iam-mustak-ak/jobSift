@@ -37,21 +37,16 @@ export const useSocket = () => {
     return context;
 };
 
-let socket: Socket | null = null;
-
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuthStore((state) => state);
     const userId = user?._id;
+    const [socketInstance, setSocketInstance] = useState<Socket | null>(null);
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
     useEffect(() => {
         if (!userId) {
-            if (socket) {
-                socket.disconnect();
-                socket = null;
-            }
-
-            setTimeout(() => setNotifications([]), 0);
+            setSocketInstance(null);
+            setNotifications([]);
             return;
         }
 
@@ -72,29 +67,26 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
         fetchNotifications();
 
-        if (!socket) {
-            socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
-                withCredentials: true,
-            });
-        }
-
-        socket.emit("register", userId);
+        const connection = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, { withCredentials: true });
+        setSocketInstance(connection);
 
         const handleNewNotification = (data: any) => {
             setNotifications((prev) => [data.notification, ...prev]);
         };
 
-        socket.on("new_notification", handleNewNotification);
+        connection.on("new_notification", handleNewNotification);
 
         return () => {
-            socket?.off("new_notification", handleNewNotification);
+            connection.off("new_notification", handleNewNotification);
+            connection.disconnect();
+            setSocketInstance((current) => current === connection ? null : current);
         };
     }, [userId]);
 
     return (
         <SocketContext.Provider
             value={{
-                socket,
+                socket: socketInstance,
                 notifications,
                 setNotifications,
             }}

@@ -35,8 +35,6 @@ export default function useNotification(userId: string) {
             });
         }
 
-        socket.emit("register", userId);
-
         const handleNewNotification = (data: any) => {
             setNotifications((prev) => [data.notification, ...prev]);
         };

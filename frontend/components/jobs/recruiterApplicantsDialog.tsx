@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, Check, ChevronDown, ExternalLink, FileText, LoaderCircle, Mail, MapPin, Search, UserRound } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/state/store";
+import { CalendarDays, Check, ChevronDown, ExternalLink, FileText, LoaderCircle, Mail, MapPin, MessageCircle, Search, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -46,6 +48,9 @@ export default function RecruiterApplicantsDialog({
         (job.applicants ?? []).map((applicant) => [applicant._id, { status: applicant.status ?? "applied", note: applicant.statusNote ?? "" }])
     ));
     const [savingId, setSavingId] = useState("");
+    const [startingChatId, setStartingChatId] = useState("");
+    const user = useAuthStore((state) => state.user);
+    const router = useRouter();
 
     const filteredApplicants = useMemo(() => applicants.filter((applicant) => {
         const candidate = getCandidate(applicant);
@@ -76,6 +81,26 @@ export default function RecruiterApplicantsDialog({
             toast.error(error instanceof Error ? error.message : "Could not update application stage");
         } finally {
             setSavingId("");
+        }
+    };
+
+    const startConversation = async (applicant: Applicant) => {
+        setStartingChatId(applicant._id);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat/conversations`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ jobId: job._id, applicationId: applicant._id }),
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || "Could not start conversation");
+            setOpen(false);
+            router.push(`/profile/${user?._id}/messages?conversation=${result.data._id}`);
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Could not start conversation");
+        } finally {
+            setStartingChatId("");
         }
     };
 
@@ -122,6 +147,7 @@ export default function RecruiterApplicantsDialog({
 
                                 <div className="mt-4 flex flex-wrap gap-2">
                                     {applicant.resume && <a href={applicant.resume} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-700 hover:border-violet-200 hover:text-violet-700"><FileText className="h-4 w-4" />View resume <ExternalLink className="h-3 w-3" /></a>}
+                                    <Button type="button" disabled={startingChatId === applicant._id} onClick={() => void startConversation(applicant)} className="h-9 rounded-lg bg-violet-700 px-3 text-xs font-semibold hover:bg-violet-800">{startingChatId === applicant._id ? <LoaderCircle className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <MessageCircle className="mr-1.5 h-3.5 w-3.5" />}Start conversation</Button>
                                     {applicant.coverLetter && <details className="group min-w-0 flex-1 basis-full rounded-xl border border-slate-100 bg-slate-50"><summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5 text-xs font-semibold text-slate-700"><span>Cover letter</span><ChevronDown className="h-4 w-4 transition group-open:rotate-180" /></summary><p className="whitespace-pre-wrap break-words border-t border-slate-100 px-3 py-3 text-sm leading-6 text-slate-600">{applicant.coverLetter}</p></details>}
                                 </div>
 

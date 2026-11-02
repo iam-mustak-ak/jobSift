@@ -15,6 +15,7 @@ import Session from "./models/session.model";
 
 // Routers
 import companyRouter from "./routes/compnay.routes";
+import chatRouter from "./routes/chat.routes";
 import imageRouter from "./routes/image.routes";
 import interViewRouter from "./routes/interview.routes";
 import jobRouter from "./routes/job.routes";
@@ -101,6 +102,7 @@ app.use("/job-category", jobCategoryRouter);
 app.use("/skill", skillRouter);
 app.use("/job", jobRouter);
 app.use("/company", companyRouter);
+app.use("/chat", chatRouter);
 app.use("/resume", resumeRouter);
 app.use("/image", imageRouter);
 app.use("/analyze", analyzeRouter);

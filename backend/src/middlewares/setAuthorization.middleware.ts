@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model"; // 👈 make sure this path is correct
+import Session from "../models/session.model";
 import customError from "../utils/customError";
 import generateTokens from "../utils/generateTokens";
 import isTokenExpires from "../utils/isTokenExpires";
@@ -33,6 +34,13 @@ const setAuthorization: RequestHandler = async (req, res, next) => {
                     refreshToken,
                     process.env.JWT_SECRET
                 );
+                const activeSession = await Session.findOne({
+                    user: decoded.id,
+                    token: refreshToken,
+                    isValid: true,
+                    expiresAt: { $gt: new Date() },
+                });
+                if (!activeSession) return next(customError(401, "Session expired. Please log in again."));
                 const user = await User.findById(decoded.id);
                 if (!user) return next(customError(404, "User not found!!"));
 

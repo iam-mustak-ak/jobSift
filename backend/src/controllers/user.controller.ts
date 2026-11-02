@@ -6,6 +6,7 @@ import passport from "passport";
 import { FRONTEND_URL } from "../config/env";
 import redis from "../libs/redis";
 import Company from "../models/company.model";
+import Session from "../models/session.model";
 import User from "../models/user.model";
 import EmailTemplates from "../services/email-template";
 import customError from "../utils/customError";
@@ -417,6 +418,11 @@ export const logoutUser = async (
             next(customError(404, "User not found"));
             return;
         }
+
+        const userId = (user as unknown as { _id: Types.ObjectId })._id;
+        await Session.updateMany({ user: userId }, { $set: { isValid: false } });
+        const io = (req as Request & { io?: { in: (room: string) => { disconnectSockets: (close?: boolean) => void } } }).io;
+        io?.in(String(userId)).disconnectSockets(true);
 
         res.clearCookie("refreshToken");
 
