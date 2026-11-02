@@ -12,18 +12,19 @@ const jobSchema = new Schema(
         },
         description: {
             type: String,
-            required: true,
+            default: "",
         },
         jobType: {
             type: String,
             required: true,
+            default: "full-time",
         },
         url: {
             type: String,
         },
         employmentMode: {
             type: String,
-            default: "onsite",
+            default: "Remote",
         },
         location: {
             type: String,
@@ -35,6 +36,7 @@ const jobSchema = new Schema(
         experienceLevel: {
             type: String,
             enum: ["entry", "mid", "senior", "lead"],
+            default: "entry",
         },
 
         company: {

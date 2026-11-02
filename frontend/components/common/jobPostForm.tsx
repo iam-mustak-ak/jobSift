@@ -3,7 +3,7 @@
 
 import { useAuthStore } from "@/state/store";
 import { formatData } from "@/utils/formateData";
-import { Loader2 } from "lucide-react";
+import { BriefcaseBusiness, Building2, CalendarDays, CircleDollarSign, FileText, Loader2, MapPin, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -40,10 +40,10 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         title: "",
         jobType: "full-time",
         employmentMode: "Remote",
-        location: "Sylhet",
+        location: "",
         company: "",
         salaryRange: { min: 0, max: 0 },
-        experienceLevel: "lead",
+        experienceLevel: "entry",
         skills: [] as Option[],
         categories: [] as Option[],
         description: "",
@@ -58,8 +58,8 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                 title: jobData.title || "",
                 jobType: jobData.jobType || "full-time",
                 employmentMode: jobData.employmentMode || "Remote",
-                location: jobData.location || "Sylhet",
-                company: jobData.company?._id || "",
+                location: jobData.location || "",
+                company: typeof jobData.company === "string" ? jobData.company : jobData.company?._id || "",
                 salaryRange: jobData.salaryRange || { min: 0, max: 0 },
                 experienceLevel: jobData.experienceLevel || "lead",
                 skills: (jobData.skillsRequired || []).map((s: any) => ({
@@ -80,6 +80,25 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         }
     }, [jobData]);
 
+    const userCompanyId = typeof user?.company === "object"
+        ? String((user.company as Record<string, any>)?._id ?? "")
+        : String(user?.company ?? "");
+
+    useEffect(() => {
+        if (!jobData && userCompanyId) {
+            setFormValue((prev) => ({ ...prev, company: userCompanyId }));
+        }
+    }, [jobData, userCompanyId]);
+
+    const linkedCompany = formattedCompany.find((item: Option) => String(item.id) === userCompanyId);
+    const companyOptions = userCompanyId
+        ? [linkedCompany ?? {
+            id: userCompanyId,
+            value: "Your company",
+            label: typeof user?.company === "object" ? String((user.company as Record<string, any>)?.name ?? "Your company") : "Your company",
+        }]
+        : [];
+
     const handleChange = (key: string, value: any) => {
         setFormValue((prev) => ({ ...prev, [key]: value }));
     };
@@ -99,10 +118,15 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
 
     const validateForm = () => {
         if (!formValue.title.trim()) return "Job title is required";
-        if (!formValue.company) return "Please select a company";
+        if (!userCompanyId || !formValue.company) return "Link your company to your recruiter account before publishing";
+        if (!formValue.location.trim()) return "Add the job location or enter Remote";
         if (!formValue.skills.length) return "Select at least one skill";
         if (!formValue.categories.length) return "Select at least one category";
-        if (!formValue.description.trim()) return "Job description is required";
+        const descriptionText = formValue.description
+            .replace(/<[^>]*>/g, " ")
+            .replace(/&nbsp;|&#160;/gi, " ")
+            .trim();
+        if (!descriptionText) return "Job description is required";
         if (!formValue.deadline) return "Deadline is required";
 
         const selectedDate = new Date(formValue.deadline);
@@ -114,14 +138,12 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         const min = formValue.salaryRange.min;
         const max = formValue.salaryRange.max;
 
-        if (
-            (formValue.salaryRange.min && isNaN(min)) ||
-            (formValue.salaryRange.max && isNaN(max))
-        ) {
+        if (!Number.isFinite(min) || !Number.isFinite(max) || min < 0 || max < 0) {
             return "Salary must be valid numbers";
         }
 
-        if (min > max) return "Minimum salary cannot exceed maximum salary";
+        if (min > 0 && max > 0 && min > max)
+            return "Minimum salary cannot exceed maximum salary";
 
         return null;
     };
@@ -158,9 +180,9 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                 headers: { "Content-Type": "application/json" },
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || response.statusText);
+            const result = await response.json().catch(() => null);
+            if (!response.ok || !result?.success) {
+                throw new Error(result?.message || "Could not save this job.");
             }
 
             toast.success(
@@ -170,28 +192,11 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                     ? "Job updated successfully!"
                     : "Job posted successfully!"
             );
+            router.push(`/profile/${user?._id}/my-jobs?page=1`);
         } catch (err: any) {
-            console.error("❌ Job save failed:", err);
-            toast.error("Failed to save job. Please try again.");
+            toast.error(err?.message || "Failed to save job. Please try again.");
         } finally {
             setPostLoading(false);
-            setFormValue({
-                title: "",
-                jobType: "full-time",
-                employmentMode: "Remote",
-                location: "Sylhet",
-                company: "",
-                salaryRange: { min: 0, max: 0 },
-                experienceLevel: "lead",
-                skills: [],
-                categories: [],
-                description: "",
-                deadline: "",
-                tags: [],
-                tagsInput: "",
-            });
-
-            router.push(`/profile/${user?._id}/my-jobs?page=1`);
         }
     };
 
@@ -214,28 +219,36 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
     };
 
     return (
-        <div className="max-w-5xl mx-auto py-4 mt-10">
-            <Card>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="grid gap-5">
-                        {/* Title */}
+        <div className="mx-auto max-w-6xl py-8">
+            <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+            <Card className="overflow-hidden rounded-3xl border-slate-200 bg-white shadow-lg shadow-slate-900/[0.04]">
+                <CardContent className="p-5 sm:p-8">
+                    <form onSubmit={handleSubmit} className="space-y-7">
+                        <div className="border-b border-slate-100 pb-5">
+                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-violet-700">Job information</p>
+                            <h2 className="mt-1 text-xl font-bold text-slate-950">Tell candidates about the role</h2>
+                            <p className="mt-1 text-sm text-slate-500">Start with the essentials. You can save this as a draft at any time.</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5">
+                            <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-800"><BriefcaseBusiness className="h-4 w-4 text-violet-700" /> Role details</div>
                         <CustomInput
                             id="title"
-                            label="Title"
+                            label="Job title"
                             type="text"
                             name="title"
-                            placeholder="Job Title"
+                            placeholder="e.g. Senior Product Designer"
                             value={formValue.title}
+                            required
+                            className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
                             onChange={(e: any) =>
                                 handleChange("title", e.target.value)
                             }
                         />
 
-                        {/* Two-column section */}
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
                             <CustomSelect
-                                label="Job Type"
-                                options={["full-time", "part-time", "contract"]}
+                                label="Employment type"
+                                options={["full-time", "part-time", "contract", "internship"]}
                                 value={formValue.jobType}
                                 onChangeValue={(val: string) =>
                                     handleChange("jobType", val)
@@ -243,38 +256,31 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                             />
 
                             <CustomSelect
-                                label="Employment Type"
-                                options={["Remote", "Onsite"]}
+                                label="Work arrangement"
+                                options={["Remote", "Hybrid", "Onsite"]}
                                 value={formValue.employmentMode}
                                 onChangeValue={(val: string) =>
                                     handleChange("employmentMode", val)
                                 }
                             />
 
-                            <ComboBox
+                            <CustomInput
+                                id="location"
                                 name="location"
-                                title="Location"
-                                placeholder="Search Location"
+                                label="Location"
+                                type="text"
+                                placeholder="City, region, or Remote"
                                 value={formValue.location}
-                                values={[
-                                    { value: "Sylhet", label: "Sylhet" },
-                                    { value: "Dhaka", label: "Dhaka" },
-                                    {
-                                        value: "Chittagong",
-                                        label: "Chittagong",
-                                    },
-                                ]}
-                                setValue={(val: string) =>
-                                    handleChange("location", val)
-                                }
+                                className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
+                                onChange={(e) => handleChange("location", e.target.value)}
                             />
 
                             <ComboBox
                                 name="company"
                                 title="Company"
-                                placeholder="Search Companies"
+                                placeholder="Choose your company"
                                 value={formValue.company}
-                                values={formattedCompany.map(
+                                values={companyOptions.map(
                                     (item: Option) => ({
                                         value: String(item.id ?? ""),
                                         label: String(item.label ?? ""),
@@ -285,17 +291,16 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                 }
                             />
 
-                            {/* Salary */}
                             <div className="w-full">
-                                <Label className="mb-3">Salary Range</Label>
-                                <div className="flex gap-4">
+                                <Label className="mb-2 block text-sm font-medium text-slate-800">Salary range <span className="font-normal text-slate-400">(optional)</span></Label>
+                                <div className="flex items-end gap-3">
                                     <CustomInput
                                         id="min"
-                                        placeholder="Min"
-                                        type="text"
-                                        value={String(
-                                            formValue.salaryRange.min
-                                        )}
+                                        label="Minimum"
+                                        placeholder="0"
+                                        type="number"
+                                        value={formValue.salaryRange.min ? String(formValue.salaryRange.min) : ""}
+                                        className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
                                         onChange={(e: any) =>
                                             handleChange("salaryRange", {
                                                 ...formValue.salaryRange,
@@ -305,11 +310,11 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                     />
                                     <CustomInput
                                         id="max"
-                                        placeholder="Max"
-                                        type="text"
-                                        value={String(
-                                            formValue.salaryRange.max
-                                        )}
+                                        label="Maximum"
+                                        placeholder="0"
+                                        type="number"
+                                        value={formValue.salaryRange.max ? String(formValue.salaryRange.max) : ""}
+                                        className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
                                         onChange={(e: any) =>
                                             handleChange("salaryRange", {
                                                 ...formValue.salaryRange,
@@ -320,32 +325,32 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                 </div>
                             </div>
 
-                            {/* Deadline */}
                             <CustomInput
                                 id="deadline"
-                                label="Deadline"
+                                label="Application deadline"
                                 type="date"
                                 value={formValue.deadline}
+                                required
+                                className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
                                 onChange={(e: any) =>
                                     handleChange("deadline", e.target.value)
                                 }
                             />
 
-                            {/* Tags */}
                             <CustomInput
                                 id="tags"
-                                label="Tags"
-                                placeholder="Comma separated (e.g. frontend, react)"
+                                label="Search tags (optional)"
+                                placeholder="e.g. remote, visa sponsorship"
                                 type="text"
                                 value={formValue.tagsInput}
+                                className="h-11 rounded-xl border-slate-200 bg-white px-3.5 text-sm"
                                 onChange={(e: any) =>
                                     handleTagsChange(e.target.value)
                                 }
                             />
 
-                            {/* Experience */}
                             <CustomSelect
-                                label="Experience Level"
+                                label="Experience level"
                                 options={["entry", "mid", "senior", "lead"]}
                                 value={formValue.experienceLevel}
                                 onChangeValue={(val: string) =>
@@ -353,12 +358,11 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                 }
                             />
 
-                            {/* Skills */}
-                            <div>
-                                <Label className="mb-3">Skills Required</Label>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium text-slate-800">Required skills</Label>
                                 <MultipleSelector
                                     defaultOptions={formattedSkills}
-                                    placeholder="Select Skills"
+                                    placeholder="Choose skills candidates should have"
                                     value={formValue.skills}
                                     onChange={(val: Option[]) =>
                                         handleChange("skills", val)
@@ -366,12 +370,11 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                 />
                             </div>
 
-                            {/* Categories */}
-                            <div>
-                                <Label className="mb-3">Job Categories</Label>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium text-slate-800">Job categories</Label>
                                 <MultipleSelector
                                     defaultOptions={formattedCategories}
-                                    placeholder="Select Categories"
+                                    placeholder="Choose relevant categories"
                                     value={formValue.categories}
                                     onChange={(val: Option[]) =>
                                         handleChange("categories", val)
@@ -379,25 +382,25 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                 />
                             </div>
                         </div>
-
-                        {/* Description */}
-                        <div>
-                            <Label className="mb-3">Job Description</Label>
-                            <EditorWrapper
-                                value={formValue.description}
-                                setValue={(val: string) =>
-                                    handleChange("description", val)
-                                }
-                            />
                         </div>
 
-                        {/* Buttons */}
-                        <div className="flex items-center gap-3">
+                        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+                            <div className="mb-4 flex items-start gap-3">
+                                <FileText className="mt-0.5 h-4 w-4 text-violet-700" />
+                                <div><Label className="text-sm font-semibold text-slate-800">Job description</Label><p className="mt-1 text-xs leading-5 text-slate-500">Describe the impact, responsibilities, qualifications, and what success looks like.</p></div>
+                            </div>
+                            <EditorWrapper value={formValue.description} setValue={(val: string) => handleChange("description", val)} />
+                        </div>
+
+                        <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-xs text-slate-400">You can update this post later.</p>
+                            <div className="flex flex-col gap-2 sm:flex-row">
                             <Button
                                 variant="outline"
                                 type="button"
                                 onClick={handleSaveDraft}
                                 disabled={postLoading}
+                                className="h-11 rounded-xl border-slate-200 px-5"
                             >
                                 {postLoading ? (
                                     <Loader2 className="animate-spin" />
@@ -415,10 +418,30 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
                                     "Post Job"
                                 )}
                             </Button>
+                            </div>
                         </div>
                     </form>
                 </CardContent>
             </Card>
+            <aside className="space-y-4 xl:sticky xl:top-28">
+                <Card className="rounded-3xl border-violet-100 bg-gradient-to-br from-violet-50 to-white shadow-sm">
+                    <CardContent className="p-5">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-violet-700 shadow-sm"><Sparkles className="h-5 w-5" /></div>
+                        <h3 className="mt-4 font-semibold text-slate-900">Make the role stand out</h3>
+                        <p className="mt-1 text-sm leading-6 text-slate-600">Clear expectations help the right candidates decide quickly whether the opportunity fits.</p>
+                        <ul className="mt-4 space-y-3 text-xs leading-5 text-slate-600">
+                            <li className="flex gap-2"><MapPin className="h-4 w-4 shrink-0 text-violet-700" /> Be clear about location and remote options.</li>
+                            <li className="flex gap-2"><CircleDollarSign className="h-4 w-4 shrink-0 text-violet-700" /> Add a salary range when you can.</li>
+                            <li className="flex gap-2"><CalendarDays className="h-4 w-4 shrink-0 text-violet-700" /> Give applicants a realistic deadline.</li>
+                        </ul>
+                    </CardContent>
+                </Card>
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 text-xs leading-5 text-slate-500">
+                    <p className="flex items-center gap-2 font-semibold text-slate-800"><Building2 className="h-4 w-4 text-violet-700" /> Posting as your company</p>
+                    <p className="mt-2">{userCompanyId ? "Your post will use the company linked to your recruiter account." : "Link a company to your recruiter account before publishing. You can still save a draft."}</p>
+                </div>
+            </aside>
+            </div>
         </div>
     );
 };

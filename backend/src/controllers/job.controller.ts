@@ -1,19 +1,29 @@
 import { NextFunction, Request, Response } from "express";
+import { Types } from "mongoose";
+import Company from "../models/company.model";
 import Job from "../models/job.model";
 import Notification from "../models/notification.model";
 import User from "../models/user.model";
 import customError from "../utils/customError";
+
+interface AuthenticatedRecruiter {
+    _id: Types.ObjectId | string;
+    role?: string;
+    company?: Types.ObjectId | string;
+}
 
 export const createJobController = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const authUser = req.user as { _id?: { toString: () => string } };
-
-    console.log(authUser);
-
     try {
+        const authUser = req.user as unknown as AuthenticatedRecruiter | undefined;
+        if (!authUser?._id) return next(customError(401, "Authentication required"));
+        if (authUser.role !== "recruiter") {
+            return next(customError(403, "Only recruiter accounts can post jobs"));
+        }
+
         const {
             title,
             description,
@@ -25,57 +35,72 @@ export const createJobController = async (
             company,
             skillsRequired,
             jobCategory,
-            openings,
             deadline,
-            isActive,
-            isFeatured,
             isDraft,
             tags,
-            jobId,
-            isPublished,
         } = req.body;
+        const draft = isDraft === true;
+        const jobTitle = typeof title === "string" ? title.trim() : "";
+        const descriptionText = typeof description === "string"
+            ? description.replace(/<[^>]*>/g, " ").replace(/&nbsp;|&#160;/gi, " ").trim()
+            : "";
+        if (!jobTitle) return next(customError(400, "Job title is required"));
 
-        if (
-            !title ||
-            !description ||
-            !jobType ||
-            !employmentMode ||
-            !skillsRequired ||
-            !jobCategory
-        ) {
-            return next(
-                customError(
-                    400,
-                    "Please Provide Required Field to create a job"
-                )
-            );
+        if (!draft) {
+            const requiredMissing =
+                !descriptionText ||
+                !jobType || !employmentMode || !location?.trim?.() || !company ||
+                !Array.isArray(skillsRequired) || skillsRequired.length === 0 ||
+                !Array.isArray(jobCategory) || jobCategory.length === 0 || !deadline;
+            if (requiredMissing) {
+                return next(customError(400, "Add the job details, company, skills, category, and application deadline before publishing"));
+            }
+            const deadlineDate = new Date(deadline);
+            if (Number.isNaN(deadlineDate.getTime()) || deadlineDate.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
+                return next(customError(400, "Application deadline must be today or later"));
+            }
+        } else if (deadline && Number.isNaN(new Date(deadline).getTime())) {
+            return next(customError(400, "Enter a valid application deadline"));
+        }
+
+        if (company) {
+            if (!Types.ObjectId.isValid(company)) return next(customError(400, "Invalid company"));
+            const linkedCompanyId = authUser.company?.toString();
+            if (!linkedCompanyId || linkedCompanyId !== String(company)) {
+                return next(customError(403, "Jobs can only be posted for the company linked to your recruiter account"));
+            }
+            if (!(await Company.exists({ _id: company }))) return next(customError(404, "Company not found"));
+        }
+
+        const minSalary = salaryRange?.min == null || salaryRange.min === "" ? 0 : Number(salaryRange.min);
+        const maxSalary = salaryRange?.max == null || salaryRange.max === "" ? 0 : Number(salaryRange.max);
+        if (!Number.isFinite(minSalary) || !Number.isFinite(maxSalary) || minSalary < 0 || maxSalary < 0 || (minSalary > 0 && maxSalary > 0 && minSalary > maxSalary)) {
+            return next(customError(400, "Enter a valid salary range"));
         }
 
         const newJob = new Job({
-            jobId,
-            title,
-            description,
-            jobType,
-            employmentMode,
-            location,
-            salaryRange,
-            experienceLevel,
-            recruiter: authUser?._id?.toString(),
-            company,
-            skillsRequired,
-            jobCategory,
-            openings,
-            deadline,
-            isActive,
-            isFeatured,
-            isPublished,
-            tags,
-            isDraft,
+            title: jobTitle,
+            description: typeof description === "string" ? description.trim() : "",
+            jobType: jobType || "full-time",
+            employmentMode: employmentMode || "Remote",
+            location: typeof location === "string" ? location.trim() : "",
+            salaryRange: { min: minSalary, max: maxSalary },
+            experienceLevel: experienceLevel || "entry",
+            recruiter: authUser._id,
+            company: company || undefined,
+            skillsRequired: Array.isArray(skillsRequired) ? skillsRequired : [],
+            jobCategory: Array.isArray(jobCategory) ? jobCategory : [],
+            deadline: deadline ? new Date(deadline) : undefined,
+            isActive: true,
+            isFeatured: false,
+            isPublished: !draft,
+            tags: Array.isArray(tags) ? tags.filter((tag: unknown) => typeof tag === "string").map((tag: string) => tag.trim()).filter(Boolean) : [],
+            isDraft: draft,
         });
 
         await newJob.save();
 
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             message: "Job Created Successfully",
             data: newJob,
@@ -271,7 +296,10 @@ export const updateJobController = async (
 ) => {
     try {
         const { id } = req.params;
-        const authUser = req.user as { _id?: string };
+        const authUser = req.user as unknown as AuthenticatedRecruiter | undefined;
+
+        if (!authUser?._id) return next(customError(401, "Authentication required"));
+        if (authUser.role !== "recruiter") return next(customError(403, "Only recruiter accounts can update jobs"));
 
         if (!id) {
             return next(customError(400, "Job ID is required"));
@@ -283,11 +311,7 @@ export const updateJobController = async (
             return next(customError(404, "Job not found"));
         }
 
-        // Optional: Only allow the recruiter who created it to update
-        if (
-            authUser &&
-            existingJob.recruiter?.toString() !== authUser._id?.toString()
-        ) {
+        if (existingJob.recruiter?.toString() !== authUser._id.toString()) {
             return next(
                 customError(403, "You are not authorized to update this job")
             );
@@ -307,7 +331,6 @@ export const updateJobController = async (
             "openings",
             "deadline",
             "isActive",
-            "isFeatured",
             "isDraft",
             "tags",
         ];
@@ -318,6 +341,47 @@ export const updateJobController = async (
             if (req.body[field] !== undefined) {
                 updates[field] = req.body[field];
             }
+        }
+        if (updates.company === "") delete updates.company;
+        if (updates.deadline === "") delete updates.deadline;
+
+        const nextIsDraft = updates.isDraft === undefined
+            ? existingJob.isDraft
+            : updates.isDraft === true;
+        const nextCompanyId = updates.company ?? existingJob.company;
+        if (nextCompanyId) {
+            if (!Types.ObjectId.isValid(nextCompanyId)) return next(customError(400, "Invalid company"));
+            if (authUser.company?.toString() !== String(nextCompanyId)) {
+                return next(customError(403, "Jobs can only be posted for the company linked to your recruiter account"));
+            }
+            if (!(await Company.exists({ _id: nextCompanyId }))) return next(customError(404, "Company not found"));
+        }
+
+        const candidate = { ...existingJob.toObject(), ...updates };
+        if (!nextIsDraft) {
+            const descriptionText = typeof candidate.description === "string"
+                ? candidate.description.replace(/<[^>]*>/g, " ").replace(/&nbsp;|&#160;/gi, " ").trim()
+                : "";
+            if (!candidate.title?.trim() || !descriptionText || !candidate.jobType || !candidate.employmentMode || !candidate.location?.trim() || !candidate.company || !candidate.skillsRequired?.length || !candidate.jobCategory?.length || !candidate.deadline) {
+                return next(customError(400, "Complete the required job details before publishing"));
+            }
+            const deadlineDate = new Date(candidate.deadline);
+            const deadlineChangedOrDraftPublished = updates.deadline !== undefined || (existingJob.isDraft && !nextIsDraft);
+            if (Number.isNaN(deadlineDate.getTime()) || (deadlineChangedOrDraftPublished && deadlineDate.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))) {
+                return next(customError(400, "Application deadline must be today or later"));
+            }
+        }
+
+        if (updates.salaryRange) {
+            const min = Number(updates.salaryRange.min ?? 0);
+            const max = Number(updates.salaryRange.max ?? 0);
+            if (!Number.isFinite(min) || !Number.isFinite(max) || min < 0 || max < 0 || (min > 0 && max > 0 && min > max)) {
+                return next(customError(400, "Enter a valid salary range"));
+            }
+        }
+        if (updates.isDraft !== undefined) {
+            updates.isDraft = nextIsDraft;
+            updates.isPublished = !nextIsDraft;
         }
 
         // Apply updates
