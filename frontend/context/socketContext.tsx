@@ -16,7 +16,7 @@ interface Notification {
     message: string;
     type?: string;
     isRead: boolean;
-    sender: string;
+    sender?: string | { name?: string; profilePicture?: string } | null;
     createdAt?: string;
     [key: string]: any;
 }

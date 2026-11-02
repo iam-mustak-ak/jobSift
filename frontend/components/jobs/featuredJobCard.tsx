@@ -18,15 +18,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import BookMarkButton from "../ui/bookMarkButton";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "../ui/dialog";
-import { Separator } from "../ui/separator";
+import { Card, CardContent, CardTitle } from "../ui/card";
+import RecruiterApplicantsDialog from "./recruiterApplicantsDialog";
 import Tag from "./tag";
 
 const FeaturedJobCard = ({
@@ -202,107 +195,13 @@ const FeaturedJobCard = ({
                                 </div>
                             )}
                             {isRecuiter && (
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button>
-                                            <p>
-                                                View {featuredJobs?.applicants?.length ?? 0}{" "}
-                                                {(featuredJobs?.applicants?.length ?? 0) === 1
-                                                    ? "applicant"
-                                                    : "applicants"}
-                                            </p>
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[600px]">
-                                        <DialogHeader>
-                                            <DialogTitle className="mb-2">
-                                                Applicants
-                                            </DialogTitle>
-
-                                            <div className="flex flex-col gap-2">
-                                                {featuredJobs?.applicants &&
-                                                    featuredJobs.applicants
-                                                        .length > 0 &&
-                                                    featuredJobs.applicants?.map(
-                                                        (applicant: any) => (
-                                                            <Card
-                                                                key={
-                                                                    applicant._id
-                                                                }
-                                                            >
-                                                                <CardHeader>
-                                                                    <CardTitle>
-                                                                        {
-                                                                            applicant.user
-                                                                        }
-                                                                    </CardTitle>
-                                                                </CardHeader>
-                                                                <Separator />
-
-                                                                <CardContent>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Dialog>
-                                                                            <DialogTrigger
-                                                                                asChild
-                                                                            >
-                                                                                <Button
-                                                                                    variant={
-                                                                                        "outline"
-                                                                                    }
-                                                                                >
-                                                                                    View
-                                                                                    Coverletter
-                                                                                </Button>
-                                                                            </DialogTrigger>
-                                                                            <DialogContent className="sm:max-w-[600px]">
-                                                                                <DialogHeader>
-                                                                                    <DialogTitle>
-                                                                                        Cover
-                                                                                        Letter
-                                                                                    </DialogTitle>
-                                                                                </DialogHeader>
-                                                                                <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
-                                                                                    {typeof applicant?.coverLetter === "string" ? applicant.coverLetter : ""}
-                                                                                </p>
-                                                                            </DialogContent>
-                                                                        </Dialog>
-
-                                                                        <Dialog>
-                                                                            <DialogTrigger
-                                                                                asChild
-                                                                            >
-                                                                                <Button>
-                                                                                    View
-                                                                                    Resume
-                                                                                </Button>
-                                                                            </DialogTrigger>
-                                                                            <DialogContent className="sm:max-w-[600px]">
-                                                                                <DialogHeader>
-                                                                                    <DialogTitle>
-                                                                                        Resume
-                                                                                    </DialogTitle>
-                                                                                </DialogHeader>
-
-                                                                                {applicant?.resume && (
-                                                                                    <iframe
-                                                                                        title="PDF preview"
-                                                                                        src={
-                                                                                            applicant.resume as string
-                                                                                        }
-                                                                                        className="mt-4 w-full h-[80vh] border sticky top-20"
-                                                                                    />
-                                                                                )}
-                                                                            </DialogContent>
-                                                                        </Dialog>
-                                                                    </div>
-                                                                </CardContent>
-                                                            </Card>
-                                                        )
-                                                    )}
-                                            </div>
-                                        </DialogHeader>
-                                    </DialogContent>
-                                </Dialog>
+                                <RecruiterApplicantsDialog
+                                    job={{
+                                        _id: featuredJobs._id,
+                                        title: featuredJobs.title,
+                                        applicants: featuredJobs.applicants ?? [],
+                                    }}
+                                />
                             )}
                         </div>
                         {isSuggested && featuredJobs?.matchReasons?.length > 0 && (

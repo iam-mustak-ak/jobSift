@@ -54,7 +54,7 @@ const ApplyJobForm = ({ jobId, jobTitle }: { jobId: string; jobTitle?: string })
         if (!jobId) return setError("This job link is missing an ID. Return to the job listing and try again.");
         if (!resume) return setError("Attach your resume before submitting your application.");
         if (user && user.role !== "candidate") return setError("A candidate account is required to apply for this job.");
-        if (user.appliedJobs?.some((application: { jobId: string }) => String(application.jobId) === jobId)) {
+        if (user?.appliedJobs?.some((application: { jobId: string }) => String(application.jobId) === jobId)) {
             return setError("You have already applied for this job. You can review it in your applied jobs.");
         }
 

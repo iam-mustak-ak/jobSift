@@ -86,6 +86,10 @@ const jobSchema = new Schema(
         },
         applicants: [
             {
+                candidateId: {
+                    type: Types.ObjectId,
+                    ref: "User",
+                },
                 user: {
                     type: String,
                 },
@@ -103,13 +107,32 @@ const jobSchema = new Schema(
                     type: String,
                     enum: [
                         "applied",
+                        "reviewing",
                         "shortlisted",
                         "interview",
                         "offered",
+                        "hired",
                         "rejected",
                     ],
                     default: "applied",
                 },
+                statusNote: {
+                    type: String,
+                    maxlength: 500,
+                    default: "",
+                },
+                statusHistory: [
+                    {
+                        status: {
+                            type: String,
+                            enum: ["applied", "reviewing", "shortlisted", "interview", "offered", "hired", "rejected"],
+                            required: true,
+                        },
+                        note: { type: String, maxlength: 500, default: "" },
+                        changedAt: { type: Date, default: Date.now },
+                        changedBy: { type: Types.ObjectId, ref: "User" },
+                    },
+                ],
             },
         ],
         tags: {

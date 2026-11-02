@@ -146,7 +146,7 @@ export const getAllJobsController = async (
         }
 
         const [jobs, total] = await Promise.all([
-            Job.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+            Job.find(filter).select("-applicants").skip(skip).limit(limit).sort({ createdAt: -1 }),
             Job.countDocuments(filter),
         ]);
 
@@ -178,7 +178,7 @@ export const getJobByIdController = async (
             return next(customError(400, "Job ID is required"));
         }
 
-        const job = await Job.findById(id);
+        const job = await Job.findById(id).select("-applicants");
 
         if (!job) {
             return next(customError(404, "Job not found"));
@@ -208,7 +208,7 @@ export const getFeaturedJobs = async (
         const skip = (page - 1) * limit;
 
         const [jobs, total] = await Promise.all([
-            Job.find({ isFeatured: true }).skip(skip).limit(limit),
+            Job.find({ isFeatured: true }).select("-applicants").skip(skip).limit(limit),
             Job.countDocuments({ isFeatured: true }),
         ]);
 
@@ -275,6 +275,7 @@ export const getRecruiterJobsController = async (
         const [jobs, total] = await Promise.all([
             Job.find(filter)
                 .populate("recruiter", "name email")
+                .populate("applicants.candidateId", "name email phone location profilePicture skills")
                 .skip(skip)
                 .limit(limit),
             Job.countDocuments(filter),
@@ -549,6 +550,137 @@ interface CustomRequest extends Request {
     io?: any;
 }
 
+const applicationStatuses = ["applied", "reviewing", "shortlisted", "interview", "offered", "hired", "rejected"] as const;
+type ApplicationStatus = (typeof applicationStatuses)[number];
+
+export const getMyApplicationsController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const authUser = req.user as unknown as {
+            _id: Types.ObjectId | string;
+            name?: string;
+            role?: string;
+            appliedJobs?: { jobId: Types.ObjectId | string; dateApplied?: Date }[];
+        } | undefined;
+        if (!authUser?._id) return next(customError(401, "Authentication required"));
+        if (authUser.role !== "candidate") return next(customError(403, "Candidate account required"));
+
+        const savedApplications = authUser.appliedJobs ?? [];
+        const jobIds = savedApplications.map((application) => application.jobId);
+        const jobs = await Job.find({ _id: { $in: jobIds } })
+            .populate("company", "name logo industry")
+            .sort({ updatedAt: -1 });
+        const candidateId = String(authUser._id);
+        const applications = jobs.map((job) => {
+            const applicant = job.applicants.find((item: any) =>
+                item.candidateId && String(item.candidateId) === candidateId
+            ) as any;
+            const legacyApplication = savedApplications.find(
+                (application) => String(application.jobId) === String(job._id)
+            );
+            const applicantData = applicant?.toObject ? applicant.toObject() : applicant;
+            const publicJobData = job.toObject() as Record<string, any>;
+            delete publicJobData.applicants;
+            return {
+                ...publicJobData,
+                application: {
+                    ...(applicantData ?? {}),
+                    status: applicantData?.status ?? "applied",
+                    statusNote: applicantData?.statusNote ?? "",
+                    statusHistory: applicantData?.statusHistory?.length
+                        ? applicantData.statusHistory
+                        : [{ status: applicantData?.status ?? "applied", note: applicantData?.statusNote || (applicantData?.status === "applied" ? "Application submitted" : ""), changedAt: applicantData?.dateApplied ?? legacyApplication?.dateApplied }],
+                    dateApplied: applicantData?.dateApplied ?? legacyApplication?.dateApplied,
+                },
+            };
+        });
+
+        res.status(200).json({ success: true, message: "Applications fetched successfully", data: applications });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const updateApplicationStatusController = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const authUser = req.user as unknown as { _id: Types.ObjectId | string; role?: string; name?: string } | undefined;
+        if (!authUser?._id) return next(customError(401, "Authentication required"));
+        if (authUser.role !== "recruiter") return next(customError(403, "Only recruiters can update application status"));
+
+        const { jobId, applicationId } = req.params;
+        const { status, note = "" } = req.body as { status?: ApplicationStatus; note?: string };
+        if (!applicationStatuses.includes(status as ApplicationStatus) || status === "applied") {
+            return next(customError(400, "Select a valid next application stage"));
+        }
+        if (typeof note !== "string" || note.length > 500) {
+            return next(customError(400, "Candidate update must be 500 characters or fewer"));
+        }
+
+        const job = await Job.findById(jobId);
+        if (!job) return next(customError(404, "Job not found"));
+        if (String(job.recruiter) !== String(authUser._id)) {
+            return next(customError(403, "You can only manage applicants for your own jobs"));
+        }
+        const applicants = job.applicants as any[];
+        const applicant = applicants.find((item) => String(item._id) === String(applicationId));
+        if (!applicant) return next(customError(404, "Application not found"));
+        if (!applicant.candidateId) {
+            let matchingCandidates = await User.find({
+                "appliedJobs.jobId": job._id,
+                role: "candidate",
+            }).select("_id").limit(2);
+            if (matchingCandidates.length !== 1) {
+                matchingCandidates = await User.find({
+                    name: applicant.user,
+                    "appliedJobs.jobId": job._id,
+                    role: "candidate",
+                }).select("_id").limit(2);
+            }
+            if (matchingCandidates.length !== 1) {
+                return next(customError(409, "This older application cannot be matched to a candidate account safely"));
+            }
+            applicant.candidateId = matchingCandidates[0]._id;
+        }
+
+        applicant.status = status;
+        applicant.statusNote = note.trim();
+        applicant.statusHistory.push({ status, note: note.trim(), changedAt: new Date(), changedBy: authUser._id });
+        await job.save();
+
+        try {
+            const notification = await Notification.create({
+                sender: authUser._id,
+                recipient: applicant.candidateId,
+                message: `Your application for "${job.title}" moved to ${status === "rejected" ? "not selected" : status}`,
+                type: status === "interview" ? "interview" : "application",
+                link: `/profile/${applicant.candidateId}/applied-jobs`,
+            });
+            await notification.populate("sender", "name profilePicture");
+            if (req.io) req.io.to(String(applicant.candidateId)).emit("new_notification", { notification });
+        } catch (notificationError) {
+            console.error("Application status saved, but candidate notification failed:", notificationError);
+        }
+
+        await job.populate("applicants.candidateId", "name email phone location profilePicture skills");
+        const updatedApplicant = (job.applicants as any[]).find((item) => String(item._id) === String(applicationId));
+
+        res.status(200).json({
+            success: true,
+            message: "Application stage updated",
+            data: updatedApplicant,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const applyJobController = async (
     req: CustomRequest,
     res: Response,
@@ -602,6 +734,9 @@ export const applyJobController = async (
             name?: string;
             email?: string;
         };
+        if (!recruiter || !recruiter._id) {
+            return next(customError(400, "Job recruiter not found"));
+        }
 
         const alreadyApplied =
             authUser.appliedJobs?.some((application) => String(application.jobId) === String(job._id)) ||
@@ -613,36 +748,44 @@ export const applyJobController = async (
             );
         }
 
+        const applicationDate = new Date();
+        const reservedApplication = await User.updateOne(
+            { _id: authUser._id, "appliedJobs.jobId": { $ne: job._id } },
+            { $push: { appliedJobs: { jobId: job._id, dateApplied: applicationDate } } }
+        );
+        if (!reservedApplication.matchedCount) {
+            return next(customError(400, "You have already applied for this job"));
+        }
+
         job.applicants.push({
+            candidateId: authUser._id,
             user: authUser.name || "Candidate",
             resume: resume.trim(),
             coverLetter: typeof coverLetter === "string" ? coverLetter.trim() : "",
+            dateApplied: applicationDate,
+            statusHistory: [{ status: "applied", note: "Application submitted", changedAt: applicationDate, changedBy: authUser._id }],
         });
-        await job.save();
-
-        await User.findByIdAndUpdate(authUser._id, {
-            $push: {
-                appliedJobs: {
-                    jobId: job._id,
-                },
-            },
-        });
-        if (!recruiter || !recruiter._id) {
-            return next(customError(400, "Job recruiter not found"));
+        try {
+            await job.save();
+        } catch (saveError) {
+            await User.updateOne(
+                { _id: authUser._id },
+                { $pull: { appliedJobs: { jobId: job._id } } }
+            );
+            throw saveError;
         }
-
-        const notification = await Notification.create({
-            sender: authUser._id,
-            recipient: recruiter._id,
-            message: `New application received for "${job.title}"`,
-            type: "application",
-            link: `/dashboard/recruiter/jobs/${job._id}/applicants`,
-        });
-
-        if (req.io) {
-            req.io.to(recruiter._id.toString()).emit("new_notification", {
-                notification,
+        try {
+            const notification = await Notification.create({
+                sender: authUser._id,
+                recipient: recruiter._id,
+                message: `New application received for "${job.title}"`,
+                type: "application",
+                link: `/profile/${recruiter._id}/my-jobs?page=1`,
             });
+            await notification.populate("sender", "name profilePicture");
+            if (req.io) req.io.to(recruiter._id.toString()).emit("new_notification", { notification });
+        } catch (notificationError) {
+            console.error("Application submitted, but recruiter notification failed:", notificationError);
         }
 
         res.status(200).json({

@@ -5,10 +5,12 @@ import {
     deleteJobController,
     getAllJobsController,
     getBookmarkedJobsController,
+    getMyApplicationsController,
     getFeaturedJobs,
     getJobByIdController,
     getRecruiterJobsController,
     toggleBookmarkController,
+    updateApplicationStatusController,
     updateJobController,
 } from "../controllers/job.controller";
 import authecticationMiddleware from "../middlewares/authentication.middleware";
@@ -35,6 +37,13 @@ jobRouter.get(
 
 jobRouter.get("/get-featured", getFeaturedJobs);
 jobRouter.get("/recruiter/:recruiterId", setAuthorization, authecticationMiddleware, getRecruiterJobsController);
+jobRouter.get("/my-applications", setAuthorization, authecticationMiddleware, getMyApplicationsController);
+jobRouter.patch(
+    "/:jobId/applicants/:applicationId/status",
+    setAuthorization,
+    authecticationMiddleware,
+    updateApplicationStatusController
+);
 jobRouter.patch(
     "/update/:id",
     setAuthorization,
