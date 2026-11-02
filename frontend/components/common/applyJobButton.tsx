@@ -2,7 +2,7 @@
 "use client";
 
 import { useAuthStore } from "@/state/store";
-import { SquareArrowOutUpRight } from "lucide-react";
+import { Check, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 type buttonType = {
     job: {
         url?: string;
-        recruiter?: string;
+        recruiter?: string | { _id?: string };
         isActive: boolean;
     };
     jobId: string;
@@ -19,8 +19,10 @@ type buttonType = {
 const ApplyJobButton: React.FC<buttonType> = ({ job, jobId }) => {
     const { user } = useAuthStore((state) => state);
 
-    const hasAlreadyApplied = user?.appliedJobs?.some(
-        (appliedJob: any) => appliedJob.jobId === jobId
+    const getId = (value: any) => String(typeof value === "object" ? value?._id ?? "" : value ?? "");
+    const recruiterId = getId(job.recruiter);
+    const hasAlreadyApplied = user?.role === "candidate" && user.appliedJobs?.some(
+        (application: any) => getId(application?.jobId) === getId(jobId)
     );
 
     const handleOnClick = () => {
@@ -28,7 +30,7 @@ const ApplyJobButton: React.FC<buttonType> = ({ job, jobId }) => {
             return toast.error("You must be logged in to apply");
         }
 
-        if (job.recruiter && user._id === job.recruiter) {
+        if (recruiterId && getId(user._id) === recruiterId) {
             return toast.error("You can't apply for your posted job");
         }
 
@@ -48,9 +50,23 @@ const ApplyJobButton: React.FC<buttonType> = ({ job, jobId }) => {
     const canApply =
         user &&
         user.role !== "recruiter" &&
-        user._id !== job.recruiter &&
+        getId(user._id) !== recruiterId &&
         job.isActive &&
         !hasAlreadyApplied;
+
+    if (hasAlreadyApplied) {
+        return (
+            <Button
+                type="button"
+                disabled
+                aria-label="You have already applied for this job"
+                className="cursor-default bg-emerald-50 text-emerald-700 shadow-none hover:bg-emerald-50"
+            >
+                <Check className="mr-2 h-4 w-4" />
+                Applied
+            </Button>
+        );
+    }
 
     return canApply ? (
         <Button asChild>
