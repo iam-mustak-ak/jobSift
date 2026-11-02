@@ -43,6 +43,13 @@ const globalErrorHandler: ErrorRequestHandler = (err, _, res, next) => {
             message = `Duplicate value for field: ${duplicateField}`;
         }
 
+        if (err.name === "MulterError") {
+            statusCode = 400;
+            message = err.code === "LIMIT_FILE_SIZE"
+                ? "Uploaded file exceeds the 5 MB limit"
+                : "Uploaded file could not be processed";
+        }
+
         res.status(statusCode).json({
             success: false,
             message,

@@ -52,6 +52,14 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/", req.nextUrl));
     }
 
+    if (
+        isLoggedIn &&
+        path.startsWith("/apply/") &&
+        data?.data?.role !== "candidate"
+    ) {
+        return NextResponse.redirect(new URL("/find-jobs/?page=1", req.nextUrl));
+    }
+
     return NextResponse.next();
 }
 

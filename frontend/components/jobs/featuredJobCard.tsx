@@ -261,15 +261,9 @@ const FeaturedJobCard = ({
                                                                                         Letter
                                                                                     </DialogTitle>
                                                                                 </DialogHeader>
-                                                                                <div
-                                                                                    dangerouslySetInnerHTML={{
-                                                                                        __html:
-                                                                                            typeof applicant?.coverLetter ===
-                                                                                            "string"
-                                                                                                ? applicant.coverLetter
-                                                                                                : "",
-                                                                                    }}
-                                                                                />
+                                                                                <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+                                                                                    {typeof applicant?.coverLetter === "string" ? applicant.coverLetter : ""}
+                                                                                </p>
                                                                             </DialogContent>
                                                                         </Dialog>
 

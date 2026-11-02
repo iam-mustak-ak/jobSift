@@ -555,12 +555,20 @@ export const applyJobController = async (
     next: NextFunction
 ) => {
     try {
-        const authUser = req.user as { _id: string; name: string };
+        const authUser = req.user as unknown as {
+            _id: string | Types.ObjectId;
+            name?: string;
+            role?: string;
+            appliedJobs?: { jobId: string | Types.ObjectId }[];
+        } | undefined;
         const { jobId } = req.params;
         const { resume, coverLetter } = req.body;
 
         if (!authUser || !authUser._id) {
             return next(customError(401, "Unauthorized"));
+        }
+        if (authUser.role !== "candidate") {
+            return next(customError(403, "Only candidate accounts can apply for jobs"));
         }
 
         if (!jobId) {
@@ -574,15 +582,30 @@ export const applyJobController = async (
         if (!job) {
             return next(customError(404, "Job not found"));
         }
+        if (!job.isActive || (job.deadline && new Date(String(job.deadline)).getTime() < Date.now())) {
+            return next(customError(400, "This job is no longer accepting applications"));
+        }
+        if (typeof resume !== "string" || !resume.trim()) {
+            return next(customError(400, "A resume is required to apply"));
+        }
+        try {
+            const resumeUrl = new URL(resume);
+            if (resumeUrl.protocol !== "https:") throw new Error("Invalid resume URL");
+        } catch {
+            return next(customError(400, "Upload a valid resume before applying"));
+        }
+        if (coverLetter != null && (typeof coverLetter !== "string" || coverLetter.length > 5000)) {
+            return next(customError(400, "Cover letter must be 5,000 characters or fewer"));
+        }
         const recruiter = job.recruiter as {
             _id: string;
             name?: string;
             email?: string;
         };
 
-        const alreadyApplied = job.applicants.some(
-            (a: any) => a.user.toString() === authUser._id.toString()
-        );
+        const alreadyApplied =
+            authUser.appliedJobs?.some((application) => String(application.jobId) === String(job._id)) ||
+            job.applicants.some((a: any) => a.user.toString() === authUser._id.toString());
 
         if (alreadyApplied) {
             return next(
@@ -591,9 +614,9 @@ export const applyJobController = async (
         }
 
         job.applicants.push({
-            user: authUser.name,
-            resume,
-            coverLetter,
+            user: authUser.name || "Candidate",
+            resume: resume.trim(),
+            coverLetter: typeof coverLetter === "string" ? coverLetter.trim() : "",
         });
         await job.save();
 
