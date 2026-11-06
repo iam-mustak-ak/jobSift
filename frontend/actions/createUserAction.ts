@@ -81,7 +81,7 @@ export default async function createUserAction(
             }),
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            signal: AbortSignal.timeout(15000),
+            signal: AbortSignal.timeout(60000),
         });
     } catch {
         return {
