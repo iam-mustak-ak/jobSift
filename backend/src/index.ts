@@ -33,7 +33,11 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:3000", "https://job-sift.vercel.app"];
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://job-sift.vercel.app",
+    "https://jobsift-project.vercel.app",
+];
 
 app.use(
     cors({
