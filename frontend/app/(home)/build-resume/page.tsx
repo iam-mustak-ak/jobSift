@@ -17,6 +17,7 @@ const Page = () => {
     const [data, setData] = useState<Record<string, any>>();
     const [loading, setLoading] = useState<boolean>(false);
     const [deleteLoader, setDeleteLoader] = useState<boolean>(false);
+    const resumeCount = data?.data?.length ?? 0;
 
     useEffect(() => {
         setLoading(true);
@@ -83,7 +84,7 @@ const Page = () => {
                                 <h2 className="text-lg font-semibold text-slate-900">Your resumes</h2>
                                 <p className="mt-1 text-sm text-slate-500">Pick up where you left off or start a new one.</p>
                             </div>
-                            {data?.data?.length > 0 && <span className="text-sm text-slate-400">{data.data.length} saved</span>}
+                            {resumeCount > 0 && <span className="text-sm text-slate-400">{resumeCount} saved</span>}
                         </div>
 
                         {loading ? (
