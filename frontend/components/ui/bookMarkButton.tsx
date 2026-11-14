@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ const BookMarkButton = ({ jobId, className = "float-right" }: BookMarkButtonProp
             }
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/job/bookmark/${jobId}`,
+                `${API_BASE_URL}/job/bookmark/${jobId}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

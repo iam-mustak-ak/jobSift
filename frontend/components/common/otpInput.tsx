@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/api";
 import useCountdown from "@/hooks/userCountDown";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,7 +31,7 @@ const OtpInput = () => {
             }
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/resend-email`,
+                `${API_BASE_URL}/auth/resend-email`,
                 {
                     method: "POST",
                     body: JSON.stringify({
@@ -76,7 +77,7 @@ const OtpInput = () => {
             }
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-user`,
+                `${API_BASE_URL}/auth/verify-user`,
                 {
                     method: "POST",
                     body: JSON.stringify({

@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import { Check, Link2, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -77,7 +78,7 @@ const SocialInfo = () => {
         setLoading(true);
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-social-links`,
+                `${API_BASE_URL}/auth/update-social-links`,
                 {
                     method: "PATCH",
                     headers: {

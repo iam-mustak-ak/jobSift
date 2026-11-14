@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import { ArrowUpRight, BriefcaseBusiness, Building2, Check, Globe2, ImagePlus, LoaderCircle, MapPin, Pencil, Plus, Users, X } from "lucide-react";
@@ -82,7 +83,7 @@ export default function RecruiterProfile({
         try {
             const body = new FormData();
             body.append("image", file);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/image/?type=company`, {
+            const response = await fetch(`${API_BASE_URL}/image/?type=company`, {
                 method: "POST",
                 credentials: "include",
                 body,
@@ -123,7 +124,7 @@ export default function RecruiterProfile({
     const saveCompany = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault(); setSaving(true); setError("");
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/company/${company?._id ? "update-company" : "create-company"}`, {
+            const response = await fetch(`${API_BASE_URL}/company/${company?._id ? "update-company" : "create-company"}`, {
                 method: company?._id ? "PATCH" : "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },

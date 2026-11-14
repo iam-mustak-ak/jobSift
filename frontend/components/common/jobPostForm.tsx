@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import { formatData } from "@/utils/formateData";
 import { BriefcaseBusiness, Building2, CalendarDays, CircleDollarSign, FileText, Loader2, MapPin, Sparkles } from "lucide-react";
@@ -168,8 +169,8 @@ const JobPostForm: React.FC<JobPostFormProps> = ({
         setPostLoading(true);
         try {
             const url = jobData
-                ? `${process.env.NEXT_PUBLIC_SERVER_URL}/job/update/${jobData._id}`
-                : `${process.env.NEXT_PUBLIC_SERVER_URL}/job/create`;
+                ? `${API_BASE_URL}/job/update/${jobData._id}`
+                : `${API_BASE_URL}/job/create`;
 
             const method = jobData ? "PATCH" : "POST";
 

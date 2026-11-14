@@ -29,6 +29,27 @@ Redis, and saves the user in MongoDB before returning success.
 
 ## Frontend environment
 
+All browser API calls now go through `/api/backend` on the frontend domain.
+The gateway forwards requests to the configured backend and returns login and
+refresh cookies as frontend HttpOnly cookies. Page guards and server-rendered
+pages can therefore use the same session. Keep `SERVER_URL` set to the actual
+backend origin, never to the frontend domain or `/api/backend`.
+
+After deploying this change, sign in once to establish the frontend cookies.
+Existing cookies stored on the previous backend domain cannot be read by the
+frontend. Session refresh is forwarded to both the browser and the current
+server-rendered page. Chat and notifications use authenticated HTTP polling
+through the same gateway.
+
+If Google sign-in is enabled, register the frontend callback
+`https://YOUR-FRONTEND-DOMAIN/api/backend/auth/google/callback` in Google Cloud and
+set the backend's `GOOGLE_REDIRECT_URL` to that value. This ensures OAuth also
+sets cookies on the frontend domain.
+
+The gateway is subject to the frontend host's request-size and execution limits.
+On Vercel, keep uploads below its function request-body limit (including multipart
+overhead), even though the backend allows files up to 5 MB.
+
 Set these in the frontend hosting dashboard for the production environment:
 
 ```dotenv

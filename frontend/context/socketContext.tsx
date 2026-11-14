@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import React, {
     createContext,
@@ -53,7 +54,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
         const fetchNotifications = async () => {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/notification`,
+                    `${API_BASE_URL}/notification`,
                     { credentials: "include" }
                 );
                 if (!res.ok)
@@ -67,7 +68,13 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
         fetchNotifications();
 
-        const connection = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, { withCredentials: true });
+        const connection = io({
+            path: `${API_BASE_URL}/socket.io`,
+            addTrailingSlash: false,
+            transports: ["polling"],
+            upgrade: false,
+            withCredentials: true,
+        });
         setSocketInstance(connection);
 
         const handleNewNotification = (data: any) => {

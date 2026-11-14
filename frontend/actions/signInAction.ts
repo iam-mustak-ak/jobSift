@@ -2,6 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getBackendUrl } from "@/lib/backend";
+import { persistBackendCookies } from "@/lib/serverSession";
 
 export default async function signInAction(prevState: any, formData: FormData) {
     "use server";
@@ -17,7 +19,7 @@ export default async function signInAction(prevState: any, formData: FormData) {
     }
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
+        getBackendUrl("/auth/login"),
         {
             method: "POST",
             body: JSON.stringify({
@@ -40,6 +42,7 @@ export default async function signInAction(prevState: any, formData: FormData) {
     }
 
     const data = await res.json();
+    await persistBackendCookies(res.headers);
 
     redirect(`/profile/${data.data._id}`);
 }

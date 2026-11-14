@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { getBackendUrl } from "@/lib/backend";
 
 const resetPasswordAction = async (
     extras: {
@@ -44,7 +45,7 @@ const resetPasswordAction = async (
     }
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/reset-password`,
+        getBackendUrl("/auth/reset-password"),
         {
             method: "POST",
             headers: {

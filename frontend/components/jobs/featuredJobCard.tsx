@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import { dateFormate } from "@/utils/dateFormate";
 import { formateCapitalized } from "@/utils/formateCapitalized";
@@ -53,7 +54,7 @@ const FeaturedJobCard = ({
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/job/delete/${featuredJobs._id}`,
+                `${API_BASE_URL}/job/delete/${featuredJobs._id}`,
                 {
                     method: "DELETE",
                     credentials: "include",

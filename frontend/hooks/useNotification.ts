@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -13,7 +14,7 @@ export default function useNotification(userId: string) {
         const fetchNotifications = async () => {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/notification`,
+                    `${API_BASE_URL}/notification`,
                     {
                         credentials: "include",
                     }
@@ -30,7 +31,11 @@ export default function useNotification(userId: string) {
 
         // --- Connect socket ---
         if (!socket) {
-            socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}`, {
+            socket = io({
+                path: `${API_BASE_URL}/socket.io`,
+                addTrailingSlash: false,
+                transports: ["polling"],
+                upgrade: false,
                 withCredentials: true,
             });
         }

@@ -1,4 +1,5 @@
 // utils/saveResume.ts
+import { API_BASE_URL } from "@/lib/api";
 import { ResumeDataTypes } from "@/state/store";
 
 export const saveResume = async (
@@ -6,7 +7,7 @@ export const saveResume = async (
     data: ResumeDataTypes
 ) => {
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/resume/save-resume/${resumeId}`,
+        `${API_BASE_URL}/resume/save-resume/${resumeId}`,
         {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },

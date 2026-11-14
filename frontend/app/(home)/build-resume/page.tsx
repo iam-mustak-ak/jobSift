@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/api";
 import ContainerWrapper from "@/components/common/containerWrapper";
 import WorkspacePageHeading from "@/components/common/workspacePageHeading";
 import CreateResumeBtn from "@/components/resume/createResumeBtn";
@@ -39,7 +40,7 @@ const Page = () => {
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/resume/delete-resume/${resumeId}`,
+                `${API_BASE_URL}/resume/delete-resume/${resumeId}`,
                 {
                     method: "DELETE",
                     headers: {

@@ -1,12 +1,14 @@
 import { cookies } from "next/headers";
+import { getBackendUrl } from "@/lib/backend";
 
 export const fetcherSever = async (uri: string) => {
     const cookieStore = await cookies();
     try {
         const dataPromise = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+            getBackendUrl(uri),
             {
                 method: "GET",
+                cache: "no-store",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",

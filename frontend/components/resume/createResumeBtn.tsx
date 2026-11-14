@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useResumeData } from "@/state/store";
 import { Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,7 +31,7 @@ const CreateResumeBtn: React.FC = () => {
 
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL!}/resume/create`,
+                `${API_BASE_URL!}/resume/create`,
                 {
                     method: "POST",
                     credentials: "include",

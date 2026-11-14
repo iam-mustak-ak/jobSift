@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import {
     CalendarDays,
@@ -53,7 +54,7 @@ const AddEditEducation = () => {
     const updateUserEducations = async (updatedList: Education[]) => {
         const updatedUser = { ...user, educations: updatedList };
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-profile`,
+            `${API_BASE_URL}/auth/update-profile`,
             {
                 method: "PATCH",
                 credentials: "include",

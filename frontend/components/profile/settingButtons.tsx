@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
@@ -23,7 +24,7 @@ const SettingButtons = ({
 
         // send updated data to server
         await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-profile`,
+            `${API_BASE_URL}/auth/update-profile`,
             {
                 method: "PATCH",
                 credentials: "include",

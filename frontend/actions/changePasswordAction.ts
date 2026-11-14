@@ -1,6 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { getBackendUrl } from "@/lib/backend";
+import { persistBackendCookies } from "@/lib/serverSession";
 
 const chnagePasswordAction = async (prevState: any, formData: FormData) => {
     "use server";
@@ -36,7 +38,7 @@ const chnagePasswordAction = async (prevState: any, formData: FormData) => {
     }
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/change-password`,
+        getBackendUrl("/auth/change-password"),
         {
             method: "POST",
             credentials: "include",
@@ -52,6 +54,7 @@ const chnagePasswordAction = async (prevState: any, formData: FormData) => {
     );
 
     const data = await res.json();
+    await persistBackendCookies(res.headers);
 
     return {
         success: data.success,

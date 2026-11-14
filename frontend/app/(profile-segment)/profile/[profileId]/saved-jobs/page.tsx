@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import FeaturedJobCard from "@/components/jobs/featuredJobCard";
 import WorkspacePageHeading from "@/components/common/workspacePageHeading";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ const Page = () => {
                 const jobs = await Promise.all(
                     user.savedJobs?.map(async (item: any) => {
                         const res = await fetch(
-                            `${process.env.NEXT_PUBLIC_SERVER_URL}/job/get-job/${item.jobId}`,
+                            `${API_BASE_URL}/job/get-job/${item.jobId}`,
                             {
                                 credentials: "include",
                             }

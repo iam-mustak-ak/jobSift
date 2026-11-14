@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/api";
 import Googlesvg from "@/lib/LogoProvider/googlesvg";
 import { Button } from "../ui/button";
 
@@ -11,12 +12,12 @@ const SocialLoginButtons = ({
     const handleGooleSignUpLogin = () => {
         if (isLogIn) {
             window.open(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=login`,
+                `${API_BASE_URL}/auth/google?mode=login`,
                 "_self"
             );
         } else {
             window.open(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/google?mode=register&role=${role}`,
+                `${API_BASE_URL}/auth/google?mode=register&role=${role}`,
                 "_self"
             );
         }

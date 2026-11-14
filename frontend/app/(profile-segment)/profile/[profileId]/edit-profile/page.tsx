@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/api";
 import CustomInput from "@/components/common/customInput";
 import CustomSelect from "@/components/common/customSelect";
 import EditorWrapper from "@/components/common/EditorWrapper";
@@ -83,7 +84,7 @@ const Page = () => {
                 formData.append("image", target.files[0]);
 
                 const uploadImage = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/image/?type=profile`,
+                    `${API_BASE_URL}/image/?type=profile`,
                     {
                         method: "POST",
 
@@ -104,7 +105,7 @@ const Page = () => {
 
                 // update in DB with the new image
                 const updateResponse = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-profile`,
+                    `${API_BASE_URL}/auth/update-profile`,
                     {
                         method: "PATCH",
                         credentials: "include",
@@ -145,7 +146,7 @@ const Page = () => {
         setLoading(true);
         try {
             await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-profile`,
+                `${API_BASE_URL}/auth/update-profile`,
                 {
                     method: "PATCH",
                     credentials: "include",

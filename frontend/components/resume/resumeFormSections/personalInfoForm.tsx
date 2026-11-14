@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import CustomInput from "@/components/common/customInput";
 import EditorWrapper from "@/components/common/EditorWrapper";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ const PersonalInfoForm = () => {
                 formData.append("image", target.files[0]);
 
                 const uploadImage = await fetch(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/image/?type=resume&resumeId=${resumeId}`,
+                    `${API_BASE_URL}/image/?type=resume&resumeId=${resumeId}`,
                     {
                         method: "POST",
                         credentials: "include",

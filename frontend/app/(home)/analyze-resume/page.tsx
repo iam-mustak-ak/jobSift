@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import AtsChart from "@/components/common/atsChart";
 import ContainerWrapper from "@/components/common/containerWrapper";
 import WorkspacePageHeading from "@/components/common/workspacePageHeading";
@@ -52,7 +53,7 @@ const Page = () => {
             fd.append("mode", analysisMode);
             if (analysisMode === "job-description") fd.append("jobDescription", jd.trim());
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/analyze`,
+                `${API_BASE_URL}/analyze`,
                 { method: "POST", body: fd }
             );
             const json = await res.json();

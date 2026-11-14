@@ -1,4 +1,5 @@
 "use server";
+import { getBackendUrl } from "@/lib/backend";
 
 const forgotPasswordAction = async (prevState: any, formData: FormData) => {
     "use server";
@@ -13,7 +14,7 @@ const forgotPasswordAction = async (prevState: any, formData: FormData) => {
     }
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/forgot-password`,
+        getBackendUrl("/auth/forgot-password"),
         {
             method: "POST",
             headers: {

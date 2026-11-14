@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthStore } from "@/state/store";
@@ -18,7 +19,7 @@ const useLogout = ({ redirect = "login" }: LogoutType) => {
             setError("");
 
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/logout`,
+                `${API_BASE_URL}/auth/logout`,
                 {
                     method: "GET",
                     credentials: "include",

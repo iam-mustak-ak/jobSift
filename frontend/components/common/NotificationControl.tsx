@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useMemo, useState } from "react";
 import { useSocket } from "@/context/socketContext";
 import { useAuthStore } from "@/state/store";
@@ -76,7 +77,7 @@ const NotificationControl = () => {
         if (!notification._id || notification.isRead) return;
         setNotifications((current) => current.map((item) => item._id === notification._id ? { ...item, isRead: true } : item));
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/notification/${notification._id}/read`, { method: "PATCH", credentials: "include" });
+            const response = await fetch(`${API_BASE_URL}/notification/${notification._id}/read`, { method: "PATCH", credentials: "include" });
             if (!response.ok) throw new Error("Could not update notification");
         } catch {
             setNotifications((current) => current.map((item) => item._id === notification._id ? { ...item, isRead: false } : item));
@@ -89,7 +90,7 @@ const NotificationControl = () => {
         setUpdating(true);
         setNotifications((current) => current.map((item) => ({ ...item, isRead: true })));
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/notification/read-all`, { method: "PATCH", credentials: "include" });
+            const response = await fetch(`${API_BASE_URL}/notification/read-all`, { method: "PATCH", credentials: "include" });
             if (!response.ok) throw new Error("Could not update notifications");
         } catch {
             setNotifications(previous);

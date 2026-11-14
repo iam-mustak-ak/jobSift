@@ -1,7 +1,9 @@
+import { API_BASE_URL } from "@/lib/api";
+
 export const fetcherClient = async (uri: string) => {
     try {
         const dataPromise = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}${uri}`,
+            `${API_BASE_URL}${uri}`,
             {
                 method: "GET",
                 credentials: "include",
@@ -13,7 +15,7 @@ export const fetcherClient = async (uri: string) => {
 
         const data = await dataPromise.json();
 
-        return Promise.resolve(data);
+        return { ...data, httpStatus: dataPromise.status };
     } catch (err) {
         console.log(err);
     }

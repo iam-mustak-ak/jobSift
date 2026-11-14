@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useAuthStore } from "@/state/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,7 @@ const SigninForm = () => {
                 return toast.error("Please fill all the fields");
             }
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
+                `${API_BASE_URL}/auth/login`,
                 {
                     method: "POST",
                     body: JSON.stringify({
@@ -51,7 +52,11 @@ const SigninForm = () => {
             }
 
             setAuth(data.data);
-            router.push(`/profile/${data.data._id}`);
+            const destination = new URLSearchParams(window.location.search).get("next");
+            const safeDestination = destination?.startsWith("/") && !destination.startsWith("//") && !destination.includes("\\")
+                ? destination : `/profile/${data.data._id}`;
+            router.push(safeDestination);
+            router.refresh();
         } catch (error) {
             toast.error("Invalid credentials");
             console.log(error);

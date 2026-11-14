@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -62,7 +63,7 @@ const ApplyJobForm = ({ jobId, jobTitle }: { jobId: string; jobTitle?: string })
             setStage("uploading");
             const resumeForm = new FormData();
             resumeForm.append("resume", resume);
-            const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/upload-resume`, {
+            const uploadResponse = await fetch(`${API_BASE_URL}/upload-resume`, {
                 method: "POST",
                 body: resumeForm,
                 credentials: "include",
@@ -75,7 +76,7 @@ const ApplyJobForm = ({ jobId, jobTitle }: { jobId: string; jobTitle?: string })
             if (typeof resumeUrl !== "string" || !resumeUrl) throw new Error("Resume upload completed without a file link. Please try again.");
 
             setStage("submitting");
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/job/apply/${jobId}`, {
+            const response = await fetch(`${API_BASE_URL}/job/apply/${jobId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ coverLetter: coverLetter.trim(), resume: resumeUrl }),

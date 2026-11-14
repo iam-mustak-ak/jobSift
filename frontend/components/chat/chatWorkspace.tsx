@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -72,7 +73,7 @@ export default function ChatWorkspace() {
         if (!user?._id) return;
         setLoadingList(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat/conversations`, { credentials: "include" });
+            const response = await fetch(`${API_BASE_URL}/chat/conversations`, { credentials: "include" });
             const result = await response.json();
             if (!response.ok || !result.success) throw new Error(result.message || "Could not load conversations");
             const items = Array.isArray(result.data) ? result.data as Conversation[] : [];
@@ -112,7 +113,7 @@ export default function ChatWorkspace() {
         const loadMessages = async () => {
             setLoadingMessages(true);
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat/conversations/${selectedId}/messages`, { credentials: "include", signal: controller.signal });
+                const response = await fetch(`${API_BASE_URL}/chat/conversations/${selectedId}/messages`, { credentials: "include", signal: controller.signal });
                 const result = await response.json();
                 if (!response.ok || !result.success) throw new Error(result.message || "Could not load messages");
                 setMessages(Array.isArray(result.data) ? result.data : []);
@@ -205,7 +206,7 @@ export default function ChatWorkspace() {
         if (!selectedConversation || updatingStatus) return;
         setUpdatingStatus(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat/conversations/${selectedConversation._id}/status`, {
+            const response = await fetch(`${API_BASE_URL}/chat/conversations/${selectedConversation._id}/status`, {
                 method: "PATCH", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }),
             });
             const result = await response.json();

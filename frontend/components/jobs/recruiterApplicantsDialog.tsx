@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -65,7 +66,7 @@ export default function RecruiterApplicantsDialog({
         if (!draft || draft.status === applicant.status || !stages.includes(draft.status as Stage)) return;
         setSavingId(applicant._id);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/job/${job._id}/applicants/${applicant._id}/status`, {
+            const response = await fetch(`${API_BASE_URL}/job/${job._id}/applicants/${applicant._id}/status`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -87,7 +88,7 @@ export default function RecruiterApplicantsDialog({
     const startConversation = async (applicant: Applicant) => {
         setStartingChatId(applicant._id);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/chat/conversations`, {
+            const response = await fetch(`${API_BASE_URL}/chat/conversations`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
