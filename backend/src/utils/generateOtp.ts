@@ -1,6 +1,7 @@
+import { randomInt } from "node:crypto";
+
 const generateOtp = (): string => {
-    const otp = Math.floor(100000 + Math.random() * 999999);
-    return otp.toString();
+    return randomInt(100000, 1000000).toString();
 };
 
 export default generateOtp;
