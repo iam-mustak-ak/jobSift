@@ -1,5 +1,4 @@
-import { SMTP_SENDER } from "../../config/env";
-import transporter from "../../libs/transporter";
+import sendEmail from "../../libs/sendEmail";
 import { htmlTemplates } from "./htmlTemplates";
 
 class EmailTemplates {
@@ -26,8 +25,7 @@ class EmailTemplates {
     }
 
     async sendEmail(to: string): Promise<this> {
-        await transporter.sendMail({
-            from: SMTP_SENDER,
+        await sendEmail({
             to: to,
             subject: this.subject,
             html: this.htmlContent,

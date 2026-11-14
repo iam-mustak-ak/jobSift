@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 
 export default async function createUserAction(
-    prevState: any,
+    prevState: unknown,
     formData: FormData
 ) {
     "use server";
@@ -56,14 +56,31 @@ export default async function createUserAction(
         };
     }
 
-    const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
-    if (!serverUrl) {
+    // Server actions can use a runtime URL instead of the public URL frozen at build time.
+    const serverUrl = (process.env.SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL)?.trim();
+    let signupUrl: URL;
+    try {
+        if (!serverUrl) throw new Error("Missing backend URL");
+        signupUrl = new URL(`${serverUrl.replace(/\/+$/, "")}/auth/create-user`);
+        if (!["http:", "https:"].includes(signupUrl.protocol)) {
+            throw new Error("Backend URL must use HTTP or HTTPS");
+        }
+        if (
+            process.env.NODE_ENV === "production" &&
+            ["localhost", "127.0.0.1", "[::1]", "0.0.0.0"].includes(signupUrl.hostname)
+        ) {
+            throw new Error("Production backend URL points to localhost");
+        }
+    } catch (error) {
+        console.error("[signup] Invalid backend configuration", {
+            reason: error instanceof Error ? error.message : "Invalid backend URL",
+        });
         return { success: false, message: "Account service is not configured. Please contact support." };
     }
 
     let res: Response;
     try {
-        res = await fetch(`${serverUrl}/auth/create-user`, {
+        res = await fetch(signupUrl, {
             method: "POST",
             body: JSON.stringify({
                 role,
@@ -83,14 +100,29 @@ export default async function createUserAction(
             headers: { "Content-Type": "application/json" },
             signal: AbortSignal.timeout(60000),
         });
-    } catch {
+    } catch (error) {
+        const requestError = error as Error & { cause?: { code?: string } };
+        const timedOut = requestError.name === "TimeoutError";
+        // Keep passwords, email addresses, and URL credentials out of deployment logs.
+        console.error("[signup] Backend request failed", {
+            host: signupUrl.host,
+            name: requestError.name,
+            code: requestError.cause?.code,
+            timedOut,
+        });
         return {
             success: false,
-            message: "We couldn’t reach the account service. Please try again in a moment.",
+            message: timedOut
+                ? "The account service took too long to respond. Please try again in a moment."
+                : "We couldn’t reach the account service. Please try again in a moment.",
         };
     }
 
     if (!res.ok) {
+        console.error("[signup] Backend rejected request", {
+            host: signupUrl.host,
+            status: res.status,
+        });
         const error = await res.json().catch(() => null);
         return {
             success: false,
