@@ -27,7 +27,8 @@ import {
     Trash,
     UserRound,
 } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 // type ProfileInfo = {
@@ -47,6 +48,13 @@ import { toast } from "sonner";
 
 const Page = () => {
     const { setAuth, user } = useAuthStore((state) => state);
+    const { profileId } = useParams<{ profileId: string }>();
+    const router = useRouter();
+    useEffect(() => {
+        if (user?._id && profileId !== user._id) {
+            router.replace(`/profile/${user._id}/edit-profile`);
+        }
+    }, [profileId, router, user?._id]);
     const [loading, setLoading] = useState<boolean>(false);
     const [isEnabledEdit, SetIsEnableEdit] = useState<string>("");
     const [imageLoading, setImageLoading] = useState<boolean>(false);

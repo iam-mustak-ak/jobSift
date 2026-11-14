@@ -58,13 +58,13 @@ const BasicInfo = ({ data }: { data: Record<string, any> }) => {
                             </p>
                         </div>
                     </div>
-                    <Link
+                    {data?._id && <Link
                         href={`/profile/${data?._id}/edit-profile`}
                         className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700"
                     >
                         <Pen className="h-4 w-4" />
                         Edit profile
-                    </Link>
+                    </Link>}
                 </div>
             </CardHeader>
 
