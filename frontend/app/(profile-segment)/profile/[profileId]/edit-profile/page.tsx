@@ -55,6 +55,18 @@ const Page = () => {
 
     const handleImageUpload = async (e: FormEvent) => {
         const target = e.target as HTMLInputElement;
+        const file = target.files?.[0];
+        if (!file) return;
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            toast.error("Please choose a JPG, PNG, or WEBP image.");
+            target.value = "";
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("Please choose an image smaller than 5 MB.");
+            target.value = "";
+            return;
+        }
 
         setImageLoading(true);
         try {
@@ -72,24 +84,18 @@ const Page = () => {
                     }
                 );
 
-                const data = await uploadImage.json();
+                const data = await uploadImage.json().catch(() => null);
 
-                if (!data.success) {
-                    toast.error("Error Uploading");
+                if (!uploadImage.ok || !data?.success || typeof data.data !== "string") {
+                    toast.error(data?.message || "Couldn’t upload your photo. Please try again.");
                     return;
                 }
 
                 // get the new image URL from response
                 const newProfilePicture = data.data;
 
-                // update local state
-                setAuth({
-                    ...user,
-                    profilePicture: newProfilePicture,
-                });
-
                 // update in DB with the new image
-                await fetch(
+                const updateResponse = await fetch(
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/update-profile`,
                     {
                         method: "PATCH",
@@ -103,6 +109,17 @@ const Page = () => {
                     }
                 );
 
+                const updatedProfile = await updateResponse.json().catch(() => null);
+                if (!updateResponse.ok || !updatedProfile?.success) {
+                    toast.error(updatedProfile?.message || "Photo uploaded, but your profile could not be saved. Please try again.");
+                    return;
+                }
+
+                setAuth({
+                    ...user,
+                    profilePicture: newProfilePicture,
+                });
+
                 toast.success("Profile picture updated!");
             } else {
                 toast.error("Error Uploading");
@@ -112,6 +129,7 @@ const Page = () => {
             console.log(err);
         } finally {
             setImageLoading(false);
+            target.value = "";
         }
     };
 

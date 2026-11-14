@@ -16,6 +16,12 @@ export const postImage = async (
             return next(customError(403, "Image required"));
         }
 
+        const config = cloudinary.config();
+        if (!config.cloud_name || !config.api_key || !config.api_secret) {
+            console.error("[image] Cloudinary configuration is incomplete");
+            return next(customError(503, "Image uploads are not configured. Please contact support."));
+        }
+
         const b64 = Buffer.from(image!.buffer).toString("base64");
         let dataURI = "data:" + image?.mimetype + ";base64," + b64;
         const data = await cloudinary.uploader.upload(dataURI, {
@@ -43,6 +49,11 @@ export const postImage = async (
             data: data.secure_url,
         });
     } catch (err) {
+        const uploadError = err as { code?: string; http_code?: number };
+        console.error("[image] Upload failed", {
+            code: uploadError.code,
+            status: uploadError.http_code,
+        });
         next(err);
     }
 };
